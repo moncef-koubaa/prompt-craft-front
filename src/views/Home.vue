@@ -60,6 +60,7 @@ export default {
 <template>
   <Horizontal />
   <PageHeader title="Item Details" pageTitle="NFT Marketplace" />
+  <p class="text-base">moncef</p>
   <BCard no-body>
     <BCardBody>
       <BRow class="g-4">
