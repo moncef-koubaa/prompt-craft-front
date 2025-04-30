@@ -350,9 +350,204 @@
 <script setup>
 import { ref, reactive, onMounted, onUnmounted, watch } from 'vue';
 
+// NFT Image
+const nftImage = ref('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-HaGSVGwBB8Mfv8YwFPsEKd4AYUHLHM.png');
+
+// Thumbnails
+const thumbnails = ref([
+  { id: 1, src: 'https://via.placeholder.com/80' },
+  { id: 2, src: 'https://via.placeholder.com/80' },
+  { id: 3, src: 'https://via.placeholder.com/80' },
+  { id: 4, src: 'https://via.placeholder.com/80' },
+]);
+
+// Auction state
+const currentBid = ref(2.45);
+const nextBid = ref(2.55);
+const bidIncrement = ref(0.1);
+const isPlacingBid = ref(false);
+const bidSuccess = ref(false);
+const watchCount = ref(8634);
+const isWatching = ref(false);
+const likeCount = ref(342);
+const isLiked = ref(false);
+
+// Countdown timer
+const timeLeft = reactive({
+  hours: 5,
+  minutes: 31,
+  seconds: 49,
+});
+
+// Tabs
+const tabs = [
+  { label: 'Bid History', value: 'history' },
+  { label: 'Details', value: 'details' },
+  { label: 'Activity', value: 'activity' },
+];
+const activeTab = ref('history');
+
+// Bid history
+const bids = ref([
+  {
+    id: 1,
+    bidder: "Alex Morgan",
+    avatar: "AM",
+    amount: 2.45,
+    time: "2 minutes ago",
+  },
+  {
+    id: 2,
+    bidder: "Jessica Chen",
+    avatar: "JC",
+    amount: 2.4,
+    time: "5 minutes ago",
+  },
+  {
+    id: 3,
+    bidder: "Michael Wilson",
+    avatar: "MW",
+    amount: 2.3,
+    time: "10 minutes ago",
+  },
+  {
+    id: 4,
+    bidder: "Sarah Johnson",
+    avatar: "SJ",
+    amount: 2.25,
+    time: "15 minutes ago",
+  },
+]);
 
 // Methods
+const handlePlaceBid = () => {
+  isPlacingBid.value = true;
 
+  // Simulate bid processing
+  setTimeout(() => {
+    currentBid.value = nextBid.value;
+    nextBid.value = parseFloat((nextBid.value + bidIncrement.value).toFixed(2));
+    isPlacingBid.value = false;
+    bidSuccess.value = true;
+
+    // Reset success message
+    setTimeout(() => {
+      bidSuccess.value = false;
+    }, 3000);
+  }, 1000);
+};
+
+const handleCustomBid = (amount) => {
+  if (amount > currentBid.value) {
+    isPlacingBid.value = true;
+
+    setTimeout(() => {
+      currentBid.value = amount;
+      nextBid.value = parseFloat((amount + bidIncrement.value).toFixed(2));
+      isPlacingBid.value = false;
+      bidSuccess.value = true;
+
+      setTimeout(() => {
+        bidSuccess.value = false;
+      }, 3000);
+    }, 1000);
+  }
+};
+
+const toggleWatch = () => {
+  if (isWatching.value) {
+    watchCount.value -= 1;
+  } else {
+    watchCount.value += 1;
+  }
+  isWatching.value = !isWatching.value;
+};
+
+const toggleLike = () => {
+  if (isLiked.value) {
+    likeCount.value -= 1;
+  } else {
+    likeCount.value += 1;
+  }
+  isLiked.value = !isLiked.value;
+};
+
+// Update bid history when current bid changes
+watch(currentBid, (newBid, oldBid) => {
+  if (newBid !== oldBid) {
+    const bidders = ["Alex Morgan", "Jessica Chen", "Michael Wilson", "Sarah Johnson", "David Kim", "Emma Davis"];
+    const avatars = ["AM", "JC", "MW", "SJ", "DK", "ED"];
+
+    const randomIndex = Math.floor(Math.random() * bidders.length);
+
+    const newBidEntry = {
+      id: Date.now(),
+      bidder: bidders[randomIndex],
+      avatar: avatars[randomIndex],
+      amount: newBid,
+      time: "Just now",
+    };
+
+    bids.value = [newBidEntry, ...bids.value.slice(0, 3)];
+
+    // Update time labels
+    setTimeout(() => {
+      bids.value = bids.value.map((bid, index) => ({
+        ...bid,
+        time:
+          index === 0
+            ? "Just now"
+            : index === 1
+              ? "2 minutes ago"
+              : index === 2
+                ? "5 minutes ago"
+                : "10 minutes ago",
+      }));
+    }, 1000);
+  }
+});
+
+// Countdown timer
+let timerInterval;
+
+onMounted(() => {
+  // Simulate other bidders
+  const bidderInterval = setInterval(() => {
+    // 10% chance of another bidder
+    if (Math.random() < 0.1) {
+      const randomIncrement = Math.random() < 0.7 ? bidIncrement.value : bidIncrement.value * 2;
+      const newBid = parseFloat((currentBid.value + randomIncrement).toFixed(2));
+      currentBid.value = newBid;
+      nextBid.value = parseFloat((newBid + bidIncrement.value).toFixed(2));
+    }
+  }, 15000);
+
+  // Countdown timer
+  timerInterval = setInterval(() => {
+    if (timeLeft.seconds > 0) {
+      timeLeft.seconds -= 1;
+    } else {
+      timeLeft.seconds = 59;
+      if (timeLeft.minutes > 0) {
+        timeLeft.minutes -= 1;
+      } else {
+        timeLeft.minutes = 59;
+        if (timeLeft.hours > 0) {
+          timeLeft.hours -= 1;
+        } else {
+          // Auction ended
+          clearInterval(timerInterval);
+        }
+      }
+    }
+  }, 1000);
+
+  // Clean up intervals
+  onUnmounted(() => {
+    clearInterval(bidderInterval);
+    clearInterval(timerInterval);
+  });
+});
 </script>
 
 <style scoped>

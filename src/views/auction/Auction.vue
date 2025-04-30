@@ -2,9 +2,7 @@
 import PageHeader from "@/components/page-header";
 import simplebar from "simplebar-vue";
 import Horizontal from "@/layouts/horizontal.vue";
-import {onUnmounted, ref} from 'vue';
 
-// Auction state
 export default {
   components: {
     PageHeader,
@@ -16,24 +14,34 @@ export default {
       currentBid: 2.45,
       nextBid: 2.55,
       bidIncrement: 0.1,
+      howBidModal: false,
+      bidAmount: '',
       timeLeft: {
         hours: 5,
         minutes: 31,
         seconds: 49,
       },
       showDetails: false,
+      isPlacingBid: false,
+      bidSuccess: false,
+      watchCount: 8634,
+      isWatching: false,
+      likeCount: 342,
+      isLiked: false,
+      tabs: [
+        { label: 'Bid History', value: 'history' },
+        { label: 'Details', value: 'details' },
+        { label: 'Activity', value: 'activity' },
+      ],
+      activeTab: 'history',
       bids: [
         { id: 1, bidder: "Alex Morgan", avatar: "AM", amount: 2.45, time: "2 minutes ago" },
         { id: 2, bidder: "Jessica Chen", avatar: "JC", amount: 2.4, time: "5 minutes ago" },
         { id: 3, bidder: "Michael Wilson", avatar: "MW", amount: 2.3, time: "10 minutes ago" },
         { id: 4, bidder: "Sarah Johnson", avatar: "SJ", amount: 2.25, time: "15 minutes ago" }
       ],
-      tabs : [
-        { label: 'Bid History', value: 'history' },
-        { label: 'Details', value: 'details' },
-        { label: 'Activity', value: 'activity' },
-      ],
-      activeTab : ref('history'),
+      bidderInterval: null,
+      timerInterval: null,
     };
   },
   watch: {
@@ -53,7 +61,6 @@ export default {
 
         this.bids = [newBidEntry, ...this.bids.slice(0, 3)];
 
-        // Update time labels
         setTimeout(() => {
           this.bids = this.bids.map((bid, index) => ({
             ...bid,
@@ -64,16 +71,58 @@ export default {
     }
   },
   methods: {
+    confirmBid () {
+      if (!this.bidAmount|| this.bidAmount <= this.currentBid) return;
+
+      this.isPlacingBid = true;
+
+      // Simulate bid processing
+      setTimeout(() => {
+        this.currentBid = parseFloat(this.bidAmount);
+        this.nextBid = parseFloat((this.currentBid + this.bidIncrement).toFixed(2));
+        this.isPlacingBid = false;
+        this.bidSuccess = true;
+        this.showBidModal = false;
+
+        // Reset success message
+        setTimeout(() => {
+          this.bidSuccess = false;
+        }, 3000);
+      }, 1500);
+    },
+
+
+    openBidModal() {
+      this.bidAmount = parseFloat((this.currentBid + 0.1).toFixed(2));
+      this.howBidModal = true;
+    },
+    handlePresetBid(amount) {
+      this.bidAmount = amount;
+      this.isPlacingBid = true;
+
+      // Simulate bid processing
+      setTimeout(() => {
+        this.currentBid = parseFloat(this.bidAmount);
+        this.nextBid = parseFloat((this.currentBid + this.bidIncrement).toFixed(2));
+        this.isPlacingBid = false;
+        this.bidSuccess = true;
+        this.showBidModal = false;
+
+        // Reset success message
+        setTimeout(() => {
+          this.bidSuccess = false;
+        }, 3000);
+      }, 1500);
+    },
     toggleDetails() {
       this.showDetails = !this.showDetails;
     },
     startCountDownDate(dateVal) {
       return new Date(dateVal).getTime();
-    },
+    }
   },
   mounted() {
-    const bidderInterval = setInterval(() => {
-      // 10% chance of another bidder
+    this.bidderInterval = setInterval(() => {
       if (Math.random() < 0.1) {
         const randomIncrement = Math.random() < 0.7 ? this.bidIncrement : this.bidIncrement * 2;
         const newBid = parseFloat((this.currentBid + randomIncrement).toFixed(2));
@@ -82,8 +131,7 @@ export default {
       }
     }, 15000);
 
-    // Countdown timer logic
-    const timerInterval = setInterval(() => {
+    this.timerInterval = setInterval(() => {
       if (this.timeLeft.seconds > 0) {
         this.timeLeft.seconds -= 1;
       } else {
@@ -95,20 +143,12 @@ export default {
           if (this.timeLeft.hours > 0) {
             this.timeLeft.hours -= 1;
           } else {
-            // Auction ended
-            clearInterval(timerInterval);
+            clearInterval(this.timerInterval);
           }
         }
       }
     }, 1000);
 
-    // Clean up intervals on unmount
-    onUnmounted(() => {
-      clearInterval(bidderInterval);
-      clearInterval(timerInterval);
-    });
-
-    // Countdown for end date logic
     const setEndDate1 = "March 19, 2024 6:00:00";
     const cdd1 = this.startCountDownDate(setEndDate1);
 
@@ -130,13 +170,37 @@ export default {
     }, 1000);
   },
   beforeUnmount() {
-    // Clear any active intervals
+    clearInterval(this.bidderInterval);
     clearInterval(this.timerInterval);
   }
 };
 </script>
 
+
 <style scoped>
+/* Additional styles can be added here if needed */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 .slide-fade-enter-active,
 .slide-fade-leave-active {
   transition: all 0.3s ease;
@@ -153,6 +217,14 @@ export default {
   opacity: 1;
   overflow: hidden;
 }
+.more-details-btn {
+  margin-bottom: 1rem;
+  cursor: pointer;
+  color: gray;
+  font-weight: bold;
+  background: none;
+  border: none;
+}
 </style>
 
 <template>
@@ -161,7 +233,7 @@ export default {
   <BCard no-body>
     <BCardBody>
       <BRow class="g-4">
-        <BCol lg="4">
+        <BCol lg="5">
           <div class="sticky-side-div">
             <BCard no-body class="ribbon-box border shadow-none right">
               <div class="ribbon-two ribbon-two-danger">
@@ -208,12 +280,9 @@ export default {
                 </BRow>
               </div>
             </BCard>
-            <div class="hstack gap-2">
-              <BButton variant="success" class="w-100">Place Bid</BButton>
-            </div>
           </div>
         </BCol>
-        <BCol lg="8">
+        <BCol lg="7">
           <div>
             <BDropdown
                 class="float-end"
@@ -889,16 +958,15 @@ export default {
                             <span class="text-red-500">⏱</span>
                             <div class="flex items-center">
                               <div class="bg-black text-white dark:bg-gray-900 rounded-md px-2 py-1 font-mono font-bold">
-                                11:00
+                                {{ String(timeLeft.hours).padStart(2, '0') }}
                               </div>
                               <span class="mx-1 text-lg font-bold">:</span>
                               <div class="bg-black text-white dark:bg-gray-900 rounded-md px-2 py-1 font-mono font-bold">
-                                11:22
-
+                                {{ String(timeLeft.minutes).padStart(2, '0') }}
                               </div>
                               <span class="mx-1 text-lg font-bold">:</span>
                               <div class="bg-black text-white dark:bg-gray-900 rounded-md px-2 py-1 font-mono font-bold">
-                                11:33
+                                {{ String(timeLeft.seconds).padStart(2, '0') }}
                               </div>
                             </div>
                           </div>
@@ -936,19 +1004,19 @@ export default {
                       <div class="grid grid-cols-3 gap-3">
                         <button
                             class="inline-flex items-center justify-center rounded-md text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 h-12"
-                            @click="handleCustomBid(parseFloat((currentBid + 0.1).toFixed(2)))"
+                            @click="handlePresetBid(parseFloat((currentBid + 0.1).toFixed(2)))"
                         >
                           +0.1 ETH
                         </button>
                         <button
                             class="inline-flex items-center justify-center rounded-md text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 h-12"
-                            @click="handleCustomBid(parseFloat((currentBid + 0.2).toFixed(2)))"
+                            @click="handlePresetBid(parseFloat((currentBid + 0.2).toFixed(2)))"
                         >
                           +0.2 ETH
                         </button>
                         <button
                             class="inline-flex items-center justify-center rounded-md text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 h-12"
-                            @click="handleCustomBid(parseFloat((currentBid + 0.5).toFixed(2)))"
+                            @click="handlePresetBid(parseFloat((currentBid + 0.5).toFixed(2)))"
                         >
                           +0.5 ETH
                         </button>
@@ -956,19 +1024,20 @@ export default {
 
                       <!-- Main Bid Button -->
                       <div class="relative">
-                        <button
-                            class="w-full py-6 text-xl font-bold bg-amber-500 hover:bg-amber-600 text-white h-14 rounded-md transition-transform hover:scale-[1.02] active:scale-[0.98]"
-                            @click="handlePlaceBid"
-                            :disabled="isPlacingBid"
-                        >
-                          <div v-if="isPlacingBid" class="flex items-center justify-center">
-                            <div class="h-5 w-5 border-t-2 border-r-2 border-white rounded-full animate-spin mr-2"></div>
-                            Processing...
-                          </div>
-                          <template v-else>
-                            BID NOW: {{ nextBid }} ETH
-                          </template>
-                        </button>
+<!--                        <button-->
+<!--                            class="w-full py-6 text-xl font-bold bg-amber-500 hover:bg-amber-600 text-white h-14 rounded-md transition-transform hover:scale-[1.02] active:scale-[0.98]"-->
+<!--                            @click="handlePlaceBid"-->
+<!--                            :disabled="isPlacingBid"-->
+<!--                        >-->
+<!--                          <div v-if="isPlacingBid" class="flex items-center justify-center">-->
+<!--                            <div class="h-5 w-5 border-t-2 border-r-2 border-white rounded-full animate-spin mr-2"></div>-->
+<!--                            Processing...-->
+<!--                          </div>-->
+<!--                          <template v-else>-->
+<!--                            BID NOW: {{ nextBid }} ETH-->
+<!--                          </template>-->
+                          <BButton variant="primary" class="w-100"  @click="openBidModal">Place Bid</BButton>
+<!--                        </button>-->
 
                         <transition
                             enter-active-class="transition duration-300 ease-out"
@@ -1082,7 +1151,132 @@ export default {
                       </div>
                     </div>
 
+            <transition
+                enter-active-class="transition duration-300 ease-out"
+                enter-from-class="opacity-0"
+                enter-to-class="opacity-100"
+                leave-active-class="transition duration-200 ease-in"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
+            >
+              <div v-if="this.howBidModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <transition
+                    enter-active-class="transition duration-300 ease-out"
+                    enter-from-class="transform scale-95 opacity-0"
+                    enter-to-class="transform scale-100 opacity-100"
+                    leave-active-class="transition duration-200 ease-in"
+                    leave-from-class="transform scale-100 opacity-100"
+                    leave-to-class="transform scale-95 opacity-0"
+                >
+                  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6 relative">
+                    <!-- Close button -->
+                    <button
+                        @click="howBidModal = false"
+                        class="absolute top-4 right-4 text-gray-400 hover:text-gray-500"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 6 6 18"/>
+                        <path d="m6 6 12 12"/>
+                      </svg>
+                    </button>
 
+                    <div class="text-center mb-6">
+                      <h2 class="text-2xl font-bold">Place Your Bid</h2>
+                      <p class="text-gray-500 dark:text-gray-400 mt-1">You're about to place a bid on Patterns Arts & Culture</p>
+                    </div>
+
+                    <div class="space-y-4">
+                      <!-- Current Bid Info -->
+                      <div class="bg-gray-100  p-3 rounded-lg">
+                        <div class="flex justify-between items-center">
+                          <span class="text-gray-500 dark:text-gray-400">Current Bid</span>
+                          <span class="font-bold">{{ currentBid }} ETH</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-1">
+                          <span class=" dark:text-gray-400">Minimum Bid</span>
+                          <span class="font-medium">{{ parseFloat((currentBid + 0.01).toFixed(2)) }} ETH</span>
+                        </div>
+                      </div>
+
+                      <!-- Bid Amount Input -->
+                      <div>
+                        <label for="bidAmount" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          Your Bid Amount
+                        </label>
+                        <div class="relative">
+                          <input
+                              id="bidAmount"
+                              v-model="bidAmount"
+                              type="number"
+                              step="0.01"
+                              :min="currentBid + 0.01"
+                              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500 pr-16"
+                              placeholder="Enter amount"
+                          />
+                          <div class="absolute right-3 top-1/2 -translate-y-1/2 font-bold text-gray-500">ETH</div>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">
+                          ≈ ${{ bidAmount ? (bidAmount * 3450).toLocaleString() : '0' }}
+                        </p>
+                      </div>
+
+                      <!-- Gas Fee -->
+                      <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-500 dark:text-gray-400">Estimated Gas Fee</span>
+                        <span>0.005 ETH</span>
+                      </div>
+
+                      <!-- Service Fee -->
+                      <div class="flex justify-between items-center text-sm">
+                        <span class="text-gray-500 dark:text-gray-400">Service Fee (2.5%)</span>
+                        <span>{{ bidAmount ? (bidAmount * 0.025).toFixed(3) : '0' }} ETH</span>
+                      </div>
+
+                      <hr class="border-gray-200 " />
+
+                      <!-- Total -->
+                      <div class="flex justify-between items-center font-medium">
+                        <span>You will pay</span>
+                        <span>{{ bidAmount ? (parseFloat(bidAmount) + 0.005 + parseFloat(bidAmount) * 0.025).toFixed(3) : '0' }} ETH</span>
+                      </div>
+
+                      <!-- Wallet Balance -->
+                      <div class="bg-gray-100  p-3 rounded-lg flex justify-between items-center">
+                        <span class="text-gray-500 dark:text-gray-400">Your Wallet Balance</span>
+                        <span class="font-bold">5.243 ETH</span>
+                      </div>
+
+                      <!-- Bid Button -->
+                      <button
+                          @click="confirmBid"
+                          :disabled="!bidAmount || bidAmount <= currentBid || isPlacingBid"
+                          :class="[
+                  'w-full py-3 text-white font-bold rounded-md transition-colors',
+                  (!bidAmount || bidAmount <= currentBid || isPlacingBid)
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-rose-600 hover:bg-rose-700'
+                ]"
+                      >
+                        <div v-if="isPlacingBid" class="flex items-center justify-center">
+                          <div class="h-5 w-5 border-t-2 border-r-2 border-white rounded-full animate-spin mr-2"></div>
+                          Processing...
+                        </div>
+                        <template v-else>
+                          Confirm Bid
+                        </template>
+                      </button>
+
+                      <!-- Terms -->
+                      <p class="text-xs text-gray-500 dark:text-gray-400 text-center">
+                        By confirming this bid, you agree to the
+                        <a href="#" class="text-rose-600 hover:underline">Terms of Service</a>
+                        and acknowledge this is a binding financial transaction.
+                      </p>
+                    </div>
+                  </div>
+                </transition>
+              </div>
+            </transition>
 
 
 
