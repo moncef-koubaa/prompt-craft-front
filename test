@@ -1,0 +1,372 @@
+<template>
+  <div class="container mx-auto px-4 py-6 max-w-7xl">
+    <!-- Breadcrumb -->
+    <div class="flex items-center text-sm text-gray-500 mb-4">
+      <span>NFT Marketplace</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mx-1">
+        <path d="m9 18 6-6-6-6"/>
+      </svg>
+      <span class="text-gray-900 dark:text-white">Item Details</span>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Left column - NFT Image and thumbnails -->
+      <div class="space-y-6">
+        <div class="relative rounded-xl overflow-hidden border shadow-lg">
+          <div class="absolute top-0 right-0 z-10">
+            <div class="bg-red-500 text-white font-bold py-1 px-4 transform rotate-45 translate-x-[30%] translate-y-[30%] shadow-md flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-1">
+                <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+              </svg>
+              HOT
+            </div>
+          </div>
+
+          <img
+            :src="nftImage"
+            alt="Patterns Arts & Culture NFT"
+            class="w-full aspect-square object-cover"
+          />
+        </div>
+
+        <!-- NFT Thumbnails -->
+        <div class="flex gap-2 overflow-x-auto pb-2">
+          <div
+            v-for="thumb in thumbnails"
+            :key="thumb.id"
+            class="min-w-[80px] h-20 border rounded-md overflow-hidden cursor-pointer hover:border-amber-500 transition-colors"
+          >
+            <img
+              :src="thumb.src"
+              :alt="`Thumbnail ${thumb.id}`"
+              class="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
+        <!-- Description Card -->
+        <div class="border rounded-lg p-4 shadow-sm">
+          <h3 class="font-semibold mb-2">Description</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            A unique digital artwork from the "Patterns Arts & Culture" collection. This piece represents the fusion
+            of traditional cultural elements with modern digital art techniques, creating a stunning visual experience
+            that bridges past and present.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right column - Auction details and bidding -->
+      <div class="space-y-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2 text-amber-500">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5">
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <span class="font-medium">{{ watchCount.toLocaleString() }} watching this</span>
+          </div>
+
+          <div class="flex space-x-3">
+            <button
+              :class="[
+                'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 px-4 py-2',
+                isWatching
+                  ? 'bg-amber-500 hover:bg-amber-600 text-white'
+                  : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground'
+              ]"
+              @click="toggleWatch"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 mr-1">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              {{ isWatching ? 'Watching' : 'Watch' }}
+            </button>
+
+            <button
+              :class="[
+                'inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 px-4 py-2',
+                isLiked
+                  ? 'bg-pink-500 hover:bg-pink-600 text-white'
+                  : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground'
+              ]"
+              @click="toggleLike"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                :fill="isLiked ? 'currentColor' : 'none'"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="h-4 w-4 mr-1"
+              >
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+              {{ likeCount }}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <h1 class="text-3xl font-bold">Patterns Arts & Culture</h1>
+
+          <div class="flex flex-wrap gap-y-2 gap-x-6 mt-3 text-sm">
+            <div>
+              <span class="text-gray-500 dark:text-gray-400">Creators: </span>
+              <span class="font-medium text-purple-500">Nancy Martino</span>
+            </div>
+            <div>
+              <span class="text-gray-500 dark:text-gray-400">Seller: </span>
+              <span class="font-medium">Rickey Teran</span>
+            </div>
+            <div>
+              <span class="text-gray-500 dark:text-gray-400">Published: </span>
+              <span class="font-medium">29 April, 2022</span>
+            </div>
+          </div>
+
+          <div class="flex items-center mt-3">
+            <div v-for="star in 5" :key="star" class="w-5 h-5 text-yellow-400 fill-current">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z" />
+              </svg>
+            </div>
+            <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">(5.50k Customer Review)</span>
+          </div>
+        </div>
+
+        <hr class="border-gray-200 dark:border-gray-700" />
+
+        <!-- Bidding Section -->
+        <div class="bg-gray-100 dark:bg-gray-800/50 rounded-xl p-6 space-y-4">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-lg font-medium">Auction Ends In</h3>
+              <div class="flex items-center space-x-2 mt-1">
+                <span class="text-red-500">⏱</span>
+                <div class="flex items-center">
+                  <div class="bg-black text-white dark:bg-gray-900 rounded-md px-2 py-1 font-mono font-bold">
+                    {{ String(timeLeft.hours).padStart(2, '0') }}
+                  </div>
+                  <span class="mx-1 text-lg font-bold">:</span>
+                  <div class="bg-black text-white dark:bg-gray-900 rounded-md px-2 py-1 font-mono font-bold">
+                    {{ String(timeLeft.minutes).padStart(2, '0') }}
+                  </div>
+                  <span class="mx-1 text-lg font-bold">:</span>
+                  <div class="bg-black text-white dark:bg-gray-900 rounded-md px-2 py-1 font-mono font-bold">
+                    {{ String(timeLeft.seconds).padStart(2, '0') }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <span class="text-amber-500">👤</span>
+              <span class="text-sm font-medium">24 active bidders</span>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Current Bid</h3>
+            <div class="flex items-baseline">
+              <span class="text-4xl font-bold">{{ currentBid }} ETH</span>
+              <span class="ml-2 text-sm text-gray-500 dark:text-gray-400">≈ ${{ (currentBid * 3450).toLocaleString() }}</span>
+            </div>
+          </div>
+
+          <!-- Success Message -->
+          <transition
+            enter-active-class="transition duration-300 ease-out"
+            enter-from-class="transform opacity-0 translate-y-2"
+            enter-to-class="transform opacity-100 translate-y-0"
+            leave-active-class="transition duration-200 ease-in"
+            leave-from-class="transform opacity-100"
+            leave-to-class="transform opacity-0"
+          >
+            <div v-if="bidSuccess" class="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 p-2 rounded-md text-sm">
+              Your bid has been placed successfully!
+            </div>
+          </transition>
+
+          <!-- Bid Increment Buttons -->
+          <div class="grid grid-cols-3 gap-3">
+            <button
+              class="inline-flex items-center justify-center rounded-md text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 h-12"
+              @click="handleCustomBid(parseFloat((currentBid + 0.1).toFixed(2)))"
+            >
+              +0.1 ETH
+            </button>
+            <button
+              class="inline-flex items-center justify-center rounded-md text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 h-12"
+              @click="handleCustomBid(parseFloat((currentBid + 0.2).toFixed(2)))"
+            >
+              +0.2 ETH
+            </button>
+            <button
+              class="inline-flex items-center justify-center rounded-md text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 h-12"
+              @click="handleCustomBid(parseFloat((currentBid + 0.5).toFixed(2)))"
+            >
+              +0.5 ETH
+            </button>
+          </div>
+
+          <!-- Main Bid Button -->
+          <div class="relative">
+            <button
+              class="w-full py-6 text-xl font-bold bg-amber-500 hover:bg-amber-600 text-white h-14 rounded-md transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              @click="handlePlaceBid"
+              :disabled="isPlacingBid"
+            >
+              <div v-if="isPlacingBid" class="flex items-center justify-center">
+                <div class="h-5 w-5 border-t-2 border-r-2 border-white rounded-full animate-spin mr-2"></div>
+                Processing...
+              </div>
+              <template v-else>
+                BID NOW: {{ nextBid }} ETH
+              </template>
+            </button>
+
+            <transition
+              enter-active-class="transition duration-300 ease-out"
+              enter-from-class="transform opacity-0"
+              enter-to-class="transform opacity-100"
+              leave-active-class="transition duration-200 ease-in"
+              leave-from-class="transform opacity-100"
+              leave-to-class="transform opacity-0"
+            >
+              <div v-if="!isPlacingBid" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full px-2 py-1 shadow-md">
+                BID NOW!
+              </div>
+            </transition>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div>
+          <div class="flex border-b border-gray-200 dark:border-gray-700">
+            <button
+              v-for="tab in tabs"
+              :key="tab.value"
+              class="flex-1 px-4 py-2 text-center"
+              :class="[
+                activeTab === tab.value
+                  ? 'border-b-2 border-primary font-medium text-primary'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+              ]"
+              @click="activeTab = tab.value"
+            >
+              {{ tab.label }}
+            </button>
+          </div>
+
+          <!-- Tab Content -->
+          <div class="pt-4">
+            <!-- Bid History Tab -->
+            <div v-if="activeTab === 'history'" class="border rounded-lg p-4 shadow-sm">
+              <div class="space-y-4">
+                <div v-for="bid in bids" :key="bid.id" class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="h-8 w-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 text-white flex items-center justify-center text-xs font-medium">
+                      {{ bid.avatar }}
+                    </div>
+                    <div>
+                      <div class="font-medium">{{ bid.bidder }}</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">{{ bid.time }}</div>
+                    </div>
+                  </div>
+                  <div class="font-bold">{{ bid.amount }} ETH</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Details Tab -->
+            <div v-if="activeTab === 'details'" class="border rounded-lg p-4 shadow-sm">
+              <div class="space-y-3">
+                <div class="flex justify-between">
+                  <span class="text-gray-500 dark:text-gray-400">Contract Address</span>
+                  <span class="font-mono text-sm">0x7a23...45e9</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-500 dark:text-gray-400">Token ID</span>
+                  <span>1342</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-500 dark:text-gray-400">Token Standard</span>
+                  <span>ERC-721</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-500 dark:text-gray-400">Blockchain</span>
+                  <span>Ethereum</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Activity Tab -->
+            <div v-if="activeTab === 'activity'" class="border rounded-lg p-4 shadow-sm">
+              <div class="space-y-4">
+                <div class="flex items-start gap-3">
+                  <div class="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-purple-500">
+                      <path d="M3 3v5h5"/>
+                      <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="font-medium">
+                      Listed by <span class="text-purple-500">Rickey Teran</span>
+                    </div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">29 April, 2022 at 12:34 PM</div>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <div class="bg-green-100 dark:bg-green-900/30 p-2 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 text-green-500">
+                      <circle cx="12" cy="12" r="10"/>
+                      <path d="M12 16v-4"/>
+                      <path d="M12 8h.01"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="font-medium">
+                      Created by <span class="text-purple-500">Nancy Martino</span>
+                    </div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">28 April, 2022 at 09:23 AM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, reactive, onMounted, onUnmounted, watch } from 'vue';
+
+
+// Methods
+
+</script>
+
+<style scoped>
+/* Additional styles can be added here if needed */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>
