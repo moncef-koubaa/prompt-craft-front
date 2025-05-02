@@ -9,4 +9,10 @@ export default [
         name : 'auction',
         component : () => import('@/views/auction/Auction.vue'),
     }
+    ,{
+     path : '/wallet',
+     name : 'wallet-login',
+     component : ()=>import('@/views/wallet-login/WalletLogin.vue'),
+    }
+
 ]
