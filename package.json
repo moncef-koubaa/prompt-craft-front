@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@ai-sdk/vue": "^1.2.10",
     "@ckeditor/ckeditor5-build-classic": "^44.3.0",
     "@ckeditor/ckeditor5-vue": "^7.3.0",
     "@fullcalendar/bootstrap": "^6.1.11",
