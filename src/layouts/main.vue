@@ -18,7 +18,7 @@ export default {
         ...layoutComputed,
     },
     mounted() {
-        // document.querySelector("html").setAttribute('dir', 'rtl');
+        //document.querySelector("html").setAttribute('dir', 'rtl');
     }
 };
 </script>
