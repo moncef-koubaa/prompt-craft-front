@@ -7,6 +7,7 @@ import Input from "../components/ui/Input.vue";
 import LoadingAnimation from "../components/LoadingAnimation.vue";
 import LoadingDots from "../components/LoadingDots.vue";
 import EmptyState from "../components/EmptyState.vue";
+import axios from "axios";
 
 export default {
   components: {
@@ -53,20 +54,17 @@ export default {
       this.isLoading = true;
 
       try {
-        // Simulate API call (replace with your actual API)
-        const response = await fetch("/api/generate-image", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: this.input }),
-        });
+        const response = await axios.post(
+          "http://localhost:3000/ai/image-url",
+          { prompt: this.input }
+        );
+        console.log("Response from server:", response.data);
 
-        const data = await response.json();
-
-        // Add AI response (image URL)
         this.messages.push({
           role: "assistant",
-          content: data.imageUrl || "data:image/png;base64,yourImageDataHere",
+          content: response.data.url,
         });
+        console.log("Generated image URL:", response.data.url);
       } catch (error) {
         console.error("Error generating image:", error);
         this.messages.push({
@@ -86,6 +84,9 @@ export default {
 
     clearHistory() {
       this.messages = [];
+    },
+    saveImage(imageUrl) {
+      console.log("Image URL saved:", imageUrl);
     },
   },
 };
@@ -149,24 +150,24 @@ export default {
                 'bg-muted',
               ]"
             >
-              <p
-                v-if="
-                  message.role === 'user' ||
-                  !message.content.startsWith('data:image')
-                "
-              >
+              <p v-if="message.role === 'user'">
                 {{ message.content }}
               </p>
               <div v-else class="relative">
                 <img
-                  :src="message.content || '/placeholder.svg'"
+                  :src="message.content"
                   alt="Generated image"
                   class="rounded-md max-w-full max-h-[500px] object-contain"
                 />
                 <div class="absolute top-2 right-2">
-                  <Button size="sm" variant="secondary" class="h-8">
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    class="h-8"
+                    @Click="saveImage(message.content)"
+                  >
                     <ImageIcon class="h-4 w-4 mr-2" />
-                    Download
+                    Choose this image
                   </Button>
                 </div>
               </div>
