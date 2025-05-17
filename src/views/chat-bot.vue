@@ -7,6 +7,7 @@ import Input from "../components/ui/Input.vue";
 import LoadingAnimation from "../components/LoadingAnimation.vue";
 import LoadingDots from "../components/LoadingDots.vue";
 import EmptyState from "../components/EmptyState.vue";
+import ChatBotService from "@/services/chat-bot.service";
 
 export default {
   components: {
@@ -53,19 +54,11 @@ export default {
       this.isLoading = true;
 
       try {
-        // Simulate API call (replace with your actual API)
-        const response = await fetch("/api/generate-image", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: this.input }),
-        });
+        const data = await ChatBotService.getChatBotResponse(this.input);
 
-        const data = await response.json();
-
-        // Add AI response (image URL)
         this.messages.push({
           role: "assistant",
-          content: data.imageUrl || "data:image/png;base64,yourImageDataHere",
+          content: data.url || "data:image/png;base64,yourImageDataHere",
         });
       } catch (error) {
         console.error("Error generating image:", error);
