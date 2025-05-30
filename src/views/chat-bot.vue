@@ -8,6 +8,10 @@ import LoadingAnimation from "../components/LoadingAnimation.vue";
 import LoadingDots from "../components/LoadingDots.vue";
 import EmptyState from "../components/EmptyState.vue";
 import ChatBotService from "@/services/chat-bot.service";
+<<<<<<< HEAD
+=======
+import Swal from "sweetalert2";
+>>>>>>> 455714c (fix : fix bugs)
 
 export default {
   components: {
@@ -40,6 +44,58 @@ export default {
   },
 
   methods: {
+    async Mint(imageUrl) {
+      let data = {};
+      await Swal.fire({
+        title: "Enter Item Details",
+        html: `
+    <input type="text" id="item-name" class="swal2-input" placeholder="Name (required)">
+    <input type="number" id="item-price" class="swal2-input" placeholder="Price (optional)">
+  `,
+        showCancelButton: true,
+        confirmButtonText: "Submit",
+        cancelButtonText: "Cancel",
+        focusConfirm: false,
+        preConfirm: () => {
+          const name = document.getElementById("item-name").value.trim();
+          const price = document.getElementById("item-price").value.trim();
+
+          if (!name) {
+            Swal.showValidationMessage("Name is required");
+            return false;
+          }
+
+          return { name, price: price || null };
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const { name, price } = result.value;
+          data = { name, price };
+          console.log("Name:", name);
+          console.log("Price:", price);
+        }
+      });
+
+      data.path = imageUrl;
+      console.log("data:", data);
+      await ChatBotService.mintImage(data)
+        .then(() => {
+          Swal.fire({
+            title: "Minting Successful",
+            text: `Your NFT has been minted successfully!`,
+            icon: "success",
+          });
+        })
+        .catch((error) => {
+          console.error("Minting error:", error);
+          Swal.fire({
+            title: "Minting Failed",
+            text: "There was an error minting your NFT. Please try again.",
+            icon: "error",
+          });
+        });
+    },
+
     async generateImage() {
       if (!this.input.trim() || this.isLoading || this.isGenerating) return;
 
@@ -160,10 +216,10 @@ export default {
                     size="sm"
                     variant="secondary"
                     class="h-8"
-                    @Click="saveImage(message.content)"
+                    @click="Mint(message.content)"
                   >
                     <ImageIcon class="h-4 w-4 mr-2" />
-                    Choose this image
+                    Mint
                   </Button>
                 </div>
               </div>

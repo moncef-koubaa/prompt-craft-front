@@ -13,4 +13,13 @@ export default class ChatBotService  {
         }
     }
 
+<<<<<<< HEAD
+=======
+    static async mintImage(data){
+    
+        const response = await apiClientUnAuth.post("/nft", data);
+        return response.data;    
+    }
+
+>>>>>>> 455714c (fix : fix bugs)
 }
