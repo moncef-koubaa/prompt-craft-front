@@ -1,9 +1,9 @@
-import apiClientUnAuth from "./API/not-authenticated";
+import apiClientAuth from "./API/authenticated";
 export default class ChatBotService  {
     static async getChatBotResponse(message) {
         console.log("Chatbot message:", message);
         try {
-            const response = await apiClientUnAuth.post("/ai/image-url", {
+            const response = await apiClientAuth.post("/ai/image-url", {
                 prompt: message,
             });
             return response.data;
@@ -13,13 +13,10 @@ export default class ChatBotService  {
         }
     }
 
-<<<<<<< HEAD
-=======
     static async mintImage(data){
-    
-        const response = await apiClientUnAuth.post("/nft", data);
+        console.log("Minting image with data:", data);
+        const response = await apiClientAuth.post("/nft", data);
         return response.data;    
     }
 
->>>>>>> 455714c (fix : fix bugs)
 }

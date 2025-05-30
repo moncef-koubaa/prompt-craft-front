@@ -8,10 +8,7 @@ import LoadingAnimation from "../components/LoadingAnimation.vue";
 import LoadingDots from "../components/LoadingDots.vue";
 import EmptyState from "../components/EmptyState.vue";
 import ChatBotService from "@/services/chat-bot.service";
-<<<<<<< HEAD
-=======
 import Swal from "sweetalert2";
->>>>>>> 455714c (fix : fix bugs)
 
 export default {
   components: {
@@ -71,14 +68,13 @@ export default {
         if (result.isConfirmed) {
           const { name, price } = result.value;
           data = { name, price };
-          console.log("Name:", name);
-          console.log("Price:", price);
+          console.log("Item details:", data);
         }
       });
 
       data.path = imageUrl;
       console.log("data:", data);
-      await ChatBotService.mintImage(data)
+      ChatBotService.mintImage(data)
         .then(() => {
           Swal.fire({
             title: "Minting Successful",
@@ -116,7 +112,7 @@ export default {
           role: "assistant",
           content: data.url || "data:image/png;base64,yourImageDataHere",
         });
-        console.log("Generated image URL:", response.data.url);
+        console.log("Generated image URL:", data.url);
       } catch (error) {
         console.error("Error generating image:", error);
         this.messages.push({
