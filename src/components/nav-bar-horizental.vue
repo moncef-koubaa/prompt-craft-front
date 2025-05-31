@@ -146,7 +146,7 @@ export default {
                     alt="Header Avatar">
                   <span class="text-start ms-xl-2">
                     <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">Edward
-                      Diana</span>
+                      Diana abc</span>
                     <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">Founder</span>
                   </span>
                 </span>

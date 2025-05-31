@@ -34,9 +34,13 @@ export default [
     name : 'profile',
     component : () => import('@/views/profile/ProfileInfo.vue'),
     },
-    // {
-    // path : '/profile/settings',
-    // name : 'profile-settings',
-    // component : () => import('@/views/profile/ProfileSettings.vue'),
-    // }
-]
+    {
+    path : '/profile/settings',
+    name : 'profile-settings',
+    component : () => import('@/views/profile/ProfileSettings.vue'),
+    },
+    {
+        path: '/notif',
+        name: 'notifications',
+        component: () => import('@/views/notif.vue'),
+    },];
