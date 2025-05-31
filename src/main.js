@@ -19,6 +19,7 @@ import '@/assets/scss/config/default/app.scss';
 import "leaflet/dist/leaflet.css";
 import '@/assets/scss/mermaid.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle'
+import { createPinia } from 'pinia' // Import Pinia
 
 
 
@@ -26,12 +27,15 @@ AOS.init({
     easing: 'ease-out-back',
     duration: 1000
 });
+const pinia = createPinia() // Create Pinia instance
+
 
 createApp(App)
     .use(store)
     .use(router)
     .use(VueApexCharts)
     .use(BootstrapVueNext)
+    .use(pinia)
     .component(VueFeather.type, VueFeather)
     .directive("maska", vMaska)
     .use(VueSweetalert2)
