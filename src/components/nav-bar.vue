@@ -11,19 +11,32 @@ import simplebar from "simplebar-vue";
 import i18n from "../i18n";
 import { useNotificationStore} from '@/stores/notification';
 import {storeToRefs} from "pinia";
-import {onUnmounted} from "vue";
+import {onMounted, onUnmounted} from "vue";
+import { notificationService } from '@/services/notificationService';
 /**
  * Nav-bar Component
  */
 export default {
   setup() {
     const notificationStore = useNotificationStore();
-    const { notifications, unreadCount, isConnected, error } = storeToRefs(notificationStore);
+    let { notifications, unreadCount, isConnected, error ,notificationCount } = storeToRefs(notificationStore);
 
+    // Fetch unread notifications after component mounts
+    onMounted(async () => {
+      try {
+        const unread = await notificationService.getUnreadNotifications();
+        notifications.value = notifications.value.concat(unread);
+        console.log("notification filler", notifications.value);
+        notificationCount.value+= unread.length;
+        console.log("notification count", notificationCount.value);
+      } catch (err) {
+        console.error("Failed to fetch unread notifications", err);
+      }
+    });
 
-    // Cleanup on unmount
+    // Cleanup SSE connection on unmount
     onUnmounted(() => {
-      notificationStore.disconnectSSE();
+      setTimeout(() => notificationStore.disconnectSSE(), 0);
     });
 
     return {
@@ -31,7 +44,8 @@ export default {
       notifications,
       unreadCount,
       isConnected,
-      error
+      error,
+      notificationCount,
     };
   },
   data() {
@@ -639,7 +653,7 @@ export default {
             <template #button-content>
               <i class='bx bx-bell fs-22'></i>
               <span class="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger"><span
-                  class="notification-badge">3</span><span class="visually-hidden">unread
+                  class="notification-badge">{{ notificationCount}}</span><span class="visually-hidden">unread
                   messages
                 </span>
               </span>
@@ -692,9 +706,9 @@ export default {
                           </a>
 
                           <!-- Timestamp -->
-                          <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">
-                            <span><i class="mdi mdi-clock-outline"></i> {{ notification.timestamp.toLocaleTimeString() }}</span>
-                          </p>
+<!--                          <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">-->
+<!--                            <span><i class="mdi mdi-clock-outline"></i> {{ notification.timestamp.toLocaleTimeString() }}</span>-->
+<!--                          </p>-->
                         </div>
 
                         <!-- Checkbox -->

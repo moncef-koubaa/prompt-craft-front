@@ -11,6 +11,7 @@ export const useNotificationStore = defineStore('notifications', () => {
     const eventSource = ref(null)
     const reconnectAttempts = ref(0)
     const maxReconnectAttempts = 5
+    let notificationCount= ref(0)
     const reconnectDelay = computed(() =>
         Math.min(1000 * Math.pow(2, reconnectAttempts.value), 30000
         )); // Exponential backoff with max 30s
@@ -55,6 +56,7 @@ export const useNotificationStore = defineStore('notifications', () => {
 
             // Message received
             eventSource.value.onmessage = (event) => {
+                notificationCount.value++;
                 console.log('New notification received');
                 try {
                     const newNotification = JSON.parse(event.data)
@@ -148,6 +150,8 @@ export const useNotificationStore = defineStore('notifications', () => {
         disconnectSSE,
         markAsRead,
         markAllAsRead,
-        clearNotifications
+        clearNotifications,
+
+        notificationCount,
     }
 })
