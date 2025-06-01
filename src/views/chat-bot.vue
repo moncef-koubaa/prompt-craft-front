@@ -72,7 +72,7 @@ export default {
         }
       });
 
-      data.path = imageUrl;
+      data.imageUrl = imageUrl;
       console.log("data:", data);
       ChatBotService.mintImage(data)
         .then(() => {
