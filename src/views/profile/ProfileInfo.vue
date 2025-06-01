@@ -277,7 +277,7 @@ export default {
                   </BCardBody>
                 </BCard>
 
-                <BCard no-body>
+                <!-- <BCard no-body>
                   <BCardBody>
                     <div class="d-flex align-items-center mb-4">
                       <div class="flex-grow-1">
@@ -333,7 +333,7 @@ export default {
                       </div>
                     </div>
                   </BCardBody>
-                </BCard>
+                </BCard> -->
               </BCol>
               <BCol xxl="9">
                 <BCard no-body>
