@@ -62,7 +62,6 @@ export const useNotificationStore = defineStore('notifications', () => {
                     const newNotification = JSON.parse(event.data)
                     notifications.value.unshift({
                         ...newNotification,
-                        id: Date.now() + Math.random().toString(36).substring(2, 9),
                         read: false,
                         timestamp: new Date()
                     })
