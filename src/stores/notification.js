@@ -4,7 +4,6 @@ import { ref, computed, watch, onUnmounted } from 'vue'
 import { EventSourcePolyfill } from 'event-source-polyfill'
 
 export const useNotificationStore = defineStore('notifications', () => {
-    // State
     const notifications = ref([])
     const error = ref(null)
     const isConnected = ref(false)
@@ -26,7 +25,6 @@ export const useNotificationStore = defineStore('notifications', () => {
 
     // SSE connection management
     function connectSSE() {
-        // Clear any previous connection
         disconnectSSE()
 
         // Validate token
@@ -36,15 +34,17 @@ export const useNotificationStore = defineStore('notifications', () => {
         }
 
         try {
+            const baseUrl = process.env.VUE_APP_NOTIFICATION_API;
             eventSource.value = new EventSourcePolyfill(
-                'http://localhost:3002/sse/getNotified',
+                baseUrl+'/sse/getNotified',
                 {
                     headers: {
                         Authorization: `Bearer ${token.value}`
                     },
                     withCredentials: true
                 }
-            )
+            );
+
 
             // Connection established
             eventSource.value.onopen = () => {
