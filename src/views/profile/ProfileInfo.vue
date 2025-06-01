@@ -1,105 +1,104 @@
 <script>
-import Multiselect from "@vueform/multiselect";
-import "@vueform/multiselect/themes/default.css";
-import flatPickr from "vue-flatpickr-component";
-import "flatpickr/dist/flatpickr.css";
-import axios from "axios";
-import Layout from "@/layouts/main.vue";
+import Layout from "@/layouts/main.vue"; 
+
+import { Swiper, SwiperSlide } from "swiper/vue";
+import { Autoplay, Navigation } from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/autoplay";
+import "swiper/css/navigation";
+
+const infos = [{}];
+
+infos.Name = "Hsan Ellouze";
+infos.Mobile = "+216 55 555 555";
+infos.Email = "test@gmail.com";
+infos.Location = "Tunis, Tunisia";
+infos.JoiningDate = "01 Jan 2021";
+infos.Designation = "Lead Designer / Developer";
+infos.Website = "www.mywebsite.com";
+infos.Description =
+  "Hi I'm Anna Adame, It will be as simple as Occidental; in fact, it will be Occidental. To an English person, it will seem like simplified English, as a skeptical Cambridge friend of mine told me what Occidental is European languages are members of the same family.";
+infos.Skills = [
+  "Photoshop",
+  "Illustrator",
+  "HTML",
+  "CSS",
+  "Javascript",
+  "Php",
+  "Python",
+];
 
 export default {
   data() {
     return {
-      value: ["javascript"],
-      date: null,
+      Autoplay,
+      Navigation,
+      infos,
     };
   },
   components: {
     Layout,
-    Multiselect,
-    flatPickr,
-  },
-  methods: {
-    changepass() {
-      var data = {
-        password: document.getElementById("oldpasswordInput").value,
-        new_password: document.getElementById("newpasswordInput").value,
-        confirm_password: document.getElementById("confirmpasswordInput").value,
-      };
-      axios
-        .patch("https://api-node.themesbrand.website/updatepassword", data)
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
-    updatedata() {
-      var userid = localStorage.getItem("userid");
-      var data = {
-        first_name: document.getElementById("firstnameInput").value,
-        last_name: document.getElementById("lastnameInput").value,
-        phone: document.getElementById("phonenumberInput").value,
-        email: document.getElementById("emailInput").value,
-        joining_date: document.getElementById("dateinput").value,
-        skills: document.getElementById("skillsinput").value,
-        designation: document.getElementById("designationInput").value,
-        website: document.getElementById("websiteInput1").value,
-        city: document.getElementById("cityInput").value,
-        country: document.getElementById("countryInput").value,
-        zipcode: document.getElementById("zipcodeInput").value,
-        Description: document.getElementById("exampleFormControlTextarea")
-          .value,
-      };
-      axios
-        .patch("https://api-node.themesbrand.website/user/" + userid, data)
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
+    Swiper,
+    SwiperSlide,
   },
 };
 </script>
 
 <template>
   <Layout>
-    <div class="position-relative mx-n4 mt-n4">
-      <div class="profile-wid-bg profile-setting-img">
-        <img
-          src="@/assets/images/profile-bg.jpg"
-          class="profile-wid-img"
-          alt=""
-        />
-        <div class="overlay-content">
-          <div class="text-end p-3">
-            <div class="p-0 ms-auto rounded-circle profile-photo-edit">
-              <input
-                id="profile-foreground-img-file-input"
-                type="file"
-                class="profile-foreground-img-file-input"
-              />
-              <label
-                for="profile-foreground-img-file-input"
-                class="profile-photo-edit btn btn-light"
-              >
-                <i class="ri-image-edit-line align-bottom me-1"></i> Change
-                Cover
-              </label>
+  <div class="profile-foreground position-relative mx-n4 mt-n4">
+    <div class="profile-wid-bg">
+      <img src="@/assets/images/profile-bg.jpg" alt="" class="profile-wid-img" />
+    </div>
+  </div>
+  <div class="pt-4 mb-4 mb-lg-3 pb-lg-4 profile-wrapper">
+    <BRow class="g-4">
+      <BCol cols="auto">
+        <div class="avatar-lg">
+          <img src="@/assets/images/users/avatar-1.jpg" alt="user-img" class="img-thumbnail rounded-circle" />
+        </div>
+      </BCol>
+      <BCol>
+        <div class="p-2">
+          <h3 class="text-white mb-1">{{ infos.Name }}</h3>
+          <p class="text-white text-opacity-75">Owner & Founder</p>
+          <div class="hstack text-white-50 gap-1">
+            <div class="me-2">
+              <i class="ri-map-pin-user-line me-1 text-white text-opacity-75 fs-16 align-middle"></i>{{ infos.Location
+              }}
+            </div>
+            <div>
+              <i class="ri-building-line me-1 text-white text-opacity-75 fs-16 align-middle"></i>Themesbrand
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </BCol>
+      <BCol cols="12" lg="auto" order-lg="0" class="order-last">
+        <BRow class="text text-white-50 text-center">
+          <BCol lg="6" cols="4">
+            <div class="p-2">
+              <h4 class="text-white mb-1">24.3K</h4>
+              <p class="fs-14 mb-0">Followers</p>
+            </div>
+          </BCol>
+          <BCol lg="6" cols="4">
+            <div class="p-2">
+              <h4 class="text-white mb-1">1.3K</h4>
+              <p class="fs-14 mb-0">Following</p>
+            </div>
+          </BCol>
+        </BRow>
+      </BCol>
+    </BRow>
+  </div>
 
   <BRow>
     <BCol lg="12">
       <div>
         <div class="d-flex profile-wrapper" style="position: absolute; right: 13px; top: 26px">
           <div class="d-flex justify-content-end">
-            <router-link to="/pages/profile-setting" class="btn btn-success"><i
+            <router-link to="/profile/settings" class="btn btn-success"><i
                 class="ri-edit-box-line align-bottom"></i> Edit
               Profile</router-link>
           </div>
@@ -193,17 +192,7 @@ export default {
                   </BCardBody>
                 </BCard>
 
-                <BCard no-body>
-                  <BCardBody>
-                    <h5 class="card-title mb-4">Skills</h5>
-                    <div class="d-flex flex-wrap gap-2 fs-15">
-                      <BLink v-for="(skill, index) in infos.Skills" :key="index" href="javascript:void(0);"
-                        class="badge bg-primary-subtle text-primary">
-                        {{ skill }}
-                      </BLink>
-                    </div>
-                  </BCardBody>
-                </BCard>
+                
 
                 <BCard no-body>
                   <BCardBody>
@@ -1379,268 +1368,1097 @@ export default {
                             </BCol>
                           </BRow>
                         </BCol>
-                        <BCol lg="12">
-                          <div class="mb-3">
-                            <label for="jobDescription" class="form-label"
-                              >Job Description</label
-                            >
-                            <textarea
-                              class="form-control"
-                              id="jobDescription"
-                              rows="3"
-                              placeholder="Enter description"
-                            >
-You always want to make sure that your fonts work well together and try to limit the number of fonts you use to three or less. Experiment and play around with the fonts that you already have in the software you're working with reputable font websites. </textarea
-                            >
-                          </div>
-                        </BCol>
-                        <div class="hstack gap-2 justify-content-end">
-                          <BLink
-                            class="btn btn-success"
-                            href="javascript:void(0);"
-                            >Delete</BLink
-                          >
-                        </div>
                       </BRow>
+                      <small class="mb-0 text-muted">25 Nov</small>
                     </div>
                   </div>
-                  <div id="newForm" style="display: none"></div>
+                  <div class="acitivity-item py-3 d-flex">
+                    <div class="flex-shrink-0">
+                      <img src="@/assets/images/users/avatar-6.jpg" alt=""
+                        class="avatar-xs rounded-circle acitivity-avatar" />
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                      <h6 class="mb-1">Bethany Johnson</h6>
+                      <p class="text-muted mb-2">
+                        added a new member to velzon dashboard
+                      </p>
+                      <small class="mb-0 text-muted">19 Nov</small>
+                    </div>
+                  </div>
+                  <div class="acitivity-item py-3 d-flex">
+                    <div class="flex-shrink-0">
+                      <div class="avatar-xs acitivity-avatar">
+                        <div class="avatar-title rounded-circle bg-danger-subtle text-danger">
+                          <i class="ri-shopping-bag-line"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                      <h6 class="mb-1">
+                        Your order is placed
+                        <BBadge variant="danger-subtle" class="text-danger align-middle ms-1">Out of Delivery</BBadge>
+                      </h6>
+                      <p class="text-muted mb-2">
+                        These customers can rest assured their order has been
+                        placed.
+                      </p>
+                      <small class="mb-0 text-muted">16 Nov</small>
+                    </div>
+                  </div>
+                  <div class="acitivity-item py-3 d-flex">
+                    <div class="flex-shrink-0">
+                      <img src="@/assets/images/users/avatar-7.jpg" alt=""
+                        class="avatar-xs rounded-circle acitivity-avatar" />
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                      <h6 class="mb-1">Lewis Pratt</h6>
+                      <p class="text-muted mb-2">
+                        They all have something to say beyond the words on the
+                        page. They can come across as casual or neutral, exotic
+                        or graphic.
+                      </p>
+                      <small class="mb-0 text-muted">22 Oct</small>
+                    </div>
+                  </div>
+                  <div class="acitivity-item py-3 d-flex">
+                    <div class="flex-shrink-0">
+                      <div class="avatar-xs acitivity-avatar">
+                        <div class="avatar-title rounded-circle bg-info-subtle text-info">
+                          <i class="ri-line-chart-line"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                      <h6 class="mb-1">Monthly sales report</h6>
+                      <p class="text-muted mb-2">
+                        <span class="text-danger">2 days left</span>
+                        notification to submit the monthly sales report.
+                        <BLink href="javascript:void(0);" class="link-warning text-decoration-underline">Reports Builder
+                        </BLink>
+                      </p>
+                      <small class="mb-0 text-muted">15 Oct</small>
+                    </div>
+                  </div>
+                  <div class="acitivity-item d-flex">
+                    <div class="flex-shrink-0">
+                      <img src="@/assets/images/users/avatar-8.jpg" alt=""
+                        class="avatar-xs rounded-circle acitivity-avatar" />
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                      <h6 class="mb-1">
+                        New ticket received
+                        <BBadge variant="success-subtle" class="text-success align-middle">Completed</BBadge>
+                      </h6>
+                      <p class="text-muted mb-2">
+                        User
+                        <span class="text-secondary">Erica245</span> submitted a
+                        ticket.
+                      </p>
+                      <small class="mb-0 text-muted">26 Aug</small>
+                    </div>
+                  </div>
+                </div>
+              </BCardBody>
+            </BCard>
+          </BTab>
+          <BTab class="nav-item pt-4">
+            <template #title>
+              <i class="ri-price-tag-line d-inline-block d-md-none"></i>
+              <span class="d-none d-md-inline-block">Activities</span>
+            </template>
+            <BCard no-body>
+              <BCardBody>
+                <BRow>
+                  <BCol xxl="3" sm="6">
+                    <BCard no-body class="profile-project-card shadow-none profile-project-warning">
+                      <BCardBody class="p-4">
+                        <div class="d-flex">
+                          <div class="flex-grow-1 text-muted overflow-hidden">
+                            <h5 class="fs-14 text-truncate">
+                              <BLink href="#" class="text-body">Chat App Update</BLink>
+                            </h5>
+                            <p class="text-muted text-truncate mb-0">
+                              Last Update :
+                              <span class="fw-semibold text-body">2 year Ago</span>
+                            </p>
+                          </div>
+                          <div class="flex-shrink-0 ms-2">
+                            <BBadge variant="warning-subtle" class="bg-warning-subtle text-warning fs-10">
+                              Inprogress
+                            </BBadge>
+                          </div>
+                        </div>
+
+                        <div class="d-flex mt-4">
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2">
+                              <div>
+                                <h5 class="fs-12 text-muted mb-0">Members :</h5>
+                              </div>
+                              <div class="avatar-group">
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-1.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-3.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <div class="avatar-title rounded-circle bg-light text-primary">
+                                      J
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </BCardBody>
+                    </BCard>
+                  </BCol>
+                  <BCol xxl="3" sm="6">
+                    <BCard no-body class="profile-project-card shadow-none profile-project-success">
+                      <BCardBody class="p-4">
+                        <div class="d-flex">
+                          <div class="flex-grow-1 text-muted overflow-hidden">
+                            <h5 class="fs-14 text-truncate">
+                              <BLink href="#" class="text-body">ABC Project Customization</BLink>
+                            </h5>
+                            <p class="text-muted text-truncate mb-0">
+                              Last Update :
+                              <span class="fw-semibold text-body">2 month Ago</span>
+                            </p>
+                          </div>
+                          <div class="flex-shrink-0 ms-2">
+                            <BBadge variant="primary-subtle" class="bg-primary-subtle text-primary fs-10">
+                              Progress
+                            </BBadge>
+                          </div>
+                        </div>
+
+                        <div class="d-flex mt-4">
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2">
+                              <div>
+                                <h5 class="fs-12 text-muted mb-0">Members :</h5>
+                              </div>
+                              <div class="avatar-group">
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-8.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-7.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-6.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <div class="avatar-title rounded-circle bg-primary">
+                                      2+
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </BCardBody>
+                    </BCard>
+                  </BCol>
+                  <BCol xxl="3" sm="6">
+                    <BCard no-body class="profile-project-card shadow-none profile-project-info">
+                      <BCardBody class="p-4">
+                        <div class="d-flex">
+                          <div class="flex-grow-1 text-muted overflow-hidden">
+                            <h5 class="fs-14 text-truncate">
+                              <BLink href="#" class="text-body">Client - Frank Hook</BLink>
+                            </h5>
+                            <p class="text-muted text-truncate mb-0">
+                              Last Update :
+                              <span class="fw-semibold text-body">1 hr Ago</span>
+                            </p>
+                          </div>
+                          <div class="flex-shrink-0 ms-2">
+                            <BBadge variant="info-subtle" class="bg-info-subtle text-info fs-10">New</BBadge>
+                          </div>
+                        </div>
+
+                        <div class="d-flex mt-4">
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2">
+                              <div>
+                                <h5 class="fs-12 text-muted mb-0">Members :</h5>
+                              </div>
+                              <div class="avatar-group">
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-4.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <div class="avatar-title rounded-circle bg-light text-primary">
+                                      M
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-3.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </BCardBody>
+                    </BCard>
+                  </BCol>
+                  <BCol xxl="3" sm="6">
+                    <BCard no-body class="profile-project-card shadow-none profile-project-primary">
+                      <BCardBody class="p-4">
+                        <div class="d-flex">
+                          <div class="flex-grow-1 text-muted overflow-hidden">
+                            <h5 class="fs-14 text-truncate">
+                              <BLink href="#" class="text-body">Velzon Project</BLink>
+                            </h5>
+                            <p class="text-muted text-truncate mb-0">
+                              Last Update :
+                              <span class="fw-semibold text-body">11 hr Ago</span>
+                            </p>
+                          </div>
+                          <div class="flex-shrink-0 ms-2">
+                            <BBadge variant="success-subtle" class="bg-success-subtle text-success fs-10">
+                              Completed
+                            </BBadge>
+                          </div>
+                        </div>
+
+                        <div class="d-flex mt-4">
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2">
+                              <div>
+                                <h5 class="fs-12 text-muted mb-0">Members :</h5>
+                              </div>
+                              <div class="avatar-group">
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-7.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-5.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </BCardBody>
+                    </BCard>
+                  </BCol>
+                  <BCol xxl="3" sm="6">
+                    <BCard no-body class="profile-project-card shadow-none profile-project-danger">
+                      <BCardBody class="p-4">
+                        <div class="d-flex">
+                          <div class="flex-grow-1 text-muted overflow-hidden">
+                            <h5 class="fs-14 text-truncate">
+                              <BLink href="#" class="text-body">Brand Logo Design</BLink>
+                            </h5>
+                            <p class="text-muted text-truncate mb-0">
+                              Last Update :
+                              <span class="fw-semibold text-body">10 min Ago</span>
+                            </p>
+                          </div>
+                          <div class="flex-shrink-0 ms-2">
+                            <BBadge variant="info-subtle" class="bg-info-subtle text-info fs-10">New</BBadge>
+                          </div>
+                        </div>
+
+                        <div class="d-flex mt-4">
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2">
+                              <div>
+                                <h5 class="fs-12 text-muted mb-0">Members :</h5>
+                              </div>
+                              <div class="avatar-group">
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-7.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-6.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <div class="avatar-title rounded-circle bg-light text-primary">
+                                      E
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </BCardBody>
+                    </BCard>
+                  </BCol>
+                  <BCol xxl="3" sm="6">
+                    <BCard no-body class="profile-project-card shadow-none profile-project-primary">
+                      <BCardBody class="p-4">
+                        <div class="d-flex">
+                          <div class="flex-grow-1 text-muted overflow-hidden">
+                            <h5 class="fs-14 text-truncate">
+                              <BLink href="#" class="text-body">Chat App</BLink>
+                            </h5>
+                            <p class="text-muted text-truncate mb-0">
+                              Last Update :
+                              <span class="fw-semibold text-body">8 hr Ago</span>
+                            </p>
+                          </div>
+                          <div class="flex-shrink-0 ms-2">
+                            <BBadge variant="warning-subtle" class="bg-warning-subtle text-warning fs-10">
+                              Inprogress
+                            </BBadge>
+                          </div>
+                        </div>
+
+                        <div class="d-flex mt-4">
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2">
+                              <div>
+                                <h5 class="fs-12 text-muted mb-0">Members :</h5>
+                              </div>
+                              <div class="avatar-group">
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <div class="avatar-title rounded-circle bg-light text-primary">
+                                      R
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-3.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-8.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </BCardBody>
+                    </BCard>
+                  </BCol>
+                  <BCol xxl="3" sm="6">
+                    <BCard no-body class="profile-project-card shadow-none profile-project-warning">
+                      <BCardBody class="p-4">
+                        <div class="d-flex">
+                          <div class="flex-grow-1 text-muted overflow-hidden">
+                            <h5 class="fs-14 text-truncate">
+                              <BLink href="#" class="text-body">Project Update</BLink>
+                            </h5>
+                            <p class="text-muted text-truncate mb-0">
+                              Last Update :
+                              <span class="fw-semibold text-body">48 min Ago</span>
+                            </p>
+                          </div>
+                          <div class="flex-shrink-0 ms-2">
+                            <BBadge variant="warning-subtle" class="bg-warning-subtle text-warning fs-10">
+                              Inprogress
+                            </BBadge>
+                          </div>
+                        </div>
+
+                        <div class="d-flex mt-4">
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2">
+                              <div>
+                                <h5 class="fs-12 text-muted mb-0">Members :</h5>
+                              </div>
+                              <div class="avatar-group">
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-6.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-5.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-4.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </BCardBody>
+                    </BCard>
+                  </BCol>
+                  <BCol xxl="3" sm="6">
+                    <BCard no-body class="profile-project-card shadow-none profile-project-success">
+                      <BCardBody class="p-4">
+                        <div class="d-flex">
+                          <div class="flex-grow-1 text-muted overflow-hidden">
+                            <h5 class="fs-14 text-truncate">
+                              <BLink href="#" class="text-body">Client - Jennifer</BLink>
+                            </h5>
+                            <p class="text-muted text-truncate mb-0">
+                              Last Update :
+                              <span class="fw-semibold text-body">30 min Ago</span>
+                            </p>
+                          </div>
+                          <div class="flex-shrink-0 ms-2">
+                            <BBadge variant="primary-subtle" class="bg-primary-subtle text-primary fs-10">
+                              Process
+                            </BBadge>
+                          </div>
+                        </div>
+
+                        <div class="d-flex mt-4">
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2">
+                              <div>
+                                <h5 class="fs-12 text-muted mb-0">Members :</h5>
+                              </div>
+                              <div class="avatar-group">
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-1.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </BCardBody>
+                    </BCard>
+                  </BCol>
+                  <BCol xxl="3" sm="6">
+                    <BCard no-body class="profile-project-card shadow-none mb-xxl-0 profile-project-info">
+                      <BCardBody class="p-4">
+                        <div class="d-flex">
+                          <div class="flex-grow-1 text-muted overflow-hidden">
+                            <h5 class="fs-14 text-truncate">
+                              <BLink href="#" class="text-body">Business Template - UI/UX design</BLink>
+                            </h5>
+                            <p class="text-muted text-truncate mb-0">
+                              Last Update :
+                              <span class="fw-semibold text-body">7 month Ago</span>
+                            </p>
+                          </div>
+                          <div class="flex-shrink-0 ms-2">
+                            <BBadge variant="success-subtle" class="bg-success-subtle text-success fs-10">
+                              Completed
+                            </BBadge>
+                          </div>
+                        </div>
+                        <div class="d-flex mt-4">
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2">
+                              <div>
+                                <h5 class="fs-12 text-muted mb-0">Members :</h5>
+                              </div>
+                              <div class="avatar-group">
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-2.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-3.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-4.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <div class="avatar-title rounded-circle bg-primary">
+                                      2+
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </BCardBody>
+                    </BCard>
+                  </BCol>
+                  <BCol xxl="3" sm="6">
+                    <BCard no-body class="profile-project-card shadow-none mb-xxl-0 profile-project-success">
+                      <BCardBody class="p-4">
+                        <div class="d-flex">
+                          <div class="flex-grow-1 text-muted overflow-hidden">
+                            <h5 class="fs-14 text-truncate">
+                              <BLink href="#" class="text-body">Update Project</BLink>
+                            </h5>
+                            <p class="text-muted text-truncate mb-0">
+                              Last Update :
+                              <span class="fw-semibold text-body">1 month Ago</span>
+                            </p>
+                          </div>
+                          <div class="flex-shrink-0 ms-2">
+                            <BBadge variant="info-subtle" class="bg-info-subtle text-info fs-10">New</BBadge>
+                          </div>
+                        </div>
+                        <div class="d-flex mt-4">
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2">
+                              <div>
+                                <h5 class="fs-12 text-muted mb-0">Members :</h5>
+                              </div>
+                              <div class="avatar-group">
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-7.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <div class="avatar-title rounded-circle bg-light text-primary">
+                                      A
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </BCardBody>
+                    </BCard>
+                  </BCol>
+                  <BCol xxl="3" sm="6">
+                    <BCard no-body class="profile-project-card shadow-none mb-sm-0 profile-project-danger">
+                      <BCardBody class="p-4">
+                        <div class="d-flex">
+                          <div class="flex-grow-1 text-muted overflow-hidden">
+                            <h5 class="fs-14 text-truncate">
+                              <BLink href="#" class="text-body">Bank Management System</BLink>
+                            </h5>
+                            <p class="text-muted text-truncate mb-0">
+                              Last Update :
+                              <span class="fw-semibold text-body">10 month Ago</span>
+                            </p>
+                          </div>
+                          <div class="flex-shrink-0 ms-2">
+                            <BBadge variant="success-subtle" class="bg-success-subtle text-success fs-10">
+                              Completed
+                            </BBadge>
+                          </div>
+                        </div>
+                        <div class="d-flex mt-4">
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2">
+                              <div>
+                                <h5 class="fs-12 text-muted mb-0">Members :</h5>
+                              </div>
+                              <div class="avatar-group">
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-7.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-6.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-5.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <div class="avatar-title rounded-circle bg-primary">
+                                      2+
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </BCardBody>
+                    </BCard>
+                  </BCol>
+                  <BCol xxl="3" sm="6">
+                    <BCard no-body class="profile-project-card shadow-none mb-0 profile-project-primary">
+                      <BCardBody class="p-4">
+                        <div class="d-flex">
+                          <div class="flex-grow-1 text-muted overflow-hidden">
+                            <h5 class="fs-14 text-truncate">
+                              <BLink href="#" class="text-body">PSD to HTML Convert</BLink>
+                            </h5>
+                            <p class="text-muted text-truncate mb-0">
+                              Last Update :
+                              <span class="fw-semibold text-body">29 min Ago</span>
+                            </p>
+                          </div>
+                          <div class="flex-shrink-0 ms-2">
+                            <BBadge variant="info-subtle" class="bg-info-subtle text-info fs-10">New</BBadge>
+                          </div>
+                        </div>
+                        <div class="d-flex mt-4">
+                          <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2">
+                              <div>
+                                <h5 class="fs-12 text-muted mb-0">Members :</h5>
+                              </div>
+                              <div class="avatar-group">
+                                <div class="avatar-group-item">
+                                  <div class="avatar-xs">
+                                    <img src="@/assets/images/users/avatar-7.jpg" alt=""
+                                      class="rounded-circle img-fluid" />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </BCardBody>
+                    </BCard>
+                  </BCol>
                   <BCol lg="12">
-                    <div class="hstack gap-2">
-                      <BButton type="button" variant="success">
-                        Update
-                      </BButton>
-                      <BLink href="javascript:void(0);" class="btn btn-primary"
-                        >Add New</BLink
-                      >
+                    <div class="mt-4">
+                      <ul class="pagination pagination-separated justify-content-center mb-0">
+                        <li class="page-item disabled">
+                          <BLink href="javascript:void(0);" class="page-link"><i class="mdi mdi-chevron-left"></i>
+                          </BLink>
+                        </li>
+                        <li class="page-item active">
+                          <BLink href="javascript:void(0);" class="page-link">1</BLink>
+                        </li>
+                        <li class="page-item">
+                          <BLink href="javascript:void(0);" class="page-link">2</BLink>
+                        </li>
+                        <li class="page-item">
+                          <BLink href="javascript:void(0);" class="page-link">3</BLink>
+                        </li>
+                        <li class="page-item">
+                          <BLink href="javascript:void(0);" class="page-link">4</BLink>
+                        </li>
+                        <li class="page-item">
+                          <BLink href="javascript:void(0);" class="page-link">5</BLink>
+                        </li>
+                        <li class="page-item">
+                          <BLink href="javascript:void(0);" class="page-link"><i class="mdi mdi-chevron-right"></i>
+                          </BLink>
+                        </li>
+                      </ul>
                     </div>
                   </BCol>
-                </form>
-              </BTab>
-              <BTab title="Privacy Policy">
-                <div class="mb-4 pb-2 pt-4">
-                  <h5 class="card-title text-decoration-underline mb-3">
-                    Security:
-                  </h5>
-                  <div class="d-flex flex-column flex-sm-row mb-4 mb-sm-0">
-                    <div class="flex-grow-1">
-                      <h6 class="fs-14 mb-1">Two-factor Authentication</h6>
-                      <p class="text-muted">
-                        Two-factor authentication is an enhanced security
-                        meansur. Once enabled, you'll be required to give two
-                        types of identification when you log into Google
-                        Authentication and SMS are Supported.
-                      </p>
-                    </div>
-                    <div class="flex-shrink-0 ms-sm-3">
-                      <BLink
-                        href="javascript:void(0);"
-                        class="btn btn-sm btn-primary"
-                        >Enable Two-facor Authentication
-                      </BLink>
-                    </div>
-                  </div>
-                  <div class="d-flex flex-column flex-sm-row mb-4 mb-sm-0 mt-2">
-                    <div class="flex-grow-1">
-                      <h6 class="fs-14 mb-1">Secondary Verification</h6>
-                      <p class="text-muted">
-                        The first factor is a password and the second commonly
-                        includes a text with a code sent to your smartphone, or
-                        biometrics using your fingerprint, face, or retina.
-                      </p>
-                    </div>
-                    <div class="flex-shrink-0 ms-sm-3">
-                      <BLink
-                        href="javascript:void(0);"
-                        class="btn btn-sm btn-primary"
-                        >Set up secondary method</BLink
-                      >
-                    </div>
-                  </div>
-                  <div class="d-flex flex-column flex-sm-row mb-4 mb-sm-0 mt-2">
-                    <div class="flex-grow-1">
-                      <h6 class="fs-14 mb-1">Backup Codes</h6>
-                      <p class="text-muted mb-sm-0">
-                        A backup code is automatically generated for you when
-                        you turn on two-factor authentication through your iOS
-                        or Android Twitter app. You can also generate a backup
-                        code on twitter.com.
-                      </p>
-                    </div>
-                    <div class="flex-shrink-0 ms-sm-3">
-                      <BLink
-                        href="javascript:void(0);"
-                        class="btn btn-sm btn-primary"
-                        >Generate backup codes</BLink
-                      >
-                    </div>
+                </BRow>
+              </BCardBody>
+            </BCard>
+          </BTab>
+          <BTab class="nav-item pt-4">
+            <template #title>
+              <i class="ri-folder-4-line d-inline-block d-md-none"></i>
+              <span class="d-none d-md-inline-block">My NFTs</span>
+            </template>
+            <BCard no-body>
+              <BCardBody>
+                <div class="d-flex align-items-center mb-4">
+                  <h5 class="card-title flex-grow-1 mb-0">My NFTs</h5>
+                  <div class="flex-shrink-0">
+                    <input class="form-control d-none" type="file" id="formFile" />
+                    <label for="formFile" class="btn btn-danger"><i class="ri-bard-fill me-1 align-bottom"></i>
+                      Generate New NFT</label>
                   </div>
                 </div>
-                <div class="mb-3">
-                  <h5 class="card-title text-decoration-underline mb-3">
-                    Application Notifications:
-                  </h5>
-                  <ul class="list-unstyled mb-0">
-                    <li class="d-flex">
-                      <div class="flex-grow-1">
-                        <label
-                          for="directMessage"
-                          class="form-check-label fs-14"
-                          >Direct messages</label
-                        >
-                        <p class="text-muted">
-                          Messages from people you follow
-                        </p>
-                      </div>
-                      <div class="flex-shrink-0">
-                        <div class="form-check form-switch">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            role="switch"
-                            id="directMessage"
-                            checked
-                          />
+                <BRow class="row-cols-xxl-5 row-cols-xl-4 row-cols-lg-3 row-cols-md-2 row-cols-1">
+            <BCol>
+                <BCard no-body class="explore-box card-animate">
+                    <div class="explore-place-bid-img">
+                        <img src="https://img.themesbrand.com/velzon/images/img-3.gif" alt=""
+                            class="card-img-top explore-img" />
+                        <div class="bg-overlay"></div>
+                        <div class="place-bid-btn d-flex flex-row with-100 justify-content-center">
+                            <BLink href="#!" class="btn btn-secondary m-1 d-flex flex-row align-items-center"><i class="ri-information-fill align-bottom me-1"></i>
+                                Details</BLink>
+                                <BLink href="#!" class="btn btn-danger m-1 d-flex flex-row align-items-center"><i class="ri-delete-bin-5-line align-bottom me-1"></i>
+                                  Delete</BLink>
                         </div>
-                      </div>
-                    </li>
-                    <li class="d-flex mt-2">
-                      <div class="flex-grow-1">
-                        <label
-                          class="form-check-label fs-14"
-                          for="desktopNotification"
-                        >
-                          Show desktop notifications
-                        </label>
-                        <p class="text-muted">
-                          Choose the option you want as your default setting.
-                          Block a site: Next to "Not allowed to send
-                          notifications," click Add.
-                        </p>
-                      </div>
-                      <div class="flex-shrink-0">
-                        <div class="form-check form-switch">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            role="switch"
-                            id="desktopNotification"
-                            checked
-                          />
+                    </div>
+                    
+                    <BCardBody>
+                        <p class="fw-medium mb-0 float-end"><i class="mdi mdi-heart text-danger align-middle"></i>
+                            37.41k </p>
+                        <h5 class="mb-1">
+                            <router-link to="/apps/nft-item-detail">Walking on air</router-link>
+                        </h5>
+                        <p class="text-muted mb-0">Artwork</p>
+                    </BCardBody>
+                    <BCardFooter class="border-top border-top-dashed">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1 fs-14">
+                                <i class="ri-price-tag-3-fill text-warning align-bottom me-1"></i> Highest: <span
+                                    class="fw-medium">10.35ETH</span>
+                            </div>
+                            <h5 class="flex-shrink-0 fs-14 text-primary mb-0">14.167 ETH</h5>
                         </div>
-                      </div>
-                    </li>
-                    <li class="d-flex mt-2">
-                      <div class="flex-grow-1">
-                        <label
-                          class="form-check-label fs-14"
-                          for="emailNotification"
-                        >
-                          Show email notifications
-                        </label>
-                        <p class="text-muted">
-                          Under Settings, choose Notifications. Under Select an
-                          account, choose the account to enable notifications
-                          for.
-                        </p>
-                      </div>
-                      <div class="flex-shrink-0">
-                        <div class="form-check form-switch">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            role="switch"
-                            id="emailNotification"
-                          />
+                    </BCardFooter>
+                </BCard>
+            </BCol>
+            <BCol>
+                <BCard no-body class="explore-box card-animate">
+                    <div class="explore-place-bid-img">
+                        <img src="@/assets/images/nft/img-03.jpg" alt="" class="card-img-top explore-img" />
+                        <div class="bg-overlay"></div>
+                        <div class="place-bid-btn d-flex flex-row with-100 justify-content-center">
+                            <BLink href="#!" class="btn btn-secondary m-1 d-flex flex-row align-items-center"><i class="ri-information-fill align-bottom me-1"></i>
+                                Details</BLink>
+                                <BLink href="#!" class="btn btn-danger m-1 d-flex flex-row align-items-center"><i class="ri-delete-bin-5-line align-bottom me-1"></i>
+                                  Delete</BLink>
                         </div>
-                      </div>
-                    </li>
-                    <li class="d-flex mt-2">
-                      <div class="flex-grow-1">
-                        <label
-                          class="form-check-label fs-14"
-                          for="chatNotification"
-                        >
-                          Show chat notifications
-                        </label>
-                        <p class="text-muted">
-                          To prevent duplicate mobile notifications from the
-                          Gmail and Chat apps, in settings, turn off Chat
-                          notifications.
-                        </p>
-                      </div>
-                      <div class="flex-shrink-0">
-                        <div class="form-check form-switch">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            role="switch"
-                            id="chatNotification"
-                          />
+                    </div>
+                    
+                    <BCardBody>
+                        <p class="fw-medium mb-0 float-end"><i class="mdi mdi-heart text-danger align-middle"></i>
+                            19.29k </p>
+                        <h5 class="mb-1">
+                            <router-link to="/apps/nft-item-detail">Creative filtered portrait</router-link>
+                        </h5>
+                        <p class="text-muted mb-0">Photography</p>
+                    </BCardBody>
+                    <BCardFooter class="border-top border-top-dashed">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1 fs-14">
+                                <i class="ri-price-tag-3-fill text-warning align-bottom me-1"></i> Highest: <span
+                                    class="fw-medium">75.3ETH</span>
+                            </div>
+                            <h5 class="flex-shrink-0 fs-14 text-primary mb-0">67.36 ETH</h5>
                         </div>
-                      </div>
-                    </li>
-                    <li class="d-flex mt-2">
-                      <div class="flex-grow-1">
-                        <label
-                          class="form-check-label fs-14"
-                          for="purchaesNotification"
-                        >
-                          Show purchase notifications
-                        </label>
-                        <p class="text-muted">
-                          Get real-time purchase alerts to protect yourself from
-                          fraudulent charges.
-                        </p>
-                      </div>
-                      <div class="flex-shrink-0">
-                        <div class="form-check form-switch">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            role="switch"
-                            id="purchaesNotification"
-                          />
+                    </BCardFooter>
+                </BCard>
+            </BCol>
+            <BCol>
+                <BCard no-body class="explore-box card-animate">
+                    <div class="explore-place-bid-img">
+                        <img src="@/assets/images/nft/img-02.jpg" alt="" class="card-img-top explore-img" />
+                        <div class="bg-overlay"></div>
+                        <div class="place-bid-btn d-flex flex-row with-100 justify-content-center">
+                            <BLink href="#!" class="btn btn-secondary m-1 d-flex flex-row align-items-center"><i class="ri-information-fill align-bottom me-1"></i>
+                                Details</BLink>
+                                <BLink href="#!" class="btn btn-danger m-1 d-flex flex-row align-items-center"><i class="ri-delete-bin-5-line align-bottom me-1"></i>
+                                  Delete</BLink>
                         </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <h5 class="card-title text-decoration-underline mb-3">
-                    Delete This Account:
-                  </h5>
-                  <p class="text-muted">
-                    Go to the Data & Privacy section of your profile Account.
-                    Scroll to "Your data & privacy options." Delete your Profile
-                    Account. Follow the instructions to delete your account :
-                  </p>
-                  <div>
-                    <input
-                      type="password"
-                      class="form-control"
-                      id="passwordInput"
-                      placeholder="Enter your password"
-                      value="make@321654987"
-                      style="max-width: 265px"
-                    />
-                  </div>
-                  <div class="hstack gap-2 mt-3">
-                    <BLink
-                      href="javascript:void(0);"
-                      class="btn btn-soft-danger"
-                      >Close & Delete This Account</BLink
-                    >
-                    <BLink href="javascript:void(0);" class="btn btn-light"
-                      >Cancel</BLink
-                    >
-                  </div>
-                </div>
-              </BTab>
-            </BTabs>
-          </BCardBody>
-        </BCard>
-      </BCol>
-    </BRow>
+                    </div>
+                    
+                    <BCardBody>
+                        <p class="fw-medium mb-0 float-end"><i class="mdi mdi-heart text-danger align-middle"></i>
+                            23.63k </p>
+                        <h5 class="mb-1">
+                            <router-link to="/apps/nft-item-detail">The Chirstoper</router-link>
+                        </h5>
+                        <p class="text-muted mb-0">Music</p>
+                    </BCardBody>
+                    <BCardFooter class="border-top border-top-dashed">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1 fs-14">
+                                <i class="ri-price-tag-3-fill text-warning align-bottom me-1"></i> Highest: <span
+                                    class="fw-medium">412.30ETH</span>
+                            </div>
+                            <h5 class="flex-shrink-0 fs-14 text-primary mb-0">394.7 ETH</h5>
+                        </div>
+                    </BCardFooter>
+                </BCard>
+            </BCol>
+            <BCol>
+                <BCard no-body class="explore-box card-animate">
+                    <div class="explore-place-bid-img">
+                        <img src="https://img.themesbrand.com/velzon/images/img-4.gif" alt=""
+                            class="card-img-top explore-img" />
+                        <div class="bg-overlay"></div>
+                        <div class="place-bid-btn d-flex flex-row with-100 justify-content-center">
+                            <BLink href="#!" class="btn btn-secondary m-1 d-flex flex-row align-items-center"><i class="ri-information-fill align-bottom me-1"></i>
+                                Details</BLink>
+                                <BLink href="#!" class="btn btn-danger m-1 d-flex flex-row align-items-center"><i class="ri-delete-bin-5-line align-bottom me-1"></i>
+                                  Delete</BLink>
+                        </div>
+                    </div>
+                    
+                    <BCardBody>
+                        <p class="fw-medium mb-0 float-end"><i class="mdi mdi-heart text-danger align-middle"></i>
+                            15.93k </p>
+                        <h5 class="mb-1">
+                            <router-link to="/apps/nft-item-detail">Evolved Reality</router-link>
+                        </h5>
+                        <p class="text-muted mb-0">Video</p>
+                    </BCardBody>
+                    <BCardFooter class="border-top border-top-dashed">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1 fs-14">
+                                <i class="ri-price-tag-3-fill text-warning align-bottom me-1"></i> Highest: <span
+                                    class="fw-medium">2.75ETH</span>
+                            </div>
+                            <h5 class="flex-shrink-0 fs-14 text-primary mb-0">3.167 ETH</h5>
+                        </div>
+                    </BCardFooter>
+                </BCard>
+            </BCol>
+            <BCol>
+                <BCard no-body class="explore-box card-animate">
+                    <div class="explore-place-bid-img">
+                        <img src="@/assets/images/nft/img-01.jpg" alt="" class="card-img-top explore-img" />
+                        <div class="bg-overlay"></div>
+                        <div class="place-bid-btn d-flex flex-row with-100 justify-content-center">
+                            <BLink href="#!" class="btn btn-secondary m-1 d-flex flex-row align-items-center"><i class="ri-information-fill align-bottom me-1"></i>
+                                Details</BLink>
+                                <BLink href="#!" class="btn btn-danger m-1 d-flex flex-row align-items-center"><i class="ri-delete-bin-5-line align-bottom me-1"></i>
+                                  Delete</BLink>
+                        </div>
+                    </div>
+                    
+                    <BCardBody>
+                        <p class="fw-medium mb-0 float-end"><i class="mdi mdi-heart text-danger align-middle"></i>
+                            14.85k </p>
+                        <h5 class="mb-1">
+                            <router-link to="/apps/nft-item-detail">Abstract face painting</router-link>
+                        </h5>
+                        <p class="text-muted mb-0">Collectibles</p>
+                    </BCardBody>
+                    <BCardFooter class="border-top border-top-dashed">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1 fs-14">
+                                <i class="ri-price-tag-3-fill text-warning align-bottom me-1"></i> Highest: <span
+                                    class="fw-medium">122.34ETH</span>
+                            </div>
+                            <h5 class="flex-shrink-0 fs-14 text-primary mb-0">97.8 ETH</h5>
+                        </div>
+                    </BCardFooter>
+                </BCard>
+            </BCol>
+            <BCol>
+                <BCard no-body class="explore-box card-animate">
+                    <div class="explore-place-bid-img">
+                        <img src="@/assets/images/nft/img-05.jpg" alt="" class="card-img-top explore-img" />
+                        <div class="bg-overlay"></div>
+                        <div class="place-bid-btn d-flex flex-row with-100 justify-content-center">
+                            <BLink href="#!" class="btn btn-secondary m-1 d-flex flex-row align-items-center"><i class="ri-information-fill align-bottom me-1"></i>
+                                Details</BLink>
+                                <BLink href="#!" class="btn btn-danger m-1 d-flex flex-row align-items-center"><i class="ri-delete-bin-5-line align-bottom me-1"></i>
+                                  Delete</BLink>
+                        </div>
+                    </div>
+                    
+                    <BCardBody>
+                        <p class="fw-medium mb-0 float-end"><i class="mdi mdi-heart text-danger align-middle"></i>
+                            64.10k </p>
+                        <h5 class="mb-1">
+                            <router-link to="/apps/nft-item-detail">Long-tailed macaque</router-link>
+                        </h5>
+                        <p class="text-muted mb-0">Artwork</p>
+                    </BCardBody>
+                    <BCardFooter class="border-top border-top-dashed">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1 fs-14">
+                                <i class="ri-price-tag-3-fill text-warning align-bottom me-1"></i> Highest: <span
+                                    class="fw-medium">874.01ETH</span>
+                            </div>
+                            <h5 class="flex-shrink-0 fs-14 text-primary mb-0">745.14 ETH</h5>
+                        </div>
+                    </BCardFooter>
+                </BCard>
+            </BCol>
+            <BCol>
+                <BCard no-body class="explore-box card-animate">
+                    <div class="explore-place-bid-img">
+                        <img src="@/assets/images/nft/img-06.jpg" alt="" class="card-img-top explore-img" />
+                        <div class="bg-overlay"></div>
+                        <div class="place-bid-btn d-flex flex-row with-100 justify-content-center">
+                            <BLink href="#!" class="btn btn-secondary m-1 d-flex flex-row align-items-center"><i class="ri-information-fill align-bottom me-1"></i>
+                                Details</BLink>
+                                <BLink href="#!" class="btn btn-danger m-1 d-flex flex-row align-items-center"><i class="ri-delete-bin-5-line align-bottom me-1"></i>
+                                  Delete</BLink>
+                        </div>
+                    </div>
+                    
+                    <BCardBody>
+                        <p class="fw-medium mb-0 float-end"><i class="mdi mdi-heart text-danger align-middle"></i>
+                            36.42k </p>
+                        <h5 class="mb-1">
+                            <router-link to="/apps/nft-item-detail">Robotic Body Art</router-link>
+                        </h5>
+                        <p class="text-muted mb-0">Artwork</p>
+                    </BCardBody>
+                    <BCardFooter class="border-top border-top-dashed">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1 fs-14">
+                                <i class="ri-price-tag-3-fill text-warning align-bottom me-1"></i> Highest: <span
+                                    class="fw-medium">41.658 ETH</span>
+                            </div>
+                            <h5 class="flex-shrink-0 fs-14 text-primary mb-0">34.81 ETH</h5>
+                        </div>
+                    </BCardFooter>
+                </BCard>
+            </BCol>
+            <BCol>
+                <BCard no-body class="explore-box card-animate">
+                    <div class="explore-place-bid-img">
+                        <img src="https://img.themesbrand.com/velzon/images/img-2.gif" alt=""
+                            class="card-img-top explore-img" />
+                        <div class="bg-overlay"></div>
+                        <div class="place-bid-btn d-flex flex-row with-100 justify-content-center">
+                            <BLink href="#!" class="btn btn-secondary m-1 d-flex flex-row align-items-center"><i class="ri-information-fill align-bottom me-1"></i>
+                                Details</BLink>
+                                <BLink href="#!" class="btn btn-danger m-1 d-flex flex-row align-items-center"><i class="ri-delete-bin-5-line align-bottom me-1"></i>
+                                  Delete</BLink>
+                        </div>
+                    </div>
+                    
+                    <BCardBody>
+                        <p class="fw-medium mb-0 float-end"><i class="mdi mdi-heart text-danger align-middle"></i> 94.1k
+                        </p>
+                        <h5 class="mb-1">
+                            <router-link to="/apps/nft-item-detail">Trendy Fashion Portraits</router-link>
+                        </h5>
+                        <p class="text-muted mb-0">3d Style</p>
+                    </BCardBody>
+                    <BCardFooter class="border-top border-top-dashed">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1 fs-14">
+                                <i class="ri-price-tag-3-fill text-warning align-bottom me-1"></i> Highest: <span
+                                    class="fw-medium">674.92 ETH</span>
+                            </div>
+                            <h5 class="flex-shrink-0 fs-14 text-primary mb-0">563.81 ETH</h5>
+                        </div>
+                    </BCardFooter>
+                </BCard>
+            </BCol>
+            <BCol>
+                <BCard no-body class="explore-box card-animate">
+                    <div class="explore-place-bid-img">
+                        <img src="@/assets/images/nft/img-04.jpg" alt="" class="card-img-top explore-img" />
+                        <div class="bg-overlay"></div>
+                        <div class="place-bid-btn d-flex flex-row with-100 justify-content-center">
+                            <BLink href="#!" class="btn btn-secondary m-1 d-flex flex-row align-items-center"><i class="ri-information-fill align-bottom me-1"></i>
+                                Details</BLink>
+                                <BLink href="#!" class="btn btn-danger m-1 d-flex flex-row align-items-center"><i class="ri-delete-bin-5-line align-bottom me-1"></i>
+                                  Delete</BLink>
+                        </div>
+                    </div>
+                    
+                    <BCardBody>
+                        <p class="fw-medium mb-0 float-end"><i class="mdi mdi-heart text-danger align-middle"></i>
+                            34.12k </p>
+                        <h5 class="mb-1">
+                            <router-link to="/apps/nft-item-detail">Smillevers Crypto</router-link>
+                        </h5>
+                        <p class="text-muted mb-0">Crypto Card</p>
+                    </BCardBody>
+                    <BCardFooter class="border-top border-top-dashed">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1 fs-14">
+                                <i class="ri-price-tag-3-fill text-warning align-bottom me-1"></i> Highest: <span
+                                    class="fw-medium">41.658 ETH</span>
+                            </div>
+                            <h5 class="flex-shrink-0 fs-14 text-primary mb-0">34.81 ETH</h5>
+                        </div>
+                    </BCardFooter>
+                </BCard>
+            </BCol>
+            <BCol>
+                <BCard no-body class="explore-box card-animate">
+                    <div class="explore-place-bid-img">
+                        <img src="https://img.themesbrand.com/velzon/images/img-1.gif" alt=""
+                            class="card-img-top explore-img" />
+                        <div class="bg-overlay"></div>
+                        <div class="place-bid-btn d-flex flex-row with-100 justify-content-center">
+                            <BLink href="#!" class="btn btn-secondary m-1 d-flex flex-row align-items-center"><i class="ri-information-fill align-bottom me-1"></i>
+                                Details</BLink>
+                                <BLink href="#!" class="btn btn-danger m-1 d-flex flex-row align-items-center"><i class="ri-delete-bin-5-line align-bottom me-1"></i>
+                                  Delete</BLink>
+                        </div>
+                    </div>
+                    <BCardBody>
+                        <p class="fw-medium mb-0 float-end"><i class="mdi mdi-heart text-danger align-middle"></i> 8.42k
+                        </p>
+                        <h5 class="mb-1">
+                            <router-link to="/apps/nft-item-detail">Patterns arts & culture</router-link>
+                        </h5>
+                        <p class="text-muted mb-0">Artwork</p>
+                    </BCardBody>
+                    <BCardFooter class="border-top border-top-dashed">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1 fs-14">
+                                <i class="ri-price-tag-3-fill text-warning align-bottom me-1"></i> Highest: <span
+                                    class="fw-medium">9.64ETH</span>
+                            </div>
+                            <h5 class="flex-shrink-0 fs-14 text-primary mb-0">14.167 ETH</h5>
+                        </div>
+                    </BCardFooter>
+                </BCard>
+            </BCol>
+        </BRow>
+              </BCardBody>
+            </BCard>
+          </BTab>
+        </BTabs>
+      </div>
+    </BCol>
+  </BRow>
+
   </Layout>
 </template>
+
+<style>
+.tamp {
+  position: absolute;
+  top: 17px;
+  right: 16px;
+}
+</style>

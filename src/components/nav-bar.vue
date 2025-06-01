@@ -1259,7 +1259,7 @@ export default {
               </span>
             </template>
             <h6 class="dropdown-header">Welcome Anna!</h6>
-            <router-link class="dropdown-item" to="/pages/profile"
+            <router-link class="dropdown-item" to="/profile"
               ><i
                 class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"
               ></i>
