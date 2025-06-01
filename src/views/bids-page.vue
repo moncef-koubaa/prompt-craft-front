@@ -1,11 +1,17 @@
 <script>
 import PageHeader from "@/components/page-header";
 import Layout from "@/layouts/main.vue";
+import AuctionService from "@/services/auction.service";
 
 export default {
   components: {
     PageHeader,
     Layout,
+  },
+  data() {
+    return {
+      auctions: [],
+    };
   },
   methods: {
     startCountDownDate(dateVal) {
@@ -17,7 +23,9 @@ export default {
 
     // }
   },
-  mounted() {
+  async mounted() {
+    this.auctions = await AuctionService.getAuctions();
+    console.log(this.auctions);
     var setEndDate1 = "March 19, 2024 6:0:0";
     var setEndDate2 = "April 16, 2023 5:3:1";
     var setEndDate3 = "Dec 01, 2023 1:0:1";
@@ -419,11 +427,18 @@ export default {
           </BCardHeader>
         </BCard>
         <BRow>
-          <BCol xxl="3" lg="4" md="6" class="product-item upto-15">
+          <BCol
+            xxl="3"
+            lg="4"
+            md="6"
+            class="product-item upto-15"
+            v-for="auction in auctions"
+            v-bind:key="auction.id"
+          >
             <BCard no-body class="explore-box card-animate">
               <div class="position-relative rounded overflow-hidden">
                 <img
-                  src="@/assets/images/nft/img-01.jpg"
+                  :src="auction.nft.imageUrl"
                   alt=""
                   class="card-img-top explore-img"
                 />
@@ -432,16 +447,14 @@ export default {
                 </div>
               </div>
               <BCardBody>
-                <p class="fw-medium mb-0 float-end">
-                  <i class="mdi mdi-heart text-danger align-middle"></i> 19.29k
-                </p>
+                <p class="fw-medium mb-0 float-end"></p>
                 <h5 class="text-success">
-                  <i class="mdi mdi-ethereum"></i> 97.8 ETH
+                  <i class="mdi mdi-ethereum"> {{ auction.currentPrice }}</i>
                 </h5>
                 <h6 class="fs-16 mb-3">
-                  <router-link to="/apps/nft-item-detail"
-                    >Abstract face painting</router-link
-                  >
+                  <router-link to="/apps/nft-item-detail">{{
+                    auction.nft.title
+                  }}</router-link>
                 </h6>
                 <div>
                   <span class="text-muted float-end">Available: 436</span>
@@ -456,267 +469,8 @@ export default {
               </BCardBody>
             </BCard>
           </BCol>
-          <BCol xxl="3" lg="4" md="6" class="product-item upto-30">
-            <BCard no-body class="explore-box card-animate">
-              <div class="position-relative rounded overflow-hidden">
-                <img
-                  src="https://img.themesbrand.com/velzon/images/img-1.gif"
-                  alt=""
-                  class="card-img-top explore-img"
-                />
-                <div class="discount-time">
-                  <h5 id="auction-time-2" class="mb-0 text-white"></h5>
-                </div>
-              </div>
-              <BCardBody>
-                <p class="fw-medium mb-0 float-end">
-                  <i class="mdi mdi-heart text-danger align-middle"></i> 8.42k
-                </p>
-                <h5 class="text-success">
-                  <i class="mdi mdi-ethereum"></i> 245.23ETH
-                </h5>
-                <h6 class="fs-16 mb-3">
-                  <router-link to="/apps/nft-item-detail"
-                    >Patterns arts & culture</router-link
-                  >
-                </h6>
-                <div>
-                  <span class="text-muted float-end">Available: 8974</span>
-                  <span class="text-muted">Sold: 13</span>
-                  <BProgress
-                    striped
-                    :value="10"
-                    class="progress-sm mt-2"
-                    variant="primary"
-                  />
-                </div>
-              </BCardBody>
-            </BCard>
-          </BCol>
-          <BCol xxl="3" lg="4" md="6" class="product-item upto-40">
-            <BCard no-body class="explore-box card-animate">
-              <div class="position-relative rounded overflow-hidden">
-                <img
-                  src="@/assets/images/nft/img-03.jpg"
-                  alt=""
-                  class="card-img-top explore-img"
-                />
-                <div class="discount-time">
-                  <h5 id="auction-time-3" class="mb-0 text-white"></h5>
-                </div>
-              </div>
-              <BCardBody>
-                <p class="fw-medium mb-0 float-end">
-                  <i class="mdi mdi-heart text-danger align-middle"></i> 19.29k
-                </p>
-                <h5 class="text-success">
-                  <i class="mdi mdi-ethereum"></i> 67.36 ETH
-                </h5>
-                <h6 class="fs-16 mb-3">
-                  <router-link to="/apps/nft-item-detail"
-                    >Creative filtered portrait</router-link
-                  >
-                </h6>
-                <div>
-                  <span class="text-muted float-end">Available: 3620</span>
-                  <span class="text-muted">Sold: 345</span>
-                  <BProgress
-                    striped
-                    :value="45"
-                    class="progress-sm mt-2"
-                    variant="warning"
-                  />
-                </div>
-              </BCardBody>
-            </BCard>
-          </BCol>
-          <BCol xxl="3" lg="4" md="6" class="product-item upto-15">
-            <BCard no-body class="explore-box card-animate">
-              <div class="position-relative rounded overflow-hidden">
-                <img
-                  src="@/assets/images/nft/img-04.jpg"
-                  alt=""
-                  class="card-img-top explore-img"
-                />
-                <div class="discount-time">
-                  <h5 id="auction-time-4" class="mb-0 text-white"></h5>
-                </div>
-              </div>
-              <BCardBody>
-                <p class="fw-medium mb-0 float-end">
-                  <i class="mdi mdi-heart text-danger align-middle"></i> 34.12k
-                </p>
-                <h5 class="text-success">
-                  <i class="mdi mdi-ethereum"></i> 34.81 ETH
-                </h5>
-                <h6 class="fs-16 mb-3">
-                  <router-link to="/apps/nft-item-detail"
-                    >Smillevers Crypto</router-link
-                  >
-                </h6>
-                <div>
-                  <span class="text-muted float-end">Available: 3521</span>
-                  <span class="text-muted">Sold: 1457</span>
-                  <BProgress
-                    striped
-                    :value="67"
-                    class="progress-sm mt-2"
-                    variant="warning"
-                  />
-                </div>
-              </BCardBody>
-            </BCard>
-          </BCol>
-          <BCol xxl="3" lg="4" md="6" class="product-item upto-40">
-            <BCard no-body class="explore-box card-animate">
-              <div class="position-relative rounded overflow-hidden">
-                <img
-                  src="https://img.themesbrand.com/velzon/images/img-5.gif"
-                  alt=""
-                  class="card-img-top explore-img"
-                />
-                <div class="discount-time">
-                  <h5 id="auction-time-5" class="mb-0 text-white"></h5>
-                </div>
-              </div>
-              <BCardBody>
-                <p class="fw-medium mb-0 float-end">
-                  <i class="mdi mdi-heart text-danger align-middle"></i> 47.12k
-                </p>
-                <h5 class="text-success">
-                  <i class="mdi mdi-ethereum"></i> 245.23ETH
-                </h5>
-                <h6 class="fs-16 mb-3">
-                  <router-link to="/apps/nft-item-detail"
-                    >Long-tailed Macaque</router-link
-                  >
-                </h6>
-                <div>
-                  <span class="text-muted float-end">Available: 30</span>
-                  <span class="text-muted">Sold: 1369</span>
-                  <BProgress
-                    striped
-                    :value="95"
-                    class="progress-sm mt-2"
-                    variant="danger"
-                  />
-                </div>
-              </BCardBody>
-            </BCard>
-          </BCol>
-          <BCol xxl="3" lg="4" md="6" class="product-item upto-15">
-            <BCard no-body class="explore-box card-animate">
-              <div class="position-relative rounded overflow-hidden">
-                <img
-                  src="@/assets/images/nft/img-02.jpg"
-                  alt=""
-                  class="card-img-top explore-img"
-                />
-                <div class="discount-time">
-                  <h5 id="auction-time-6" class="mb-0 text-white"></h5>
-                </div>
-              </div>
-              <BCardBody>
-                <p class="fw-medium mb-0 float-end">
-                  <i class="mdi mdi-heart text-danger align-middle"></i> 23.63k
-                </p>
-                <h5 class="text-success">
-                  <i class="mdi mdi-ethereum"></i> 394.7 ETH
-                </h5>
-                <h6 class="fs-16 mb-3">
-                  <router-link to="/apps/nft-item-detail"
-                    >The Chirstoper</router-link
-                  >
-                </h6>
-                <div>
-                  <span class="text-muted float-end">Available: 1474</span>
-                  <span class="text-muted">Sold: 7451</span>
-                  <BProgress
-                    striped
-                    :value="83"
-                    class="progress-sm mt-2"
-                    variant="warning"
-                  />
-                </div>
-              </BCardBody>
-            </BCard>
-          </BCol>
-          <BCol xxl="3" lg="4" md="6" class="product-item upto-30">
-            <BCard no-body class="explore-box card-animate">
-              <div class="position-relative rounded overflow-hidden">
-                <img
-                  src="@/assets/images/nft/img-06.jpg"
-                  alt=""
-                  class="card-img-top explore-img"
-                />
-                <div class="discount-time">
-                  <h5 id="auction-time-7" class="mb-0 text-white"></h5>
-                </div>
-              </div>
-              <BCardBody>
-                <p class="fw-medium mb-0 float-end">
-                  <i class="mdi mdi-heart text-danger align-middle"></i> 36.42k
-                </p>
-                <h5 class="text-success">
-                  <i class="mdi mdi-ethereum"></i> 745.14 ETH
-                </h5>
-                <h6 class="fs-16 mb-3">
-                  <router-link to="/apps/nft-item-detail"
-                    >Robotic Body Art</router-link
-                  >
-                </h6>
-                <div>
-                  <span class="text-muted float-end">Available: 4563</span>
-                  <span class="text-muted">Sold: 1024</span>
-                  <BProgress
-                    striped
-                    :value="24"
-                    class="progress-sm mt-2"
-                    variant="primary"
-                  />
-                </div>
-              </BCardBody>
-            </BCard>
-          </BCol>
-          <BCol xxl="3" lg="4" md="6" class="product-item upto-15">
-            <BCard no-body class="explore-box card-animate">
-              <div class="position-relative rounded overflow-hidden">
-                <img
-                  src="https://img.themesbrand.com/velzon/images/img-4.gif"
-                  alt=""
-                  class="card-img-top explore-img"
-                />
-                <div class="discount-time">
-                  <h5 id="auction-time-8" class="mb-0 text-white"></h5>
-                </div>
-              </div>
-              <BCardBody>
-                <p class="fw-medium mb-0 float-end">
-                  <i class="mdi mdi-heart text-danger align-middle"></i> 94.1k
-                </p>
-                <h5 class="text-success">
-                  <i class="mdi mdi-ethereum"></i> 245.23ETH
-                </h5>
-                <h6 class="fs-16 mb-3">
-                  <router-link to="/apps/nft-item-detail"
-                    >Evolved Reality</router-link
-                  >
-                </h6>
-                <div>
-                  <span class="text-muted float-end">Available: 26</span>
-                  <span class="text-muted">Sold: 9974</span>
-                  <BProgress
-                    striped
-                    :value="97"
-                    class="progress-sm mt-2"
-                    variant="danger"
-                  />
-                </div>
-              </BCardBody>
-            </BCard>
-          </BCol>
         </BRow>
-        <BRow>
+        <!-- <BRow>
           <BCol lg="12">
             <div class="text-center mb-3">
               <BButton variant="link" class="text-success mt-2"
@@ -727,7 +481,7 @@ export default {
               </BButton>
             </div>
           </BCol>
-        </BRow>
+        </BRow> -->
       </BCol>
       <BCol xxl="3">
         <BCard no-body>
