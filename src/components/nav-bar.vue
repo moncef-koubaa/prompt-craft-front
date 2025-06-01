@@ -300,6 +300,27 @@ export default {
       this.cartItems = this.cartItems.filter(item => item.id !== cartItem.id)
       this.$emit("cart-item-price", this.cartItems.length);
     },
+    markAllRead(){
+      notificationService.markAllNotificationsAsRead();
+      this.notifications=[];
+      this.notificationCount = 0;
+    },
+    async markAsRead(notificationId) {
+      this.slidingOut = notificationId;
+
+      // Remove the notification after the animation completes
+      setTimeout(() => {
+        this.notifications = this.notifications.filter(notification => notification.id !== notificationId);
+        this.slidingOut = null;
+        this.notificationCount--;
+
+      }, 500); // Match the animation duration
+      await notificationService.markNotificationAsRead(notificationId);
+    },
+    isNotificationSlidingOut(id) {
+      return this.slidingOut === id;
+    }
+
   },
 
   computed: {
@@ -667,64 +688,123 @@ export default {
                     </h6>
                   </BCol>
                   <BCol cols="auto" class="dropdown-tabs">
-                    <BBadge variant="light-subtle" class="bg-light-subtle text-body fs-13"> 4 New</BBadge>
+<!--                    <BBadge variant="light-subtle" class="bg-light-subtle text-body fs-13"> 4 New</BBadge>-->
                   </BCol>
                 </BRow>
               </div>
             </div>
 
-<!--           notification -->
+            <!--           notification -->
 
             <BTabs nav-class="dropdown-tabs nav-tab-custom bg-primary px-2 pt-2">
-              <BTab title=" All (4) " class="tab-pane fade py-2 ps-2 show" id="all-noti-tab" role="tabpanel">
+              <BTab title=" All " class="tab-pane fade py-2 ps-2 show" id="all-noti-tab" role="tabpanel">
                 <simplebar data-simplebar style="max-height: 300px" class="pe-2">
-                  <div class="notification-list">
+<!--                  <div class="notification-list">-->
+<!--                    <div-->
+<!--                        v-for="notification in notifications"-->
+<!--                        :key="notification.id"-->
+<!--                        class="text-reset notification-item d-block dropdown-item position-relative"-->
+<!--                    >-->
+<!--                      <div class="d-flex">-->
+<!--                        <div class="avatar-xs me-3 flex-shrink-0">-->
+<!--                          &lt;!&ndash; Dynamic icon and color based on notification type &ndash;&gt;-->
+<!--                          <span-->
+<!--                              :class="[-->
+<!--            'avatar-title',-->
+<!--            'rounded-circle',-->
+<!--            'fs-16',-->
+
+<!--          ]"-->
+<!--                          >-->
+
+<!--        </span>-->
+<!--                        </div>-->
+
+<!--                        <div class="flex-grow-1">-->
+<!--                          <a href="#!" class="stretched-link">-->
+<!--                            &lt;!&ndash; Notification message &ndash;&gt;-->
+<!--                            <h6 class="mt-0 mb-2 lh-base" v-html="notification.userId+' '+notification.message"></h6>-->
+<!--                          </a>-->
+
+<!--                          &lt;!&ndash; Timestamp &ndash;&gt;-->
+<!--                          &lt;!&ndash;                          <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">&ndash;&gt;-->
+<!--                          &lt;!&ndash;                            <span><i class="mdi mdi-clock-outline"></i> {{ notification.timestamp.toLocaleTimeString() }}</span>&ndash;&gt;-->
+<!--                          &lt;!&ndash;                          </p>&ndash;&gt;-->
+<!--                        </div>-->
+
+<!--                        &lt;!&ndash; Checkbox &ndash;&gt;-->
+<!--                        <div class="px-2 fs-15">-->
+<!--                          <input-->
+<!--                              class="form-check-input"-->
+<!--                              type="checkbox"-->
+<!--                              v-model="notification.read"-->
+<!--                              @change="markAsRead(notification.id)"-->
+<!--                          />-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+
+
+                  <!--                  <div class="notification-list">-->
+
+                 <div class="notification-list w-full max-w-md mx-auto ">
+
+                  <transition-group
+                      name="notification-list"
+                      tag="div"
+                      class="space-y-3"
+                  >
                     <div
                         v-for="notification in notifications"
                         :key="notification.id"
-                        class="text-reset notification-item d-block dropdown-item position-relative"
+                        class=""
+                        :class="{ 'sliding-out': isNotificationSlidingOut(notification.id) }"
                     >
-                      <div class="d-flex">
-                        <div class="avatar-xs me-3 flex-shrink-0">
-                          <!-- Dynamic icon and color based on notification type -->
-                          <span
-                              :class="[
-            'avatar-title',
-            'rounded-circle',
-            'fs-16',
-
-          ]"
+                      <div class="bg-white border border-blue-200 rounded-lg hover:shadow-md transition-shadow duration-200 p-4">
+                        <div class="flex items-start gap-3">
+                          <!-- Arrow Button -->
+                          <button
+                              @click="markAsRead(notification.id)"
+                              :disabled="isNotificationSlidingOut(notification.id)"
+                              class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors duration-200 disabled:opacity-50"
                           >
+                            <transition name="icon" mode="out-in">
+                              <div v-if="isNotificationSlidingOut(notification.id)" key="check" class="check-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 text-green-600">
+                                  <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                              </div>
+                              <div v-else key="arrow" class="arrow-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                                  <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                              </div>
+                            </transition>
+                          </button>
 
-        </span>
-                        </div>
+                          <!-- Notification Content -->
+                          <div class="flex-1 min-w-0">
+                            <h3 class="font-medium text-sm text-gray-900">{{ notification.user }}</h3>
+                            <p class="text-sm mt-1 text-gray-600">{{ notification.message }}</p>
 
-                        <div class="flex-grow-1">
-                          <a href="#!" class="stretched-link">
-                            <!-- Notification message -->
-                            <h6 class="mt-0 mb-2 lh-base" v-html="notification.userId+' '+notification.message"></h6>
-                          </a>
-
-                          <!-- Timestamp -->
-<!--                          <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">-->
-<!--                            <span><i class="mdi mdi-clock-outline"></i> {{ notification.timestamp.toLocaleTimeString() }}</span>-->
-<!--                          </p>-->
-                        </div>
-
-                        <!-- Checkbox -->
-                        <div class="px-2 fs-15">
-                          <input
-                              class="form-check-input"
-                              type="checkbox"
-                              v-model="notification.read"
-                              @change="markAsRead(notification.id)"
-                          />
+                            <!-- "Marking as read" indicator -->
+                            <transition name="fade">
+                              <div
+                                  v-if="isNotificationSlidingOut(notification.id)"
+                                  class="mt-2 text-xs text-green-600 font-medium"
+                              >
+                                ✓ Marking as read...
+                              </div>
+                            </transition>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </transition-group>
 
 
+        </div>
 
                   <div class="my-3 text-center">
                     <BButton type="button" variant="soft-success">
@@ -920,3 +1000,150 @@ export default {
     </div>
   </header>
 </template>
+<style scoped>
+.slide-fade-enter-active {
+  transition: all 0.3s ease;
+}
+.slide-fade-enter-from {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+.slide-fade-enter-to {
+  opacity: 1;
+  transform: translateX(0);
+}
+.notification-mark {
+  display: inline-block;
+  width: 80px; /* Adjust based on your content */
+  min-height: 24px;
+  position: relative;
+  vertical-align: middle;
+}
+
+.arrow-icon {
+  display: inline-block;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: #666;
+}
+
+.arrow-icon:hover {
+  color: #333;
+  transform: translateX(3px);
+}
+
+.arrow-icon svg {
+  vertical-align: middle;
+}
+
+.read-indicator {
+  color: #28a745;
+  font-size: 0.9em;
+}
+
+/* Slide transition */
+.slide-leave-active {
+  transition: all 0.4s ease;
+  position: absolute;
+  width: 100%;
+}
+
+.slide-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.slide-enter {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.slide-enter-active {
+  transition: all 0.4s ease 0.2s; /* Delay to let leave finish */
+}
+
+.slide-enter-to {
+  opacity: 1;
+  transform: translateX(0);
+}
+/* Notification list transitions */
+.notification-list-enter-active,
+.notification-list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.notification-list-enter-from {
+  opacity: 0;
+  transform: translateX(-50px) scale(0.9);
+}
+
+.notification-list-leave-to {
+  opacity: 0;
+  transform: translateX(300px) scale(0.8);
+}
+
+.notification-list-move {
+  transition: transform 0.5s ease;
+}
+
+/* Sliding out state */
+.sliding-out {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(300px) scale(0.8);
+  transition: all 0.5s ease-in-out;
+}
+
+/* Icon transitions */
+.icon-enter-active,
+.icon-leave-active {
+  transition: all 0.2s ease;
+}
+
+.icon-enter-from {
+  opacity: 0;
+  transform: scale(0) rotate(-90deg);
+}
+
+.icon-leave-to {
+  opacity: 0;
+  transform: scale(0) rotate(90deg);
+}
+
+/* Arrow hover effect */
+.arrow-icon {
+  transition: transform 0.2s ease;
+}
+
+button:hover .arrow-icon {
+  transform: translateX(2px);
+}
+
+/* Check icon animation */
+.check-icon {
+  animation: check-pulse 0.2s ease;
+}
+
+@keyframes check-pulse {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Fade transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
