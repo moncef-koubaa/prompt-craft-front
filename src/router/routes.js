@@ -28,6 +28,19 @@ export default [
      path : '/wallet',
      name : 'wallet-login',
      component : ()=>import('@/views/wallet-login/WalletLogin.vue'),
-    }
-
-]
+    },
+    {
+    path : '/profile',
+    name : 'profile',
+    component : () => import('@/views/profile/ProfileInfo.vue'),
+    },
+    {
+    path : '/profile/settings',
+    name : 'profile-settings',
+    component : () => import('@/views/profile/ProfileSettings.vue'),
+    },
+    {
+        path: '/notif',
+        name: 'notifications',
+        component: () => import('@/views/notif.vue'),
+    },];

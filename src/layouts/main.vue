@@ -6,35 +6,40 @@ import Horizontal from "./horizontal";
 import TwoColumns from "./twocolumn";
 
 export default {
-    components: {
-        Vertical,
-        Horizontal,
-        TwoColumns
-    },
-    data() {
-        return {};
-    },
-    computed: {
-        ...layoutComputed,
-    },
-    mounted() {
-        // document.querySelector("html").setAttribute('dir', 'rtl');
-    }
+  components: {
+    Vertical,
+    Horizontal,
+    TwoColumns,
+  },
+  data() {
+    return {
+      layoutType: "horizontal",
+    };
+  },
+  computed: {
+    ...layoutComputed,
+  },
+  mounted() {
+    //document.querySelector("html").setAttribute('dir', 'rtl');
+  },
 };
 </script>
 
 <template>
-    <div>
-        <Vertical v-if="layoutType === 'vertical' || layoutType === 'semibox'" :layout="layoutType">
-            <slot />
-        </Vertical>
+  <div>
+    <Vertical
+      v-if="layoutType === 'vertical' || layoutType === 'semibox'"
+      :layout="layoutType"
+    >
+      <slot />
+    </Vertical>
 
-        <Horizontal v-if="layoutType === 'horizontal'" :layout="layoutType">
-            <slot />
-        </Horizontal>
+    <Horizontal v-if="layoutType === 'horizontal'" :layout="layoutType">
+      <slot />
+    </Horizontal>
 
-        <TwoColumns v-if="layoutType === 'twocolumn'" :layout="layoutType">
-            <slot />
-        </TwoColumns>
-    </div>
+    <TwoColumns v-if="layoutType === 'twocolumn'" :layout="layoutType">
+      <slot />
+    </TwoColumns>
+  </div>
 </template>
