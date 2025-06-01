@@ -122,7 +122,7 @@ export default {
         },
         {
           flag: require("@/assets/images/flags/china.svg"),
-          language: "ch",
+           language: "ch",
           title: "中國人",
         },
         {
