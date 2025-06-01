@@ -161,7 +161,7 @@ export default {
                           <th scope="col">Date</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody class="text-base">
                         <tr>
                           <td>
                             <i
@@ -173,6 +173,44 @@ export default {
                           <td>
                             <router-link to="#" class="text-primary"
                               >Nancy Martino</router-link
+                            >
+                          </td>
+                          <td>
+                            <router-link to="#" class="text-primary"
+                              >Rickey Teran</router-link
+                            >
+                          </td>
+                          <td>29 April, 2022</td>
+                        </tr>
+
+                        <tr>
+                          <td>
+                            <i class="ri-auction-line text-success me-2"></i>
+                            Auction Sale
+                          </td>
+                          <td>0.5 ETH</td>
+                          <td>
+                            <router-link to="#" class="text-primary"
+                              >Nancy Martino</router-link
+                            >
+                          </td>
+                          <td>
+                            <router-link to="#" class="text-primary"
+                              >Rickey Teran</router-link
+                            >
+                          </td>
+                          <td>29 April, 2022</td>
+                        </tr>
+
+                        <tr>
+                          <td>
+                            <i class="ri-leaf-line text-success me-2"></i>
+                            Mint
+                          </td>
+                          <td>0.1 ETH</td>
+                          <td>
+                            <router-link to="#" class="text-primary"
+                              >Null@</router-link
                             >
                           </td>
                           <td>
