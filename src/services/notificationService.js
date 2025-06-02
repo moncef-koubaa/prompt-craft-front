@@ -4,7 +4,7 @@ const API_BASE = 'http://localhost:3002/notification';
 
 
 function getAuthHeaders() {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token');
     return {
         headers: {
             Authorization: `Bearer ${token}`,

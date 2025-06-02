@@ -1,10 +1,7 @@
 <script>
-import Multiselect from "@vueform/multiselect";
-import "@vueform/multiselect/themes/default.css";
-import flatPickr from "vue-flatpickr-component";
-import "flatpickr/dist/flatpickr.css";
+
 import axios from 'axios';
-/* import Layout from "@/layouts/main.vue"; */
+import Layout from "@/layouts/main.vue";
 
 export default {
 
@@ -15,9 +12,7 @@ export default {
     };
   },
   components: {
-    /* Layout, */
-    Multiselect,
-    flatPickr
+    Layout
   },
   methods: {
     changepass() {
@@ -39,14 +34,9 @@ export default {
         last_name: document.getElementById('lastnameInput').value,
         phone: document.getElementById('phonenumberInput').value,
         email: document.getElementById('emailInput').value,
-        joining_date: document.getElementById('dateinput').value,
-        skills: document.getElementById('skillsinput').value,
-        designation: document.getElementById('designationInput').value,
-        website: document.getElementById('websiteInput1').value,
         city: document.getElementById('cityInput').value,
         country: document.getElementById('countryInput').value,
         zipcode: document.getElementById('zipcodeInput').value,
-        Description: document.getElementById('exampleFormControlTextarea').value,
       };
       axios.patch('https://api-node.themesbrand.website/user/' + userid, data).then((data) => {
         console.log(data);
@@ -59,7 +49,7 @@ export default {
 </script>
 
 <template>
-  <!-- <Layout> -->
+  <Layout>
     <div class="position-relative mx-n4 mt-n4">
       <div class="profile-wid-bg profile-setting-img">
         <img src="@/assets/images/profile-bg.jpg" class="profile-wid-img" alt="" />
@@ -210,43 +200,9 @@ export default {
                           value="daveadame@velzon.com" />
                       </div>
                     </BCol>
-                    <BCol lg="12">
-                      <div class="mb-3">
-                        <label for="JoiningdatInput" class="form-label">Joining Date</label>
-
-                        <flat-pickr v-model="date" id="dateinput" class="form-control"></flat-pickr>
-
-                      </div>
-                    </BCol>
-                    <BCol lg="12">
-                      <div class="mb-3">
-                        <label for="skillsInput" class="form-label">Skills</label>
-                        <Multiselect v-model="value" id="skillsinput" mode="tags" :close-on-select="false"
-                          :searchable="true" :create-option="true" :options="[
-                            { value: 'illustrator', label: 'Illustrator' },
-                            { value: 'photoshop', label: 'Photoshop' },
-                            { value: 'css', label: 'CSS' },
-                            { value: 'html', label: 'HTML' },
-                            { value: 'javascript', label: 'Javascript' },
-                            { value: 'python', label: 'Python' },
-                            { value: 'php', label: 'PHP' },
-                          ]" />
-                      </div>
-                    </BCol>
-                    <BCol lg="6">
-                      <div class="mb-3">
-                        <label for="designationInput" class="form-label">Designation</label>
-                        <input type="text" class="form-control" id="designationInput" placeholder="Designation"
-                          value="Lead Designer / Developer" />
-                      </div>
-                    </BCol>
-                    <BCol lg="6">
-                      <div class="mb-3">
-                        <label for="websiteInput1" class="form-label">Website</label>
-                        <input type="text" class="form-control" id="websiteInput1" placeholder="www.example.com"
-                          value="www.velzon.com" />
-                      </div>
-                    </BCol>
+                  
+                    
+                    
                     <BCol lg="4">
                       <div class="mb-3">
                         <label for="cityInput" class="form-label">City</label>
@@ -265,14 +221,6 @@ export default {
                         <label for="zipcodeInput" class="form-label">Zip Code</label>
                         <input type="text" class="form-control" minlength="5" maxlength="6" id="zipcodeInput"
                           placeholder="Enter zipcode" value="90011" />
-                      </div>
-                    </BCol>
-                    <BCol lg="12">
-                      <div class="mb-3 pb-2">
-                        <label for="exampleFormControlTextarea" class="form-label">Description</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea"
-                          placeholder="Enter your description" rows="3">
-Hi I'm Anna Adame,It will be as simple as Occidental; in fact, it will be Occidental. To an English person, it will seem like simplified English, as a skeptical Cambridge friend of mine told me what Occidental is European languages are members of the same family.</textarea>
                       </div>
                     </BCol>
                     <BCol lg="12">
@@ -399,167 +347,8 @@ Hi I'm Anna Adame,It will be as simple as Occidental; in fact, it will be Occide
                   </div>
                 </div>
               </BTab>
-              <BTab title="Experience">
-                <form>
-                  <div id="newlink">
-                    <div id="1">
-                      <BRow class="pt-4">
-                        <BCol lg="12">
-                          <div class="mb-3">
-                            <label for="jobTitle" class="form-label">Job Title</label>
-                            <input type="text" class="form-control" id="jobTitle" placeholder="Job title"
-                              value="Lead Designer / Developer" />
-                          </div>
-                        </BCol>
-                        <BCol lg="6">
-                          <div class="mb-3">
-                            <label for="companyName" class="form-label">Company Name</label>
-                            <input type="text" class="form-control" id="companyName" placeholder="Company name"
-                              value="Themesbrand" />
-                          </div>
-                        </BCol>
-                        <BCol lg="6">
-                          <div class="mb-3">
-                            <label for="experienceYear" class="form-label">Experience Years</label>
-                            <BRow>
-                              <BCol lg="5">
-                                <Multiselect class="form-control" v-model="value2" :close-on-select="true"
-                                  :searchable="true" :create-option="true" :options="[
-                                    { value: '', label: 'Select years' },
-                                    { value: 'Choice 1', label: '2001' },
-                                    { value: 'Choice 2', label: '2002' },
-                                    { value: 'Choice 3', label: '2003' },
-                                    { value: 'Choice 4', label: '2004' },
-                                    { value: 'Choice 5', label: '2005' },
-                                    { value: 'Choice 6', label: '2006' },
-                                    { value: 'Choice 7', label: '2007' },
-                                    { value: 'Choice 8', label: '2008' },
-                                    { value: 'Choice 9', label: '2009' },
-                                    { value: 'Choice 10', label: '2010' },
-                                    { value: 'Choice 11', label: '2011' },
-                                    { value: 'Choice 12', label: '2012' },
-                                    { value: 'Choice 13', label: '2013' },
-                                    { value: 'Choice 14', label: '2014' },
-                                    { value: 'Choice 15', label: '2015' },
-                                    { value: 'Choice 16', label: '2016' },
-                                    { value: 'Choice 17', label: '2017' },
-                                    { value: 'Choice 18', label: '2018' },
-                                    { value: 'Choice 19', label: '2019' },
-                                    { value: 'Choice 20', label: '2020' },
-                                    { value: 'Choice 21', label: '2021' },
-                                    { value: 'Choice 22', label: '2022' }
-
-
-                                  ]" />
-                              </BCol>
-                              <BCol cols="auto" class="align-self-center">to</BCol>
-                              <BCol lg="5">
-
-
-                                <Multiselect class="form-control" v-model="value1" :close-on-select="true"
-                                  :searchable="true" :create-option="true" :options="[
-                                    { value: '', label: 'Select years' },
-                                    { value: 'Choice 1', label: '2001' },
-                                    { value: 'Choice 2', label: '2002' },
-                                    { value: 'Choice 3', label: '2003' },
-                                    { value: 'Choice 4', label: '2004' },
-                                    { value: 'Choice 5', label: '2005' },
-                                    { value: 'Choice 6', label: '2006' },
-                                    { value: 'Choice 7', label: '2007' },
-                                    { value: 'Choice 8', label: '2008' },
-                                    { value: 'Choice 9', label: '2009' },
-                                    { value: 'Choice 10', label: '2010' },
-                                    { value: 'Choice 11', label: '2011' },
-                                    { value: 'Choice 12', label: '2012' },
-                                    { value: 'Choice 13', label: '2013' },
-                                    { value: 'Choice 14', label: '2014' },
-                                    { value: 'Choice 15', label: '2015' },
-                                    { value: 'Choice 16', label: '2016' },
-                                    { value: 'Choice 17', label: '2017' },
-                                    { value: 'Choice 18', label: '2018' },
-                                    { value: 'Choice 19', label: '2019' },
-                                    { value: 'Choice 20', label: '2020' },
-                                    { value: 'Choice 21', label: '2021' },
-                                    { value: 'Choice 22', label: '2022' }
-
-
-                                  ]" />
-                              </BCol>
-                            </BRow>
-                          </div>
-                        </BCol>
-                        <BCol lg="12">
-                          <div class="mb-3">
-                            <label for="jobDescription" class="form-label">Job Description</label>
-                            <textarea class="form-control" id="jobDescription" rows="3" placeholder="Enter description">
-You always want to make sure that your fonts work well together and try to limit the number of fonts you use to three or less. Experiment and play around with the fonts that you already have in the software you're working with reputable font websites. </textarea>
-                          </div>
-                        </BCol>
-                        <div class="hstack gap-2 justify-content-end">
-                          <BLink class="btn btn-success" href="javascript:void(0);">Delete</BLink>
-                        </div>
-                      </BRow>
-                    </div>
-                  </div>
-                  <div id="newForm" style="display: none"></div>
-                  <BCol lg="12">
-                    <div class="hstack gap-2">
-                      <BButton type="button" variant="success">
-                        Update
-                      </BButton>
-                      <BLink href="javascript:void(0);" class="btn btn-primary">Add New</BLink>
-                    </div>
-                  </BCol>
-                </form>
-              </BTab>
               <BTab title="Privacy Policy">
-                <div class="mb-4 pb-2 pt-4">
-                  <h5 class="card-title text-decoration-underline mb-3">
-                    Security:
-                  </h5>
-                  <div class="d-flex flex-column flex-sm-row mb-4 mb-sm-0">
-                    <div class="flex-grow-1">
-                      <h6 class="fs-14 mb-1">Two-factor Authentication</h6>
-                      <p class="text-muted">
-                        Two-factor authentication is an enhanced security
-                        meansur. Once enabled, you'll be required to give two
-                        types of identification when you log into Google
-                        Authentication and SMS are Supported.
-                      </p>
-                    </div>
-                    <div class="flex-shrink-0 ms-sm-3">
-                      <BLink href="javascript:void(0);" class="btn btn-sm btn-primary">Enable Two-facor Authentication
-                      </BLink>
-                    </div>
-                  </div>
-                  <div class="d-flex flex-column flex-sm-row mb-4 mb-sm-0 mt-2">
-                    <div class="flex-grow-1">
-                      <h6 class="fs-14 mb-1">Secondary Verification</h6>
-                      <p class="text-muted">
-                        The first factor is a password and the second commonly
-                        includes a text with a code sent to your smartphone, or
-                        biometrics using your fingerprint, face, or retina.
-                      </p>
-                    </div>
-                    <div class="flex-shrink-0 ms-sm-3">
-                      <BLink href="javascript:void(0);" class="btn btn-sm btn-primary">Set up secondary method</BLink>
-                    </div>
-                  </div>
-                  <div class="d-flex flex-column flex-sm-row mb-4 mb-sm-0 mt-2">
-                    <div class="flex-grow-1">
-                      <h6 class="fs-14 mb-1">Backup Codes</h6>
-                      <p class="text-muted mb-sm-0">
-                        A backup code is automatically generated for you when
-                        you turn on two-factor authentication through your iOS
-                        or Android Twitter app. You can also generate a backup
-                        code on twitter.com.
-                      </p>
-                    </div>
-                    <div class="flex-shrink-0 ms-sm-3">
-                      <BLink href="javascript:void(0);" class="btn btn-sm btn-primary">Generate backup codes</BLink>
-                    </div>
-                  </div>
-                </div>
+                
                 <div class="mb-3">
                   <h5 class="card-title text-decoration-underline mb-3">
                     Application Notifications:
@@ -567,9 +356,9 @@ You always want to make sure that your fonts work well together and try to limit
                   <ul class="list-unstyled mb-0">
                     <li class="d-flex">
                       <div class="flex-grow-1">
-                        <label for="directMessage" class="form-check-label fs-14">Direct messages</label>
+                        <label for="directMessage" class="form-check-label fs-14">New bid on auction</label>
                         <p class="text-muted">
-                          Messages from people you follow
+                          You will be notified when a new bid is placed on your own auction
                         </p>
                       </div>
                       <div class="flex-shrink-0">
@@ -581,12 +370,10 @@ You always want to make sure that your fonts work well together and try to limit
                     <li class="d-flex mt-2">
                       <div class="flex-grow-1">
                         <label class="form-check-label fs-14" for="desktopNotification">
-                          Show desktop notifications
+                          End of your auction
                         </label>
                         <p class="text-muted">
-                          Choose the option you want as your default setting.
-                          Block a site: Next to "Not allowed to send
-                          notifications," click Add.
+                          You will be notified when an auction you created has ended.
                         </p>
                       </div>
                       <div class="flex-shrink-0">
@@ -599,12 +386,10 @@ You always want to make sure that your fonts work well together and try to limit
                     <li class="d-flex mt-2">
                       <div class="flex-grow-1">
                         <label class="form-check-label fs-14" for="emailNotification">
-                          Show email notifications
+                          Higher bid on auction
                         </label>
                         <p class="text-muted">
-                          Under Settings, choose Notifications. Under Select an
-                          account, choose the account to enable notifications
-                          for.
+                          You will be notified when a higher bid is placed on an auction you are participating in.
                         </p>
                       </div>
                       <div class="flex-shrink-0">
@@ -616,12 +401,10 @@ You always want to make sure that your fonts work well together and try to limit
                     <li class="d-flex mt-2">
                       <div class="flex-grow-1">
                         <label class="form-check-label fs-14" for="chatNotification">
-                          Show chat notifications
+                          End of auction
                         </label>
                         <p class="text-muted">
-                          To prevent duplicate mobile notifications from the
-                          Gmail and Chat apps, in settings, turn off Chat
-                          notifications.
+                          You will be notified when an auction you are participating in has ended.
                         </p>
                       </div>
                       <div class="flex-shrink-0">
@@ -653,9 +436,7 @@ You always want to make sure that your fonts work well together and try to limit
                     Delete This Account:
                   </h5>
                   <p class="text-muted">
-                    Go to the Data & Privacy section of your profile Account.
-                    Scroll to "Your data & privacy options." Delete your Profile
-                    Account. Follow the instructions to delete your account :
+                    You cannot undo this action. This will permanently delete your account and all of its data.
                   </p>
                   <div>
                     <input type="password" class="form-control" id="passwordInput" placeholder="Enter your password"
@@ -672,5 +453,5 @@ You always want to make sure that your fonts work well together and try to limit
         </BCard>
       </BCol>
     </BRow>
-  <!-- </Layout> -->
+  </Layout>
 </template>

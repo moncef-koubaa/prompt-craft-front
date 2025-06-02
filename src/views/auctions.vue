@@ -15,19 +15,25 @@ export default {
     };
   },
   methods: {
-    startCountDownDate(dateVal) {
-      var countDownDate = new Date(dateVal).getTime();
-      return countDownDate;
+    async fetchAuctions(filter = {}) {
+      try {
+        const response = await AuctionService.getAuctions(filter);
+        this.auctions = response.data.getAuctions.data;
+        console.log(this.auctions);
+      } catch (error) {
+        console.error("Error fetching auctions:", error);
+      }
     },
-    // countDownTimer(start, targetDOM) {
-    //     // Get todays date and time
-
-    // }
+    resetFilter() {
+      this.filter = {};
+      this.fetchAuctions();
+    },
+    async updateFilter() {
+      await this.fetchAuctions(this.filter);
+    },
   },
   async mounted() {
-    const response = await AuctionService.getAuctions({});
-    this.auctions = response.data.getAuctions.data;
-    console.log(this.auctions);
+    await this.fetchAuctions();
   },
 };
 </script>
@@ -87,7 +93,7 @@ export default {
             xxl="3"
             lg="4"
             md="6"
-            class="product-item upto-15"
+            class="product-item upto-15 cursor-pointer"
             v-for="auction in auctions"
             v-bind:key="auction.id"
           >
@@ -153,8 +159,7 @@ export default {
                     class="form-control"
                     id="basiInput"
                     placeholder="Rechercher"
-                    :value="filter.searchQuery"
-                    @input="filter.searchQuery = $event.target.value"
+                    :value="filter.search"
                   />
                 </div>
               </BCol>
@@ -191,6 +196,7 @@ export default {
                     placeholder="0"
                     class="form-control"
                     id="minPriceInput"
+                    v-model="filter.startingPriceLower"
                   />
                 </div>
               </BCol>
@@ -205,6 +211,7 @@ export default {
                     placeholder="0"
                     class="form-control"
                     id="maxPriceInput"
+                    v-model="filter.startingPriceUpper"
                   />
                 </div>
               </BCol>
@@ -221,6 +228,7 @@ export default {
                     placeholder="0"
                     class="form-control"
                     id="minDurationInput"
+                    v-model="filter.durationLower"
                   />
                 </div>
               </BCol>
@@ -235,6 +243,7 @@ export default {
                     placeholder="0"
                     class="form-control"
                     id="maxDurationInput"
+                    v-model="filter.durationUpper"
                   />
                 </div>
               </BCol>
@@ -247,6 +256,7 @@ export default {
                     type="datetime-local"
                     class="form-control"
                     id="endTime"
+                    v-model="filter.endTime"
                   />
                 </div>
               </BCol>
@@ -263,6 +273,7 @@ export default {
                     placeholder="0"
                     class="form-control"
                     id="minPriceInput"
+                    v-model="filter.maxBidAmount"
                   />
                 </div>
               </BCol>
@@ -272,6 +283,7 @@ export default {
                     class="form-check-input"
                     type="checkbox"
                     id="endedCheckbox"
+                    v-model="filter.isEnded"
                   />
                   <label
                     class="form-check-label whitespace-pre"
