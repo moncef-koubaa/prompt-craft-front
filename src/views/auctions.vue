@@ -11,7 +11,11 @@ export default {
   data() {
     return {
       auctions: [],
-      filter: {},
+      filter: {
+        limit: 6,
+      },
+      total: 0,
+      Page: 1,
     };
   },
   methods: {
@@ -19,6 +23,8 @@ export default {
       try {
         const response = await AuctionService.getAuctions(filter);
         this.auctions = response.data.getAuctions.data;
+        this.total = response.data.getAuctions.metadata.total;
+        console.log(this.total);
         console.log(this.auctions);
       } catch (error) {
         console.error("Error fetching auctions:", error);
@@ -297,6 +303,21 @@ export default {
             </BRow>
           </BCardBody>
         </BCard>
+      </BCol>
+    </BRow>
+    <BRow class="mt-4">
+      <BCol class="d-flex justify-content-end">
+        <BPagination
+          v-if="this.total > 6"
+          v-model="this.Page"
+          pills
+          :total-rows="this.total"
+          :per-page="6"
+          prev-text="Previous"
+          next-text="Next"
+          hide-goto-end-buttons="true"
+          class="pagination-separated d-flex-wrap m-2"
+        />
       </BCol>
     </BRow>
   </Layout>

@@ -1,0 +1,18 @@
+query GetNfts($filter: NftFilterDto! = {}) {
+  getNfts(filter: $filter) {
+    metadata {
+      page
+      limit
+      total
+    }
+    data {
+      id
+      title
+      description
+      imageUrl
+      price
+      isOnAuction
+      isOnSale
+    }
+  }
+}
