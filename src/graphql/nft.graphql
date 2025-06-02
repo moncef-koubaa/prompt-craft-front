@@ -1,0 +1,35 @@
+query GetNft($id: Int!) {
+  getNft(id: $id) {
+    id
+    name
+    description
+    imageUrl
+    price
+    owner {
+      id
+      username
+    }
+    creator {
+      id
+      username
+    }
+    tags
+    auctions {
+      id
+      endTime
+      maxBidAmount
+      isEnded
+      owner {
+        id
+        username
+      }
+      winner {
+        id
+        username
+      }
+    }
+    isOnAuction
+    isOnSale
+    mintedAt
+  }
+}

@@ -36,4 +36,14 @@ export default class AuctionService {
             throw error;
         }
     }
+
+    static async createAuction(auctionData) {
+        try {
+            const response = await apiClientAuth.post('/auctions', auctionData);
+            return response.data;
+        } catch (error) {
+            console.error("Error creating auction:", error);
+            throw error;
+        }
+    }
 }
