@@ -383,53 +383,6 @@ export default {
                   style="max-height: 300px"
                   class="pe-2"
                 >
-                  <!--                  <div class="notification-list">-->
-                  <!--                    <div-->
-                  <!--                        v-for="notification in notifications"-->
-                  <!--                        :key="notification.id"-->
-                  <!--                        class="text-reset notification-item d-block dropdown-item position-relative"-->
-                  <!--                    >-->
-                  <!--                      <div class="d-flex">-->
-                  <!--                        <div class="avatar-xs me-3 flex-shrink-0">-->
-                  <!--                          &lt;!&ndash; Dynamic icon and color based on notification type &ndash;&gt;-->
-                  <!--                          <span-->
-                  <!--                              :class="[-->
-                  <!--            'avatar-title',-->
-                  <!--            'rounded-circle',-->
-                  <!--            'fs-16',-->
-
-                  <!--          ]"-->
-                  <!--                          >-->
-
-                  <!--        </span>-->
-                  <!--                        </div>-->
-
-                  <!--                        <div class="flex-grow-1">-->
-                  <!--                          <a href="#!" class="stretched-link">-->
-                  <!--                            &lt;!&ndash; Notification message &ndash;&gt;-->
-                  <!--                            <h6 class="mt-0 mb-2 lh-base" v-html="notification.userId+' '+notification.message"></h6>-->
-                  <!--                          </a>-->
-
-                  <!--                          &lt;!&ndash; Timestamp &ndash;&gt;-->
-                  <!--                          &lt;!&ndash;                          <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">&ndash;&gt;-->
-                  <!--                          &lt;!&ndash;                            <span><i class="mdi mdi-clock-outline"></i> {{ notification.timestamp.toLocaleTimeString() }}</span>&ndash;&gt;-->
-                  <!--                          &lt;!&ndash;                          </p>&ndash;&gt;-->
-                  <!--                        </div>-->
-
-                  <!--                        &lt;!&ndash; Checkbox &ndash;&gt;-->
-                  <!--                        <div class="px-2 fs-15">-->
-                  <!--                          <input-->
-                  <!--                              class="form-check-input"-->
-                  <!--                              type="checkbox"-->
-                  <!--                              v-model="notification.read"-->
-                  <!--                              @change="markAsRead(notification.id)"-->
-                  <!--                          />-->
-                  <!--                        </div>-->
-                  <!--                      </div>-->
-                  <!--                    </div>-->
-                  <!--                  </div>-->
-
-                  <!--                  <div class="notification-list">-->
 
                   <div class="notification-list w-full max-w-md mx-auto">
                     <transition-group
@@ -447,6 +400,7 @@ export default {
                           ),
                         }"
                       >
+                        <router-link to="/nft/{{notification.nftId}}">
                         <div
                           class="bg-white border border-blue-200 rounded-lg hover:shadow-md transition-shadow duration-200 p-4"
                         >
@@ -528,6 +482,7 @@ export default {
                             </div>
                           </div>
                         </div>
+                        </router-link>
                       </div>
                     </transition-group>
                   </div>
