@@ -5,9 +5,10 @@ export default [
         component : () => import('@/views/Home.vue'),
     },
     {
-        path : '/my-nft',
+        path : '/my-nft/:id',
         name : 'my-nft',
         component : () => import('@/views/my-nft.vue'),
+        props : true,
     },
     {
         path : '/auctions',
