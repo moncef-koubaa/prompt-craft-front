@@ -1,23 +1,20 @@
 <script>
 import { layoutMethods } from "@/state/helpers";
-import img1 from "../assets/images/products/img-1.png";
-import img2 from "../assets/images/products/img-2.png";
-import img3 from "../assets/images/products/img-3.png";
-import img4 from "../assets/images/products/img-6.png";
-import img5 from "../assets/images/products/img-5.png";
 
 import simplebar from "simplebar-vue";
 
 import i18n from "../i18n";
 import { useNotificationStore } from "@/stores/notification";
 import { storeToRefs } from "pinia";
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted , ref} from "vue";
 import { notificationService } from "@/services/notificationService";
+import userService from "@/services/userService";
 /**
  * Nav-bar Component
  */
 export default {
   setup() {
+    const myBalance = ref(0);
     const notificationStore = useNotificationStore();
     let { notifications, unreadCount, isConnected, error, notificationCount } =
       storeToRefs(notificationStore);
@@ -30,6 +27,8 @@ export default {
         console.log("notification filler", notifications.value);
         notificationCount.value += unread.length;
         console.log("notification count", notificationCount.value);
+        myBalance.value = await userService.getBalance();
+        console.log("my balance", this.myBalance);
       } catch (err) {
         console.error("Failed to fetch unread notifications", err);
       }
@@ -47,100 +46,19 @@ export default {
       isConnected,
       error,
       notificationCount,
+      myBalance,
     };
   },
   data() {
     return {
-      cartItems: [
-        {
-          id: 1,
-          productImage: img1,
-          productName: "Branded T-Shirts",
-          productLink: "/ecommerce/product-details",
-          quantity: "10 x $32",
-          itemPrice: "320",
-        },
-        {
-          id: 2,
-          productImage: img2,
-          productName: "Bentwood Chair",
-          productLink: "/ecommerce/product-details",
-          quantity: "5 x $18",
-          itemPrice: "89",
-        },
-        {
-          id: 3,
-          productImage: img3,
-          productName: "Borosil Paper Cup",
-          productLink: "/ecommerce/product-details",
-          quantity: "3 x $250",
-          itemPrice: "750",
-        },
-        {
-          id: 4,
-          productImage: img4,
-          productName: "Gray Styled T-Shirt",
-          productLink: "/ecommerce/product-details",
-          quantity: "1 x $1250",
-          itemPrice: "1250",
-        },
-        {
-          id: 5,
-          productImage: img5,
-          productName: "Stillbird Helmet",
-          productLink: "/ecommerce/product-details",
-          quantity: "2 x $495",
-          itemPrice: "990",
-        },
-      ],
-
-      languages: [
-        {
-          flag: require("@/assets/images/flags/us.svg"),
-          language: "en",
-          title: "English",
-        },
-        {
-          flag: require("@/assets/images/flags/spain.svg"),
-          language: "sp",
-          title: "Española",
-        },
-        {
-          flag: require("@/assets/images/flags/germany.svg"),
-          language: "gr",
-          title: "Deutsche",
-        },
-        {
-          flag: require("@/assets/images/flags/italy.svg"),
-          language: "it",
-          title: "italiana",
-        },
-        {
-          flag: require("@/assets/images/flags/russia.svg"),
-          language: "ru",
-          title: "русский",
-        },
-        {
-          flag: require("@/assets/images/flags/china.svg"),
-          language: "ch",
-          title: "中國人",
-        },
-        {
-          flag: require("@/assets/images/flags/french.svg"),
-          language: "fr",
-          title: "Français",
-        },
-        {
-          flag: require("@/assets/images/flags/ae.svg"),
-          language: "ar",
-          title: "Arabic",
-        },
-      ],
+      username: null,
+      useremail: null,
       lan: i18n.locale,
       text: null,
       flag: null,
       value: null,
       myVar: 1,
+
     };
   },
   components: {
@@ -278,7 +196,9 @@ export default {
         .toFixed(2);
     },
   },
-  mounted() {
+  async mounted() {
+    this.username = await userService.getUsername();
+    this.useremail = await userService.getEmail();
     if (process.env.VUE_APP_I18N_LOCALE) {
       this.flag = process.env.VUE_APP_I18N_LOCALE;
       this.languages.forEach((item) => {
@@ -348,125 +268,6 @@ export default {
           </BButton>
 
           <!-- App Search-->
-          <form class="app-search d-none d-md-block">
-
-            <div class="dropdown-menu dropdown-menu-lg" id="search-dropdown">
-              <simplebar data-simplebar style="max-height: 320px">
-                <div class="dropdown-header">
-                  <h6 class="text-overflow text-muted mb-0 text-uppercase">
-                    Recent Searches
-                  </h6>
-                </div>
-
-                <div class="dropdown-item bg-transparent text-wrap">
-                  <router-link
-                    to="/"
-                    class="btn btn-soft-secondary btn-sm rounded-pill"
-                    >how to setup <i class="mdi mdi-magnify ms-1"></i
-                  ></router-link>
-                  <router-link
-                    to="/"
-                    class="btn btn-soft-secondary btn-sm rounded-pill"
-                    >buttons <i class="mdi mdi-magnify ms-1"></i
-                  ></router-link>
-                </div>
-                <div class="dropdown-header mt-2">
-                  <h6 class="text-overflow text-muted mb-1 text-uppercase">
-                    Pages
-                  </h6>
-                </div>
-
-                <BLink
-                  href="javascript:void(0);"
-                  class="dropdown-item notify-item"
-                >
-                  <i
-                    class="ri-bubble-chart-line align-middle fs-18 text-muted me-2"
-                  ></i>
-                  <span>Analytics Dashboard</span>
-                </BLink>
-
-                <BLink
-                  href="javascript:void(0);"
-                  class="dropdown-item notify-item"
-                >
-                  <i
-                    class="ri-lifebuoy-line align-middle fs-18 text-muted me-2"
-                  ></i>
-                  <span>Help Center</span>
-                </BLink>
-
-                <BLink
-                  href="javascript:void(0);"
-                  class="dropdown-item notify-item"
-                >
-                  <i
-                    class="ri-user-settings-line align-middle fs-18 text-muted me-2"
-                  ></i>
-                  <span>My account settings</span>
-                </BLink>
-
-                <div class="dropdown-header mt-2">
-                  <h6 class="text-overflow text-muted mb-2 text-uppercase">
-                    Members
-                  </h6>
-                </div>
-
-                <div class="notification-list">
-                  <BLink
-                    href="javascript:void(0);"
-                    class="d-flex dropdown-item notify-item py-2"
-                  >
-                    <img
-                      src="@/assets/images/users/avatar-2.jpg"
-                      class="me-3 rounded-circle avatar-xs"
-                      alt="user-pic"
-                    />
-                    <div class="flex-grow-1">
-                      <h6 class="m-0">Angela Bernier</h6>
-                      <span class="fs-11 mb-0 text-muted">Manager</span>
-                    </div>
-                  </BLink>
-                  <BLink
-                    href="javascript:void(0);"
-                    class="d-flex dropdown-item notify-item py-2"
-                  >
-                    <img
-                      src="@/assets/images/users/avatar-3.jpg"
-                      class="me-3 rounded-circle avatar-xs"
-                      alt="user-pic"
-                    />
-                    <div class="flex-grow-1">
-                      <h6 class="m-0">David Grasso</h6>
-                      <span class="fs-11 mb-0 text-muted">Web Designer</span>
-                    </div>
-                  </BLink>
-                  <BLink
-                    href="javascript:void(0);"
-                    class="d-flex dropdown-item notify-item py-2"
-                  >
-                    <img
-                      src="@/assets/images/users/avatar-5.jpg"
-                      class="me-3 rounded-circle avatar-xs"
-                      alt="user-pic"
-                    />
-                    <div class="flex-grow-1">
-                      <h6 class="m-0">Mike Bunch</h6>
-                      <span class="fs-11 mb-0 text-muted">React Developer</span>
-                    </div>
-                  </BLink>
-                </div>
-              </simplebar>
-
-              <div class="text-center pt-3 pb-1">
-                <router-link
-                  to="/pages/search-results"
-                  class="btn btn-primary btn-sm"
-                  >View All Results <i class="ri-arrow-right-line ms-1"></i
-                ></router-link>
-              </div>
-            </div>
-          </form>
         </div>
 
         <div class="d-flex align-items-center">
@@ -478,9 +279,7 @@ export default {
             toggle-class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle show  arrow-none"
             menu-class="dropdown-menu-lg dropdown-menu-end p-0"
           >
-            <template #button-content>
-              <i class="bx bx-search fs-22"></i>
-            </template>
+
             <BDropdownItem aria-labelledby="page-header-search-dropdown">
               <form class="p-3">
                 <div class="form-group m-0">
@@ -500,6 +299,15 @@ export default {
             </BDropdownItem>
           </BDropdown>
 
+          <div class="ms-1 header-item d-none d-sm-flex">
+
+            <i class="mdi mdi-circle online-pulse"></i>
+            <router-link
+              to="/auctions"
+            >
+            <div class="text-base mr-4 text-success">Live Auctions</div>
+            </router-link>
+          </div>
 
           <div class="ms-1 header-item d-none d-sm-flex">
             <BButton
@@ -575,53 +383,6 @@ export default {
                   style="max-height: 300px"
                   class="pe-2"
                 >
-                  <!--                  <div class="notification-list">-->
-                  <!--                    <div-->
-                  <!--                        v-for="notification in notifications"-->
-                  <!--                        :key="notification.id"-->
-                  <!--                        class="text-reset notification-item d-block dropdown-item position-relative"-->
-                  <!--                    >-->
-                  <!--                      <div class="d-flex">-->
-                  <!--                        <div class="avatar-xs me-3 flex-shrink-0">-->
-                  <!--                          &lt;!&ndash; Dynamic icon and color based on notification type &ndash;&gt;-->
-                  <!--                          <span-->
-                  <!--                              :class="[-->
-                  <!--            'avatar-title',-->
-                  <!--            'rounded-circle',-->
-                  <!--            'fs-16',-->
-
-                  <!--          ]"-->
-                  <!--                          >-->
-
-                  <!--        </span>-->
-                  <!--                        </div>-->
-
-                  <!--                        <div class="flex-grow-1">-->
-                  <!--                          <a href="#!" class="stretched-link">-->
-                  <!--                            &lt;!&ndash; Notification message &ndash;&gt;-->
-                  <!--                            <h6 class="mt-0 mb-2 lh-base" v-html="notification.userId+' '+notification.message"></h6>-->
-                  <!--                          </a>-->
-
-                  <!--                          &lt;!&ndash; Timestamp &ndash;&gt;-->
-                  <!--                          &lt;!&ndash;                          <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">&ndash;&gt;-->
-                  <!--                          &lt;!&ndash;                            <span><i class="mdi mdi-clock-outline"></i> {{ notification.timestamp.toLocaleTimeString() }}</span>&ndash;&gt;-->
-                  <!--                          &lt;!&ndash;                          </p>&ndash;&gt;-->
-                  <!--                        </div>-->
-
-                  <!--                        &lt;!&ndash; Checkbox &ndash;&gt;-->
-                  <!--                        <div class="px-2 fs-15">-->
-                  <!--                          <input-->
-                  <!--                              class="form-check-input"-->
-                  <!--                              type="checkbox"-->
-                  <!--                              v-model="notification.read"-->
-                  <!--                              @change="markAsRead(notification.id)"-->
-                  <!--                          />-->
-                  <!--                        </div>-->
-                  <!--                      </div>-->
-                  <!--                    </div>-->
-                  <!--                  </div>-->
-
-                  <!--                  <div class="notification-list">-->
 
                   <div class="notification-list w-full max-w-md mx-auto">
                     <transition-group
@@ -639,6 +400,7 @@ export default {
                           ),
                         }"
                       >
+                        <router-link to="/nft/{{notification.nftId}}">
                         <div
                           class="bg-white border border-blue-200 rounded-lg hover:shadow-md transition-shadow duration-200 p-4"
                         >
@@ -720,6 +482,7 @@ export default {
                             </div>
                           </div>
                         </div>
+                        </router-link>
                       </div>
                     </transition-group>
                   </div>
@@ -935,10 +698,10 @@ export default {
                 <span class="text-start ms-xl-2">
                   <span
                     class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"
-                    >Edward Diana</span
+                    >{{ this.username }}</span
                   >
                   <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text"
-                    >Founder</span
+                    >{{this.useremail}}</span
                   >
                 </span>
               </span>
@@ -953,9 +716,16 @@ export default {
 
             <div class="dropdown-divider"></div>
 
-              ><i class="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i>
-              <span class="align-middle"> Balance : <b>$5971.67</b></span>
-
+            <div class="dropdown-item" to="/profile">
+              <i class="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i>
+              <span class="align-middle"> Balance</span>
+              <br />
+              <b>   {{myBalance}} SC</b>
+            </div>
+            <router-link class="dropdown-item" to="/pricing"
+              ><i class="mdi mdi-currency-usd text-muted fs-16 align-middle me-1"></i>
+              <span class="align-middle"> Shop</span>
+            </router-link>
             <router-link class="dropdown-item" to="/auth/logout"
               ><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
               <span class="align-middle" data-key="t-logout"> Logout</span>
@@ -1088,6 +858,24 @@ button:hover .arrow-icon {
 /* Check icon animation */
 .check-icon {
   animation: check-pulse 0.2s ease;
+}
+
+.online-pulse {
+  color: rgb(4, 87, 4);
+  font-size: 14px;
+  animation: pulse 1s infinite ease-in-out;
+  
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.3);
+  }
 }
 
 @keyframes check-pulse {

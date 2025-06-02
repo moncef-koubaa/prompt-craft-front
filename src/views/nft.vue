@@ -2,7 +2,6 @@
 import PageHeader from '@/components/page-header';
 import Horizontal from '@/layouts/horizontal.vue';
 import NftService from '@/services/nft.service';
-import AuctionService from '@/services/auction.service';
 import Layout from '@/layouts/main.vue';
 
 export default {
@@ -29,27 +28,13 @@ export default {
     goToAuction() {
       window.location.href = `/auction/${this.currentAuction?.id}`;
     },
-
-    removeFromSale() {
-      console.log('remove from sale clicked');
-    },
-
     submitSale() {
       // alert(`NFT listed for sale at ${this.salePrice} SC`);
       this.showSaleModal = false;
     },
-
-    async submitAuction() {
-      const auctionData = {
-        nftId: this.nft.id,
-        startingPrice: this.auctionStartPrice,
-        duration: this.auctionDuration * 3600,
-      };
-      const createdAuction = await AuctionService.createAuction(auctionData);
-      console.log('Auction created:', createdAuction);
-
-      this.showAuctionModal = false;
-      window.location.href = `/auction/${createdAuction.id}`;
+    likeNft() {
+      NftService.likeNft(this.id);
+      this.nft.likeCount++;
     },
   },
   computed: {
@@ -159,7 +144,8 @@ export default {
 
                   <BBadge
                     variant="danger-subtle"
-                    class="bg-danger-subtle text-danger ms-3 my-3 fs-12"
+                    class="bg-danger-subtle text-danger ms-3 my-3 fs-12 cursor-pointer"
+                    @click="likeNft"
                   >
                     <i class="ri-heart-line me-1 align-bottom text-base"></i>
                     <span class="text-base"
@@ -187,86 +173,9 @@ export default {
                       {{ this.nft.price }} SC.
                     </div>
                     <div class="d-grid gap-2">
-                      <BButton variant="outline-danger" @click="removeFromSale"
-                        >Remove from Sale</BButton
-                      >
+                      <BButton variant="outline-danger">Buy It</BButton>
                     </div>
                   </div>
-
-                  <!-- CASE 3: NFT is not listed -->
-                  <div v-else>
-                    <!-- Buttons Grid -->
-                    <div class="d-grid gap-2">
-                      <BButton variant="primary" @click="showSaleModal = true"
-                        >Place on Sale</BButton
-                      >
-                      <BButton
-                        variant="warning"
-                        @click="showAuctionModal = true"
-                        >Start Auction</BButton
-                      >
-                    </div>
-                  </div>
-
-                  <BModal
-                    v-model="showSaleModal"
-                    title="Place NFT on Sale"
-                    class="v-modal-custom"
-                    centered
-                  >
-                    <form @submit.prevent="submitSale">
-                      <div class="mb-3">
-                        <label for="price" class="form-label">Price (SC)</label>
-                        <input
-                          v-model="salePrice"
-                          type="number"
-                          class="form-control"
-                          required
-                          min="1"
-                          step="1"
-                        />
-                      </div>
-                      <button type="submit" class="btn btn-primary">
-                        Confirm
-                      </button>
-                    </form>
-                  </BModal>
-
-                  <!-- Start Auction Modal -->
-                  <BModal
-                    v-model="showAuctionModal"
-                    title="Start Auction"
-                    class="v-modal-custom"
-                    centered
-                  >
-                    <form @submit.prevent="submitAuction">
-                      <div class="mb-3">
-                        <label class="form-label">Starting Price (SC)</label>
-                        <input
-                          v-model="auctionStartPrice"
-                          type="number"
-                          class="form-control"
-                          required
-                          min="1"
-                          step="1"
-                        />
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Duration (hours)</label>
-                        <input
-                          v-model="auctionDuration"
-                          type="number"
-                          class="form-control"
-                          required
-                          min="1"
-                          step="1"
-                        />
-                      </div>
-                      <button type="submit" class="btn btn-warning">
-                        Start Auction
-                      </button>
-                    </form>
-                  </BModal>
 
                   <div class="product-content mt-5">
                     <h3 class="mb-3">Product Description :</h3>
@@ -289,7 +198,7 @@ export default {
                               </tr>
                             </thead>
                             <tbody class="text-base">
-                              <tr>
+                              <!-- <tr>
                                 <td>
                                   <i
                                     class="ri-shopping-cart-2-line text-success me-2"
@@ -308,7 +217,7 @@ export default {
                                   >
                                 </td>
                                 <td>29 April, 2022</td>
-                              </tr>
+                              </tr> -->
 
                               <tr
                                 v-for="auction in nft.auctions"
