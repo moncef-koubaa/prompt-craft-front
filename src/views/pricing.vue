@@ -104,7 +104,7 @@ export default {
             <h5 class="fw-semibold mb-2">{{ plan.name }}</h5>
             <h2 class="text-primary mb-3">${{ plan.price }}</h2>
             <p class="text-muted">{{ plan.description }}</p>
-            <h3 class="mb-3">{{ plan.quantity }} Currency</h3>
+            <h3 class="mb-3">{{ plan.quantity }} Sigma Coins (SC)</h3>
             <BButton @click="buyPlan(plan.id)" class="btn btn-success w-100">
               Buy Currency
             </BButton>

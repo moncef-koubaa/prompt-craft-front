@@ -14,6 +14,7 @@ export default {
       salePrice: null,
       auctionStartPrice: null,
       auctionDuration: null,
+      likeCount: 0,
       loading: true,
       error: null,
     };
@@ -34,7 +35,7 @@ export default {
     },
     likeNft() {
       NftService.likeNft(this.id);
-      this.nft.likeCount++;
+      this.likeCount++;
     },
   },
   computed: {
@@ -52,6 +53,7 @@ export default {
     try {
       const nftId = parseInt(this.id);
       this.nft = await NftService.getNft(nftId);
+      this.likeCount = this.nft.likeCount || 0;
     } catch (err) {
       console.error('Error loading NFT:', err);
       this.error = 'Failed to load NFT.';
@@ -148,9 +150,7 @@ export default {
                     @click="likeNft"
                   >
                     <i class="ri-heart-line me-1 align-bottom text-base"></i>
-                    <span class="text-base"
-                      >{{ this.nft.likeCount }} Likes</span
-                    >
+                    <span class="text-base">{{ this.likeCount }} Likes</span>
                   </BBadge>
 
                   <!-- Buttons Grid -->
