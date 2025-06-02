@@ -5,6 +5,7 @@ const API_BASE = '/user';
 const userService = {
     async getBalance() {
         const response = await apiClientAuth.get(`${API_BASE}/balance`);
+        console.log("User balance response:", response);
         return response.data;
     },
 

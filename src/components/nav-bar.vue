@@ -14,6 +14,7 @@ import userService from "@/services/userService";
  */
 export default {
   setup() {
+    const myBalance = ref(0);
     const notificationStore = useNotificationStore();
     let { notifications, unreadCount, isConnected, error, notificationCount } =
       storeToRefs(notificationStore);
@@ -26,6 +27,8 @@ export default {
         console.log("notification filler", notifications.value);
         notificationCount.value += unread.length;
         console.log("notification count", notificationCount.value);
+        myBalance.value = await userService.getBalance();
+        console.log("my balance", this.myBalance);
       } catch (err) {
         console.error("Failed to fetch unread notifications", err);
       }
@@ -43,6 +46,7 @@ export default {
       isConnected,
       error,
       notificationCount,
+      myBalance,
     };
   },
   data() {
@@ -54,6 +58,7 @@ export default {
       flag: null,
       value: null,
       myVar: 1,
+
     };
   },
   components: {

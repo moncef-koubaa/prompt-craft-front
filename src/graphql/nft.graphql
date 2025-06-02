@@ -31,5 +31,6 @@ query GetNft($id: Int!) {
     isOnAuction
     isOnSale
     mintedAt
+    likeCount
   }
 }
