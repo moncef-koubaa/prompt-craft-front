@@ -65,6 +65,7 @@ export default class BidsService {
   // HTTP API Methods
   static async joinAuction(auctionId) {
     console.log(`Joining auction ${auctionId}`);
+    console.log('Begin to join auction');
     return apiClientAuth.post(`/auctions/join/${auctionId}`);
   }
 

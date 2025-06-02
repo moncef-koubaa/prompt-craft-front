@@ -13,7 +13,7 @@ export default {
   data() {
     return {
       /* auctionId: this.$route.params.id, */
-      auctionId: 7,
+      auctionId: 8,
       currentBid: 0,
       nextBid: 0,
       bidIncrement: 0.1,
@@ -47,9 +47,12 @@ export default {
   async mounted() {
     try {
       const token = localStorage.getItem("token");
+
       await BidsService.connectToRoom(this.auctionId, token);
       console.log("Connected to auction room:", this.auctionId);
+
       const joined = await BidsService.isParticipant(this.auctionId);
+      console.log("Is Participant:", joined);
       if (!joined) {
         const joinResponse = await BidsService.joinAuction(this.auctionId);
         console.log("Join Response:", joinResponse);
