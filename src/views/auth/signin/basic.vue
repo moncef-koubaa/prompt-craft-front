@@ -81,8 +81,8 @@ export default {
                   <form  @submit="handleLogin">
 
                     <div class="mb-3">
-                      <label for="username" class="form-label">Username</label>
-                      <input v-model="username" type="text" class="form-control" id="username" placeholder="Enter username">
+                      <label for="username" class="form-label">Email</label>
+                      <input v-model="username" type="text" class="form-control" id="username" placeholder="Enter email">
                     </div>
 
                     <div class="mb-3">
