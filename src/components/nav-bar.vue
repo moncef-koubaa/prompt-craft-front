@@ -400,7 +400,6 @@ export default {
                           ),
                         }"
                       >
-                        <router-link to="/nft/{{notification.nftId}}">
                         <div
                           class="bg-white border border-blue-200 rounded-lg hover:shadow-md transition-shadow duration-200 p-4"
                         >
@@ -460,6 +459,7 @@ export default {
                             </button>
 
                             <!-- Notification Content -->
+                            <router-link to="/nft/{{notification.nftId}}">
                             <div class="flex-1 min-w-0">
                               <h3 class="font-medium text-sm text-gray-900">
                                 {{ notification.user }}
@@ -480,9 +480,9 @@ export default {
                                 </div>
                               </transition>
                             </div>
+                            </router-link>
                           </div>
                         </div>
-                        </router-link>
                       </div>
                     </transition-group>
                   </div>
