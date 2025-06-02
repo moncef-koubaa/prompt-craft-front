@@ -89,6 +89,7 @@
     "vue-loader": "^17.4.2",
     "vue-prismjs": "^1.2.0",
     "vue-router": "^4.3.2",
+    "vue-slider-component": "^3.2.24",
     "vue-sweetalert2": "^5.0.11",
     "vue3-apexcharts": "^1.5.2",
     "vue3-count-to": "^1.1.2",

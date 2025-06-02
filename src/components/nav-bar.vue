@@ -1,5 +1,5 @@
 <script>
-import { layoutMethods } from "@/state/helpers";
+import {layoutMethods} from "@/state/helpers";
 import img1 from "../assets/images/products/img-1.png";
 import img2 from "../assets/images/products/img-2.png";
 import img3 from "../assets/images/products/img-3.png";
@@ -9,15 +9,18 @@ import img5 from "../assets/images/products/img-5.png";
 import simplebar from "simplebar-vue";
 
 import i18n from "../i18n";
-import { useNotificationStore } from "@/stores/notification";
-import { storeToRefs } from "pinia";
-import { onMounted, onUnmounted } from "vue";
-import { notificationService } from "@/services/notificationService";
+import {useNotificationStore} from "@/stores/notification";
+import {storeToRefs} from "pinia";
+import {onMounted, onUnmounted, ref} from "vue";
+import {notificationService} from "@/services/notificationService";
+import userService from "@/services/userService";
+
 /**
  * Nav-bar Component
  */
 export default {
   setup() {
+    const myBalance = ref(0);
     const notificationStore = useNotificationStore();
     let { notifications, unreadCount, isConnected, error, notificationCount } =
       storeToRefs(notificationStore);
@@ -30,6 +33,8 @@ export default {
         console.log("notification filler", notifications.value);
         notificationCount.value += unread.length;
         console.log("notification count", notificationCount.value);
+        myBalance.value = await userService.getBalance();
+        console.log("my balance", this.myBalance);
       } catch (err) {
         console.error("Failed to fetch unread notifications", err);
       }
@@ -47,6 +52,7 @@ export default {
       isConnected,
       error,
       notificationCount,
+      myBalance,
     };
   },
   data() {
@@ -141,6 +147,7 @@ export default {
       flag: null,
       value: null,
       myVar: 1,
+
     };
   },
   components: {
@@ -954,7 +961,7 @@ export default {
             <div class="dropdown-divider"></div>
 
               ><i class="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i>
-              <span class="align-middle"> Balance : <b>$5971.67</b></span>
+              <span class="align-middle"> Balance : <b>{{myBalance}} SC</b></span>
 
             <router-link class="dropdown-item" to="/auth/logout"
               ><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
