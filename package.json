@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@ai-sdk/vue": "^1.2.10",
+    "@apollo/client": "^3.13.8",
     "@ckeditor/ckeditor5-build-classic": "^44.3.0",
     "@ckeditor/ckeditor5-vue": "^7.3.0",
     "@coinbase/wallet-sdk": "^4.3.2",
@@ -38,6 +39,7 @@
     "@tiptap/starter-kit": "^2.11.7",
     "@tiptap/vue-3": "^2.11.7",
     "@vue-leaflet/vue-leaflet": "^0.10.1",
+    "@vue/apollo-composable": "^4.2.2",
     "@vueform/multiselect": "^2.6.7",
     "@vueform/slider": "^2.1.10",
     "@vueform/toggle": "^2.1.4",
@@ -61,6 +63,7 @@
     "eventsource": "^4.0.0",
     "feather-icons": "^4.29.1",
     "firebase": "^10.7.1",
+    "graphql": "^16.11.0",
     "highlight.js": "^11.9.0",
     "leaflet": "^1.9.4",
     "lottie-web": "^5.12.2",
@@ -106,10 +109,13 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^8.31.0",
     "eslint-plugin-vue": "^7.0.0",
+    "graphql-loader": "^1.2.1",
+    "graphql-tag": "^2.12.6",
     "postcss": "^8.5.1",
     "tailwindcss": "^3.4.17",
     "ts-loader": "^9.5.1",
     "typescript": "^5.7.2",
+    "vite-plugin-graphql-loader": "^4.0.4",
     "vue-component-tree": "^3.0.2"
   },
   "resolutions": {
