@@ -4,6 +4,7 @@ import simplebar from "simplebar-vue";
 import Layout from "@/layouts/main.vue";
 import BidsService from "@/services/bids.service";
 import AuctionService from "@/services/auction.service";
+import userService from "@/services/userService";
 
 export default {
   components: {
@@ -16,9 +17,10 @@ export default {
       auctionId: 0,
       auction: null,
       isOwner: false,
+      userBalance: null,
       currentBid: 0,
       nextBid: 0,
-      bidIncrement: 0.1,
+      bidIncrement: 1,
       showBidModal: false,
       bidAmount: "",
       timeLeft: {
@@ -48,9 +50,12 @@ export default {
   },
   async mounted() {
     this.auctionId = this.$route.params.auctionId;
-    console.log("Auction ID:", this.auctionId);
+    this.userBalance = await userService.getBalance();
     this.auction = await AuctionService.getAuctionById(this.auctionId);
     this.auction = this.auction.getAuction;
+    console.log("Auction Data:", this.auction);
+    this.isOwner = await this.auction.ownerId === userService.getUserId();
+    console.log("Is Owner:", this.isOwner);
     this.currentBid = this.auction.maxBidAmount;
     this.bids = this.auction.bids;
     console.log("Auction Data:", this.auction);
@@ -358,7 +363,7 @@ input[type="number"] {
                         <div>
                           <p class="text-muted fw-medium mb-1">Price :</p>
                           <h5 class="fs-17 text-success mb-0">
-                            <i class="mdi mdi-ethereum me-1"></i> 83.06 ETH
+                            <i class="mdi mdi-ethereum me-1"></i> 83.06 SC
                           </h5>
                         </div>
                       </div>
@@ -367,7 +372,7 @@ input[type="number"] {
                       <div class="p-2 border border-dashed rounded text-center">
                         <div>
                           <p class="text-muted fw-medium mb-1">Highest bid</p>
-                          <h5 class="fs-17 mb-0">104.63 ETH</h5>
+                          <h5 class="fs-17 mb-0">104.63 SC</h5>
                         </div>
                       </div>
                     </BCol>
@@ -429,7 +434,7 @@ input[type="number"] {
                                     </router-link>
                                   </div>
                                 </th>
-                                <td>0.235 ETH</td>
+                                <td>0.235 SC</td>
                                 <td>
                                   <div class="d-flex align-items-center">
                                     <img
@@ -465,7 +470,7 @@ input[type="number"] {
                                     </router-link>
                                   </div>
                                 </th>
-                                <td>571.24 ETH</td>
+                                <td>571.24 SC</td>
                                 <td>
                                   <div class="d-flex align-items-center">
                                     <img
@@ -501,7 +506,7 @@ input[type="number"] {
                                     </router-link>
                                   </div>
                                 </th>
-                                <td>130.39 ETH</td>
+                                <td>130.39 SC</td>
                                 <td>
                                   <div class="d-flex align-items-center">
                                     <img
@@ -537,7 +542,7 @@ input[type="number"] {
                                     </router-link>
                                   </div>
                                 </th>
-                                <td>81.72 ETH</td>
+                                <td>81.72 SC</td>
                                 <td>
                                   <div class="d-flex align-items-center">
                                     <img
@@ -1000,7 +1005,7 @@ input[type="number"] {
 
                   <div class="flex items-center space-x-2">
                     <span class="text-amber-500">👤</span>
-                    <span class="text-sm font-medium">24 active bidders</span>
+                    <span class="text-sm font-medium">{{ this.auction?.bids.length }} active bidders</span>
                   </div>
                 </div>
 
@@ -1307,7 +1312,7 @@ input[type="number"] {
                       <div class="text-center mb-6">
                         <h2 class="text-2xl font-bold">Place Your Bid</h2>
                         <p class="text-gray-500 dark:text-gray-400 mt-1">
-                          You're about to place a bid on Patterns Arts & Culture
+                          You're about to place a bid on {{ this.auction?.nft.title }}
                         </p>
                       </div>
 
@@ -1318,15 +1323,15 @@ input[type="number"] {
                             <span class="text-gray-500 dark:text-gray-400"
                               >Current Bid</span
                             >
-                            <span class="font-bold">{{ currentBid }} ETH</span>
+                            <span class="font-bold">{{ currentBid }} SC</span>
                           </div>
                           <div class="flex justify-between items-center mt-1">
                             <span class="dark:text-gray-400">Minimum Bid</span>
                             <span class="font-medium"
                               >{{
-                                parseFloat((currentBid + 0.01).toFixed(2))
+                                parseFloat((currentBid + 1).toFixed(2))
                               }}
-                              ETH</span
+                              SC</span
                             >
                           </div>
                         </div>
@@ -1344,15 +1349,15 @@ input[type="number"] {
                               id="bidAmount"
                               v-model="bidAmount"
                               type="number"
-                              step="0.01"
-                              :min="currentBid + 0.01"
+                              step="1"
+                              :min="currentBid + 1"
                               class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500 pr-16"
                               placeholder="Enter amount"
                             />
                             <div
                               class="absolute right-3 top-1/2 -translate-y-1/2 font-bold text-gray-500"
                             >
-                              ETH
+                              SC
                             </div>
                           </div>
                           <p class="text-sm text-gray-500 mt-1">
@@ -1364,28 +1369,7 @@ input[type="number"] {
                           </p>
                         </div>
 
-                        <!-- Gas Fee -->
-                        <div class="flex justify-between items-center text-sm">
-                          <span class="text-gray-500 dark:text-gray-400"
-                            >Estimated Gas Fee</span
-                          >
-                          <span>0.005 ETH</span>
-                        </div>
-
-                        <!-- Service Fee -->
-                        <div class="flex justify-between items-center text-sm">
-                          <span class="text-gray-500 dark:text-gray-400"
-                            >Service Fee (2.5%)</span
-                          >
-                          <span
-                            >{{
-                              bidAmount ? (bidAmount * 0.025).toFixed(3) : "0"
-                            }}
-                            ETH</span
-                          >
-                        </div>
-
-                        <hr class="border-gray-200" />
+                        
 
                         <!-- Total -->
                         <div
@@ -1395,14 +1379,9 @@ input[type="number"] {
                           <span
                             >{{
                               bidAmount
-                                ? (
-                                    parseFloat(bidAmount) +
-                                    0.005 +
-                                    parseFloat(bidAmount) * 0.025
-                                  ).toFixed(3)
-                                : "0"
+                                
                             }}
-                            ETH</span
+                            SC</span
                           >
                         </div>
 
@@ -1413,7 +1392,7 @@ input[type="number"] {
                           <span class="text-gray-500 dark:text-gray-400"
                             >Your Wallet Balance</span
                           >
-                          <span class="font-bold">5.243 ETH</span>
+                          <span class="font-bold">{{ this.userBalance }}</span>
                         </div>
 
                         <!-- Bid Button -->
