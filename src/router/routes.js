@@ -57,6 +57,10 @@ const routes = [
         path: '/auth/signin',
         name: 'signin',
         component: () => import('@/views/auth/signin/basic.vue'),
+    }, {
+        path: '/auth/logout',
+        name: 'logout',
+        component: () => import('@/views/auth/logout.vue'),
     },
     {
         path: '/notif',

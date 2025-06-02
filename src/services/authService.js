@@ -38,6 +38,7 @@ const authService = {
     },
 
     logout: () => {
+        console.log('Logout');
         localStorage.removeItem('token');
     }
 };
