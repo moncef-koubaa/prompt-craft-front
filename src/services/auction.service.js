@@ -1,7 +1,7 @@
 import { apolloClient } from "./API/apollo-client";
 import apiClientAuth from "./API/authenticated";
 import GetAuctions from "@/graphql/auction.graphql";
-
+import getAuction from "@/graphql/auctionById.graphql";
 
   
 export default class AuctionService {
@@ -35,5 +35,26 @@ export default class AuctionService {
             console.error("Error fetching auction by ID:", error);
             throw error;
         }
+    }
+    static async getAuctionById(id) {
+        console.log("Fetching auction by ID:", id);
+        if (!id) {
+            throw new Error("Auction ID is required");
+        }
+        try{
+            
+            const response = await apolloClient.query({
+                query: getAuction,
+                variables: {
+                    id: id.toString(),
+                },
+            });
+            return response.data;
+        }
+        catch (error) {
+            console.error("Error fetching auction by ID:", error);
+            throw error;
+        }
+
     }
 }

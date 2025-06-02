@@ -96,6 +96,7 @@ export default {
             class="product-item upto-15 cursor-pointer"
             v-for="auction in auctions"
             v-bind:key="auction.id"
+            @click="() => $router.push(`/auction/${auction.id}`)"
           >
             <BCard no-body class="explore-box card-animate">
               <div class="position-relative rounded overflow-hidden">

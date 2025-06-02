@@ -3,6 +3,7 @@ import PageHeader from "@/components/page-header";
 import simplebar from "simplebar-vue";
 import Layout from "@/layouts/main.vue";
 import BidsService from "@/services/bids.service";
+import AuctionService from "@/services/auction.service";
 
 export default {
   components: {
@@ -12,8 +13,9 @@ export default {
   },
   data() {
     return {
-      /* auctionId: this.$route.params.id, */
-      auctionId: 7,
+      auctionId: 0,
+      auction: null,
+      isOwner: false,
       currentBid: 0,
       nextBid: 0,
       bidIncrement: 0.1,
@@ -45,24 +47,29 @@ export default {
     };
   },
   async mounted() {
+    this.auctionId = this.$route.params.auctionId;
+    console.log("Auction ID:", this.auctionId);
+    this.auction = await AuctionService.getAuctionById(this.auctionId);
+    this.auction = this.auction.getAuction;
+    this.currentBid = this.auction.maxBidAmount;
+    this.bids = this.auction.bids;
+    console.log("Auction Data:", this.auction);
+    this.initializeTimer(this.auction.endTime);
     try {
       const token = localStorage.getItem("token");
       await BidsService.connectToRoom(this.auctionId, token);
       console.log("Connected to auction room:", this.auctionId);
       const joined = await BidsService.isParticipant(this.auctionId);
-      if (!joined) {
+      console.log("Is Participant:", joined.data);
+      if (!joined.data) {
         const joinResponse = await BidsService.joinAuction(this.auctionId);
         console.log("Join Response:", joinResponse);
         console.log(`Joined auction ${this.auctionId} successfully`);
       }
 
-      await this.loadAuctionData();
-
       BidsService.on("newBid", this.handleNewBid);
       BidsService.on("auctionEnded", this.handleAuctionEnded);
       BidsService.on("error", this.handleSocketError);
-
-      this.startTimers();
     } catch (error) {
       this.errorMessage = "Failed to initialize auction";
       console.error(error);
@@ -77,27 +84,6 @@ export default {
     BidsService.off("error", this.handleSocketError);
   },
   methods: {
-    async loadAuctionData() {
-      try {
-        const response = await BidsService.getAuctionDetails(this.auctionId);
-        const auction = response.data;
-        console.log("Auction Details:", auction);
-
-        this.currentBid = auction.currentBid;
-        this.nextBid = parseFloat(
-          (auction.currentBid + this.bidIncrement).toFixed(2)
-        );
-        this.bids = auction.bidHistory;
-        this.watchCount = auction.watchCount;
-        this.likeCount = auction.likeCount;
-
-        this.initializeTimer(auction.endTime);
-      } catch (error) {
-        this.errorMessage = "Failed to load auction data";
-        console.error(error);
-      }
-    },
-
     initializeTimer(endTime) {
       const endDate = new Date(endTime).getTime();
 
@@ -137,16 +123,10 @@ export default {
     },
 
     handleNewBid(bid) {
+      console.log("New bid received:", bid);
       this.currentBid = bid.amount;
-      this.nextBid = parseFloat((bid.amount + this.bidIncrement).toFixed(2));
 
-      this.bids.unshift({
-        id: bid.id,
-        bidder: bid.user.name,
-        avatar: bid.user.avatar || bid.user.name.substring(0, 2).toUpperCase(),
-        amount: bid.amount,
-        time: "Just now",
-      });
+      this.bids = [bid, ...this.bids];
 
       this.bidSuccess = true;
       setTimeout(() => (this.bidSuccess = false), 3000);
@@ -186,6 +166,22 @@ export default {
       } finally {
         this.isPlacingBid = false;
       }
+    },
+    replaceTime(date) {
+      date = new Date(date);
+      const hours = date.getHours().toString().padStart(2, "0");
+      const minutes = date.getMinutes().toString().padStart(2, "0");
+      const seconds = date.getSeconds().toString().padStart(2, "0");
+      return `${hours}:${minutes}:${seconds}`;
+    },
+    replaceDate(date) {
+      date = new Date(date);
+      const day = date.getUTCDate();
+      const month = date.toLocaleString("en-US", {
+        month: "long",
+      });
+      const year = date.getUTCFullYear();
+      return `${day} ${month} ${year}`;
     },
 
     openBidModal() {
@@ -271,7 +267,7 @@ input[type="number"] {
                   <span><i class="ri-fire-fill align-bottom"></i> Hot</span>
                 </div>
                 <img
-                  src="@/assets/images/nft/img-05.jpg"
+                  :src="this.auction?.nft.imageUrl"
                   alt=""
                   class="img-fluid rounded"
                 />
@@ -279,36 +275,6 @@ input[type="number"] {
                   <div
                     class="position-absolute top-0 end-0 start-0 bottom-0 bg-white opacity-25"
                   ></div>
-                  <BRow class="justify-content-center">
-                    <BCol cols="3">
-                      <img
-                        src="@/assets/images/nft/img-02.jpg"
-                        alt=""
-                        class="img-fluid rounded"
-                      />
-                    </BCol>
-                    <BCol cols="3">
-                      <img
-                        src="@/assets/images/nft/img-03.jpg"
-                        alt=""
-                        class="img-fluid rounded"
-                      />
-                    </BCol>
-                    <BCol cols="3">
-                      <img
-                        src="https://img.themesbrand.com/velzon/images/img-3.gif"
-                        alt=""
-                        class="img-fluid rounded h-100 object-fit-cover"
-                      />
-                    </BCol>
-                    <BCol cols="3">
-                      <img
-                        src="@/assets/images/nft/img-06.jpg"
-                        alt=""
-                        class="img-fluid rounded"
-                      />
-                    </BCol>
-                  </BRow>
                 </div>
               </BCard>
             </div>
@@ -347,22 +313,27 @@ input[type="number"] {
                 ><i class="ri-eye-line me-1 align-bottom"></i> 8,634 watching
                 this</BBadge
               >
-              <h4>Patterns Arts & Culture</h4>
+              <h4>{{ this.auction?.nft.title }}</h4>
               <div class="hstack gap-3 flex-wrap">
                 <div class="text-muted">
-                  Creators :
-                  <router-link to="#" class="text-primary fw-medium"
-                    >Nancy Martino</router-link
-                  >
+                  Creator :
+                  <router-link to="#" class="text-primary fw-medium">{{
+                    this.auction?.nft.creator.username
+                  }}</router-link>
                 </div>
                 <div class="vr"></div>
                 <div class="text-muted">
-                  Seller : <span class="text-body fw-medium">Rickey Teran</span>
+                  Seller :
+                  <span class="text-body fw-medium">{{
+                    this.auction?.nft.owner.username
+                  }}</span>
                 </div>
                 <div class="vr"></div>
                 <div class="text-muted">
                   Published :
-                  <span class="text-body fw-medium">29 April, 2022</span>
+                  <span class="text-body fw-medium">{{
+                    replaceDate(this.auction?.createdAt)
+                  }}</span>
                 </div>
               </div>
               <div class="d-flex flex-wrap gap-2 align-items-center mt-3">
@@ -1040,7 +1011,9 @@ input[type="number"] {
                     Current Bid
                   </h3>
                   <div class="flex items-baseline">
-                    <span class="text-4xl font-bold">{{ currentBid }} ETH</span>
+                    <span class="text-4xl font-bold"
+                      >{{ this.currentBid }} ETH</span
+                    >
                     <span class="ml-2 text-sm text-gray-500 dark:text-gray-400"
                       >≈ ${{ (currentBid * 3450).toLocaleString() }}</span
                     >
@@ -1065,36 +1038,36 @@ input[type="number"] {
                 </transition>
 
                 <!-- Bid Increment Buttons -->
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-3 gap-3" v-if="!this.isOwner">
                   <button
                     class="inline-flex items-center justify-center rounded-md text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 h-12"
                     @click="
-                      handlePresetBid(parseFloat((currentBid + 0.1).toFixed(2)))
+                      handlePresetBid(parseFloat((currentBid + 1).toFixed(2)))
                     "
                   >
-                    +0.1 ETH
+                    +1 ETH
                   </button>
                   <button
                     class="inline-flex items-center justify-center rounded-md text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 h-12"
                     @click="
-                      handlePresetBid(parseFloat((currentBid + 0.2).toFixed(2)))
+                      handlePresetBid(parseFloat((currentBid + 2).toFixed(2)))
                     "
                   >
-                    +0.2 ETH
+                    +2 ETH
                   </button>
                   <button
                     class="inline-flex items-center justify-center rounded-md text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 h-12"
                     @click="
-                      handlePresetBid(parseFloat((currentBid + 0.5).toFixed(2)))
+                      handlePresetBid(parseFloat((currentBid + 5).toFixed(2)))
                     "
                   >
-                    +0.5 ETH
+                    +5 ETH
                   </button>
                 </div>
 
                 <!-- Main Bid Button -->
                 <div class="relative">
-                  <!--                        <button-->
+                  <!-- <button-->
                   <!--                            class="w-full py-6 text-xl font-bold bg-amber-500 hover:bg-amber-600 text-white h-14 rounded-md transition-transform hover:scale-[1.02] active:scale-[0.98]"-->
                   <!--                            @click="handlePlaceBid"-->
                   <!--                            :disabled="isPlacingBid"-->
@@ -1105,7 +1078,7 @@ input[type="number"] {
                   <!--                          </div>-->
                   <!--                          <template v-else>-->
                   <!--                            BID NOW: {{ nextBid }} ETH-->
-                  <!--                          </template>-->
+                  <!--                          </template> -->
                   <BButton variant="primary" class="w-100" @click="openBidModal"
                     >Place Bid</BButton
                   >
@@ -1167,11 +1140,13 @@ input[type="number"] {
                             {{ bid.avatar }}
                           </div>
                           <div>
-                            <div class="font-medium">{{ bid.bidder }}</div>
+                            <div class="font-medium">
+                              {{ bid.bidder.username }}
+                            </div>
                             <div
                               class="text-xs text-gray-500 dark:text-gray-400"
                             >
-                              {{ bid.time }}
+                              {{ replaceTime(bid.createdAt) }}
                             </div>
                           </div>
                         </div>
@@ -1294,7 +1269,7 @@ input[type="number"] {
                 leave-to-class="opacity-0"
               >
                 <div
-                  v-if="this.howBidModal"
+                  v-if="this.showBidModal"
                   class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
                 >
                   <transition
@@ -1310,7 +1285,7 @@ input[type="number"] {
                     >
                       <!-- Close button -->
                       <button
-                        @click="howBidModal = false"
+                        @click="showBidModal = false"
                         class="absolute top-4 right-4 text-gray-400 hover:text-gray-500"
                       >
                         <svg

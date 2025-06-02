@@ -1,0 +1,33 @@
+query getAuction($id: String! = "") {
+  getAuction(id: $id) {
+    id
+    name
+    startingPrice
+    maxBidAmount
+    isEnded
+    createdAt
+    nft {
+      id
+      imageUrl
+      title
+      creator {
+        id
+        username
+      }
+      owner {
+        id
+        username
+      }
+    }
+    bids {
+      id
+      amount
+      bidder {
+        id
+        username
+      }
+      createdAt
+    }
+    endTime
+  }
+}

@@ -25,10 +25,11 @@ const routes = [
         meta: { requiresAuth: true },
     },
     {
-        path: '/auction',
+        path: '/auction/:auctionId',
         name: 'auction',
         component: () => import('@/views/auction/Auction.vue'),
         meta: { requiresAuth: true },
+            
     },
     {
         path: '/wallet',
