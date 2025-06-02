@@ -16,7 +16,7 @@ export const useNotificationStore = defineStore('notifications', () => {
         )); // Exponential backoff with max 30s
 
     // Reactive token (updates when localStorage changes)
-    const token = computed(() => localStorage.getItem('authToken'))
+    const token = computed(() => localStorage.getItem('token'))
 
     // Getters
     const unreadCount = computed(() =>
