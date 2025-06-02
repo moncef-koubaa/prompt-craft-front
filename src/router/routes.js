@@ -1,4 +1,3 @@
-
 const routes = [
     {
         path: '/',
@@ -7,9 +6,10 @@ const routes = [
         meta: { requiresAuth: true },
     },
     {
-        path: '/my-nft',
+        path: '/my-nft/:id',
         name: 'my-nft',
         component: () => import('@/views/my-nft.vue'),
+        props: true,
         meta: { requiresAuth: true },
     },
     {
@@ -62,6 +62,16 @@ const routes = [
         path: '/auth/logout',
         name: 'logout',
         component: () => import('@/views/auth/logout.vue'),
+    },
+    {
+        path: '/notif',
+        name: 'notifications',
+        component: () => import('@/views/notif.vue'),
+    },
+    {
+        path: '/pricing',
+        name: 'pricing',
+        component: () => import('@/views/pricing.vue'),
     },
 ]
 
