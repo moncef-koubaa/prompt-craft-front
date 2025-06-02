@@ -33,6 +33,11 @@ const userService = {
         return response.data;
     },
 
+    async getUserId() {
+        const response = await apiClientAuth.get(`${API_BASE}/id`);
+        return response.data;
+    },
+
     async getOwnedNfts() {
         const response = await apiClientAuth.get(`${API_BASE}/owned-nfts`);
         return response.data;
