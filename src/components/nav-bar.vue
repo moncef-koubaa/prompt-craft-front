@@ -146,56 +146,10 @@ export default {
   components: {
     simplebar,
   },
-
-  beforeUnmount() {
-    // Cleanup SSE connection
-    if (this.notificationsStore.sse) {
-      this.notificationsStore.sse.close();
-    }
-  },
-
   methods: {
     ...layoutMethods,
     isCustomDropdown() {
       //Search bar
-      var searchOptions = document.getElementById("search-close-options");
-      var dropdown = document.getElementById("search-dropdown");
-      var searchInput = document.getElementById("search-options");
-
-      searchInput.addEventListener("focus", () => {
-        var inputLength = searchInput.value.length;
-        if (inputLength > 0) {
-          dropdown.classList.add("show");
-          searchOptions.classList.remove("d-none");
-        } else {
-          dropdown.classList.remove("show");
-          searchOptions.classList.add("d-none");
-        }
-      });
-
-      searchInput.addEventListener("keyup", () => {
-        var inputLength = searchInput.value.length;
-        if (inputLength > 0) {
-          dropdown.classList.add("show");
-          searchOptions.classList.remove("d-none");
-        } else {
-          dropdown.classList.remove("show");
-          searchOptions.classList.add("d-none");
-        }
-      });
-
-      searchOptions.addEventListener("click", () => {
-        searchInput.value = "";
-        dropdown.classList.remove("show");
-        searchOptions.classList.add("d-none");
-      });
-
-      document.body.addEventListener("click", (e) => {
-        if (e.target.getAttribute("id") !== "search-options") {
-          dropdown.classList.remove("show");
-          searchOptions.classList.add("d-none");
-        }
-      });
     },
     toggleHamburgerMenu() {
       var windowSize = document.documentElement.clientWidth;
@@ -281,13 +235,6 @@ export default {
         }
       }
     },
-    setLanguage(locale, country, flag) {
-      this.lan = locale;
-      this.text = country;
-      this.flag = flag;
-      document.getElementById("header-lang-img").setAttribute("src", flag);
-      i18n.global.locale = locale;
-    },
     toggleDarkMode() {
       if (document.documentElement.getAttribute("data-bs-theme") == "dark") {
         document.documentElement.setAttribute("data-bs-theme", "light");
@@ -300,10 +247,7 @@ export default {
         mode: mode,
       });
     },
-    removeItem(cartItem) {
-      this.cartItems = this.cartItems.filter((item) => item.id !== cartItem.id);
-      this.$emit("cart-item-price", this.cartItems.length);
-    },
+
     markAllRead() {
       notificationService.markAllNotificationsAsRead();
       this.notifications = [];
@@ -405,21 +349,7 @@ export default {
 
           <!-- App Search-->
           <form class="app-search d-none d-md-block">
-            <div class="position-relative">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Search..."
-                autocomplete="off"
-                id="search-options"
-                value=""
-              />
-              <span class="mdi mdi-magnify search-widget-icon"></span>
-              <span
-                class="mdi mdi-close-circle search-widget-icon search-widget-icon-close d-none"
-                id="search-close-options"
-              ></span>
-            </div>
+
             <div class="dropdown-menu dropdown-menu-lg" id="search-dropdown">
               <simplebar data-simplebar style="max-height: 320px">
                 <div class="dropdown-header">
@@ -570,251 +500,6 @@ export default {
             </BDropdownItem>
           </BDropdown>
 
-          <BDropdown
-            class="dropdown"
-            variant="ghost-secondary"
-            dropstart
-            :offset="{ alignmentAxis: 55, crossAxis: 15, mainAxis: -50 }"
-            toggle-class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle arrow-none"
-            menu-class="dropdown-menu-end"
-          >
-            <template #button-content>
-              <img
-                id="header-lang-img"
-                src="@/assets/images/flags/us.svg"
-                alt="Header Language"
-                height="20"
-                class="rounded"
-              />
-            </template>
-            <BLink
-              href="javascript:void(0);"
-              class="dropdown-item notify-item language py-2"
-              v-for="(entry, key) in languages"
-              :data-lang="entry.language"
-              :title="entry.title"
-              @click="setLanguage(entry.language, entry.title, entry.flag)"
-              :key="key"
-            >
-              <img
-                :src="entry.flag"
-                alt="user-image"
-                class="me-2 rounded"
-                height="18"
-              />
-              <span class="align-middle">{{ entry.title }}</span>
-            </BLink>
-          </BDropdown>
-
-          <BDropdown
-            class="dropdown"
-            variant="ghost-secondary"
-            dropstart
-            :offset="{ alignmentAxis: 57, crossAxis: 0, mainAxis: -42 }"
-            toggle-class="btn-icon btn-topbar rounded-circle mode-layout ms-1 arrow-none"
-            menu-class="p-0 dropdown-menu-end"
-          >
-            <template #button-content>
-              <i class="bx bx-category-alt fs-22"></i>
-            </template>
-            <div
-              class="p-3 border-top-0 dropdown-head border-start-0 border-end-0 border-dashed border dropdown-menu-lg"
-            >
-              <BRow class="align-items-center">
-                <BCol>
-                  <h6 class="m-0 fw-semibold fs-15">Web Apps</h6>
-                </BCol>
-                <BCol cols="auto">
-                  <BLink href="#!" class="btn btn-sm btn-soft-info">
-                    View All Apps
-                    <i class="ri-arrow-right-s-line align-middle"></i>
-                  </BLink>
-                </BCol>
-              </BRow>
-            </div>
-
-            <div class="p-2">
-              <BRow class="g-0">
-                <BCol>
-                  <BLink class="dropdown-icon-item" href="#!">
-                    <img src="@/assets/images/brands/github.png" alt="Github" />
-                    <span>GitHub</span>
-                  </BLink>
-                </BCol>
-                <BCol>
-                  <BLink class="dropdown-icon-item" href="#!">
-                    <img
-                      src="@/assets/images/brands/bitbucket.png"
-                      alt="bitbucket"
-                    />
-                    <span>Bitbucket</span>
-                  </BLink>
-                </BCol>
-                <BCol>
-                  <BLink class="dropdown-icon-item" href="#!">
-                    <img
-                      src="@/assets/images/brands/dribbble.png"
-                      alt="dribbble"
-                    />
-                    <span>Dribbble</span>
-                  </BLink>
-                </BCol>
-              </BRow>
-
-              <BRow class="g-0">
-                <BCol>
-                  <BLink class="dropdown-icon-item" href="#!">
-                    <img
-                      src="@/assets/images/brands/dropbox.png"
-                      alt="dropbox"
-                    />
-                    <span>Dropbox</span>
-                  </BLink>
-                </BCol>
-                <BCol>
-                  <BLink class="dropdown-icon-item" href="#!">
-                    <img
-                      src="@/assets/images/brands/mail_chimp.png"
-                      alt="mail_chimp"
-                    />
-                    <span>Mail Chimp</span>
-                  </BLink>
-                </BCol>
-                <BCol>
-                  <BLink class="dropdown-icon-item" href="#!">
-                    <img src="@/assets/images/brands/slack.png" alt="slack" />
-                    <span>Slack</span>
-                  </BLink>
-                </BCol>
-              </BRow>
-            </div>
-          </BDropdown>
-
-          <BDropdown
-            variant="ghost-secondary"
-            dropstart
-            :offset="{ alignmentAxis: 57, crossAxis: 0, mainAxis: -42 }"
-            class="ms-1 dropdown"
-            toggle-class="btn-icon btn-topbar rounded-circle mode-layout arrow-none"
-            menu-class="dropdown-menu-xl dropdown-menu-end p-0"
-            text="Manual close (auto-close=false)"
-            auto-close="outside"
-          >
-            <template #button-content>
-              <i class="bx bx-shopping-bag fs-22"></i>
-              <span
-                class="position-absolute topbar-badge cartitem-badge fs-10 translate-middle badge rounded-pill bg-info"
-                >{{ cartItems.length }}
-              </span>
-            </template>
-
-            <div
-              class="p-3 border-top-0 border-start-0 dropdown-head border-end-0 border-dashed border dropdown-menu-xl"
-            >
-              <BRow class="align-items-center">
-                <BCol>
-                  <h6 class="m-0 fs-16 fw-semibold">My Cart</h6>
-                </BCol>
-                <BCol cols="auto">
-                  <BBadge
-                    variant="warning-subtle"
-                    class="bg-warning-subtle text-warning fs-13"
-                    ><span class="cartitem-badge">
-                      {{ cartItems.length }}
-                    </span>
-                    items</BBadge
-                  >
-                </BCol>
-              </BRow>
-            </div>
-            <simplebar data-simplebar style="max-height: 300px">
-              <div class="p-2">
-                <div
-                  class="text-center empty-cart"
-                  id="empty-cart"
-                  v-if="cartItems.length === 0"
-                >
-                  <div class="avatar-md mx-auto my-3">
-                    <div
-                      class="avatar-title bg-info-subtle text-info fs-36 rounded-circle"
-                    >
-                      <i class="bx bx-cart"></i>
-                    </div>
-                  </div>
-                  <h5 class="mb-3">Your Cart is Empty!</h5>
-                  <router-link
-                    to="/ecommerce/products"
-                    class="btn btn-success w-md mb-3"
-                    >Shop Now</router-link
-                  >
-                </div>
-                <div
-                  class="d-block dropdown-item dropdown-item-cart text-wrap px-3 py-2"
-                  v-for="(item, index) in cartItems"
-                  :key="index"
-                >
-                  <div class="d-flex align-items-center">
-                    <img
-                      :src="item.productImage"
-                      class="me-3 rounded-circle avatar-sm p-2 bg-light"
-                    />
-                    <div class="flex-grow-1">
-                      <h6 class="mt-0 mb-1 fs-14">
-                        <router-link
-                          :to="item.productLink"
-                          class="text-reset"
-                          >{{ item.productName }}</router-link
-                        >
-                      </h6>
-                      <p class="mb-0 fs-12 text-muted">
-                        Quantity: <span>{{ item.quantity }}</span>
-                      </p>
-                    </div>
-                    <div class="px-2">
-                      <h5 class="m-0 fw-normal">
-                        $<span class="cart-item-price">{{
-                          item.itemPrice
-                        }}</span>
-                      </h5>
-                    </div>
-                    <div class="ps-2">
-                      <BButton
-                        variant="ghost-secondary"
-                        size="sm"
-                        class="btn-icon remove-item-btn"
-                        @click="removeItem(item)"
-                      >
-                        <i class="ri-close-fill fs-16"></i>
-                      </BButton>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </simplebar>
-            <div
-              v-if="cartItems.length"
-              class="p-3 border-bottom-0 border-start-0 border-end-0 border-dashed border"
-              id="checkout-elem"
-            >
-              <div
-                class="d-flex justify-content-between align-items-center pb-3"
-              >
-                <h5 class="m-0 text-muted">Total:</h5>
-                <div class="px-2">
-                  <h5 class="m-0" id="cart-item-total">
-                    ${{ calculateTotalPrice }}
-                  </h5>
-                </div>
-              </div>
-
-              <router-link
-                to="/ecommerce/checkout"
-                class="btn btn-success text-center w-100"
-              >
-                Checkout
-              </router-link>
-            </div>
-          </BDropdown>
 
           <div class="ms-1 header-item d-none d-sm-flex">
             <BButton
@@ -1258,51 +943,20 @@ export default {
                 </span>
               </span>
             </template>
-            <h6 class="dropdown-header">Welcome Anna!</h6>
+            <h6 class="dropdown-header">Welcome !</h6>
             <router-link class="dropdown-item" to="/profile"
               ><i
                 class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"
               ></i>
               <span class="align-middle"> Profile</span>
             </router-link>
-            <router-link class="dropdown-item" to="/chat">
-              <i
-                class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"
-              ></i>
-              <span class="align-middle"> Messages</span>
-            </router-link>
-            <router-link class="dropdown-item" to="/apps/tasks-kanban">
-              <i
-                class="mdi mdi-calendar-check-outline text-muted fs-16 align-middle me-1"
-              ></i>
-              <span class="align-middle"> Taskboard</span>
-            </router-link>
-            <router-link class="dropdown-item" to="/pages/faqs"
-              ><i
-                class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"
-              ></i>
-              <span class="align-middle"> Help</span>
-            </router-link>
+
             <div class="dropdown-divider"></div>
-            <router-link class="dropdown-item" to="/pages/profile"
+
               ><i class="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i>
               <span class="align-middle"> Balance : <b>$5971.67</b></span>
-            </router-link>
-            <router-link class="dropdown-item" to="/pages/profile-setting">
-              <BBadge
-                variant="success-subtle"
-                class="bg-success-subtle text-success mt-1 float-end"
-                >New</BBadge
-              ><i
-                class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"
-              ></i>
-              <span class="align-middle"> Settings</span>
-            </router-link>
-            <router-link class="dropdown-item" to="/auth/lockscreen-basic"
-              ><i class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i>
-              <span class="align-middle"> Lock screen</span>
-            </router-link>
-            <router-link class="dropdown-item" to="/logout"
+
+            <router-link class="dropdown-item" to="/auth/logout"
               ><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
               <span class="align-middle" data-key="t-logout"> Logout</span>
             </router-link>
