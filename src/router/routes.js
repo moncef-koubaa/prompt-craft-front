@@ -5,7 +5,7 @@ const routes = [
         component: () => import('@/views/nfts.vue'),
         meta: { requiresAuth: true },
     },
-    { .
+    {
         path: '/my-nft/:id',
         name: 'my-nft',
         component: () => import('@/views/my-nft.vue'),
