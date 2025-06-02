@@ -22,6 +22,7 @@ export default class BidsService {
     });
 
     this.socket.on("newBid", (bid) => {
+      console.log("New bid received:", bid);
       this.callbacks.newBid.forEach((cb) => cb(bid));
     });
 
@@ -30,7 +31,8 @@ export default class BidsService {
     });
 
     this.socket.on("exception", (error) => {
-      this.callbacks.error.forEach((cb) => cb(error));
+      console.error("WebSocket error:", error);
+      
     });
 
     this.socket.on("disconnect", () => {
