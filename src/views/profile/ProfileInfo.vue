@@ -382,9 +382,9 @@ export default {
                         <div class="d-flex align-items-center mb-4">
                           <h5 class="card-title flex-grow-1 mb-0">My NFTs</h5>
                           <div class="flex-shrink-0">
-                            <input class="form-control d-none" type="file" id="formFile" />
-                            <label for="formFile" class="btn btn-danger"><i class="ri-bard-fill me-1 align-bottom"></i>
-                              Generate New NFT</label>
+                            
+                            <router-link to="/chat-bot" class="btn btn-danger"><i class="ri-bard-fill me-1 align-bottom"></i>
+                              Generate New NFT</router-link>
                           </div>
                         </div>
 <!--                        <BRow class="row-cols-xxl-5 row-cols-xl-4 row-cols-lg-3 row-cols-md-2 row-cols-1">-->

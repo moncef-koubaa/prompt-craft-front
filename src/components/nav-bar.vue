@@ -1,20 +1,14 @@
 <script>
-import {layoutMethods} from "@/state/helpers";
-import img1 from "../assets/images/products/img-1.png";
-import img2 from "../assets/images/products/img-2.png";
-import img3 from "../assets/images/products/img-3.png";
-import img4 from "../assets/images/products/img-6.png";
-import img5 from "../assets/images/products/img-5.png";
+import { layoutMethods } from "@/state/helpers";
 
 import simplebar from "simplebar-vue";
 
 import i18n from "../i18n";
-import {useNotificationStore} from "@/stores/notification";
-import {storeToRefs} from "pinia";
-import {onMounted, onUnmounted, ref} from "vue";
-import {notificationService} from "@/services/notificationService";
+import { useNotificationStore } from "@/stores/notification";
+import { storeToRefs } from "pinia";
+import { onMounted, onUnmounted , ref} from "vue";
+import { notificationService } from "@/services/notificationService";
 import userService from "@/services/userService";
-
 /**
  * Nav-bar Component
  */
@@ -57,91 +51,8 @@ export default {
   },
   data() {
     return {
-      cartItems: [
-        {
-          id: 1,
-          productImage: img1,
-          productName: "Branded T-Shirts",
-          productLink: "/ecommerce/product-details",
-          quantity: "10 x $32",
-          itemPrice: "320",
-        },
-        {
-          id: 2,
-          productImage: img2,
-          productName: "Bentwood Chair",
-          productLink: "/ecommerce/product-details",
-          quantity: "5 x $18",
-          itemPrice: "89",
-        },
-        {
-          id: 3,
-          productImage: img3,
-          productName: "Borosil Paper Cup",
-          productLink: "/ecommerce/product-details",
-          quantity: "3 x $250",
-          itemPrice: "750",
-        },
-        {
-          id: 4,
-          productImage: img4,
-          productName: "Gray Styled T-Shirt",
-          productLink: "/ecommerce/product-details",
-          quantity: "1 x $1250",
-          itemPrice: "1250",
-        },
-        {
-          id: 5,
-          productImage: img5,
-          productName: "Stillbird Helmet",
-          productLink: "/ecommerce/product-details",
-          quantity: "2 x $495",
-          itemPrice: "990",
-        },
-      ],
-
-      languages: [
-        {
-          flag: require("@/assets/images/flags/us.svg"),
-          language: "en",
-          title: "English",
-        },
-        {
-          flag: require("@/assets/images/flags/spain.svg"),
-          language: "sp",
-          title: "Española",
-        },
-        {
-          flag: require("@/assets/images/flags/germany.svg"),
-          language: "gr",
-          title: "Deutsche",
-        },
-        {
-          flag: require("@/assets/images/flags/italy.svg"),
-          language: "it",
-          title: "italiana",
-        },
-        {
-          flag: require("@/assets/images/flags/russia.svg"),
-          language: "ru",
-          title: "русский",
-        },
-        {
-          flag: require("@/assets/images/flags/china.svg"),
-          language: "ch",
-          title: "中國人",
-        },
-        {
-          flag: require("@/assets/images/flags/french.svg"),
-          language: "fr",
-          title: "Français",
-        },
-        {
-          flag: require("@/assets/images/flags/ae.svg"),
-          language: "ar",
-          title: "Arabic",
-        },
-      ],
+      username: null,
+      useremail: null,
       lan: i18n.locale,
       text: null,
       flag: null,
@@ -285,7 +196,9 @@ export default {
         .toFixed(2);
     },
   },
-  mounted() {
+  async mounted() {
+    this.username = await userService.getUsername();
+    this.useremail = await userService.getEmail();
     if (process.env.VUE_APP_I18N_LOCALE) {
       this.flag = process.env.VUE_APP_I18N_LOCALE;
       this.languages.forEach((item) => {
@@ -356,7 +269,6 @@ export default {
 
           <!-- App Search-->
           <form class="app-search d-none d-md-block">
-
             <div class="dropdown-menu dropdown-menu-lg" id="search-dropdown">
               <simplebar data-simplebar style="max-height: 320px">
                 <div class="dropdown-header">
@@ -507,6 +419,15 @@ export default {
             </BDropdownItem>
           </BDropdown>
 
+          <div class="ms-1 header-item d-none d-sm-flex">
+            
+            <i class="mdi mdi-circle online-pulse"></i>
+            <router-link
+              to="/auctions"
+            >
+            <div class="text-base mr-4 text-success">Live Auctions</div>
+            </router-link>
+          </div>
 
           <div class="ms-1 header-item d-none d-sm-flex">
             <BButton
@@ -942,10 +863,10 @@ export default {
                 <span class="text-start ms-xl-2">
                   <span
                     class="d-none d-xl-inline-block ms-1 fw-medium user-name-text"
-                    >Edward Diana</span
+                    >{{ this.username }}</span
                   >
                   <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text"
-                    >Founder</span
+                    >{{this.useremail}}</span
                   >
                 </span>
               </span>
@@ -960,9 +881,16 @@ export default {
 
             <div class="dropdown-divider"></div>
 
-              ><i class="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i>
-              <span class="align-middle"> Balance : <b>{{myBalance}} SC</b></span>
-
+            <div class="dropdown-item" to="/profile">
+              <i class="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i>
+              <span class="align-middle"> Balance</span>
+              <br />
+              <b>$5971.67</b>
+            </div>
+            <router-link class="dropdown-item" to="/pricing"
+              ><i class="mdi mdi-currency-usd text-muted fs-16 align-middle me-1"></i>
+              <span class="align-middle"> Shop</span>
+            </router-link>
             <router-link class="dropdown-item" to="/auth/logout"
               ><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
               <span class="align-middle" data-key="t-logout"> Logout</span>
@@ -1095,6 +1023,24 @@ button:hover .arrow-icon {
 /* Check icon animation */
 .check-icon {
   animation: check-pulse 0.2s ease;
+}
+
+.online-pulse {
+  color: rgb(4, 87, 4);
+  font-size: 14px;
+  animation: pulse 1s infinite ease-in-out;
+  
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.3);
+  }
 }
 
 @keyframes check-pulse {
