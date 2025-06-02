@@ -11,14 +11,16 @@ baseAxios.interceptors.response.use(
         return response;
     },
     (error) => {
+        console.error("erreureeeeeeeeeee",error);
         if(error.response){
             if (error.response.status && error.response.status === 401) {
                 if(localStorage.getItem('token')) {
                     localStorage.removeItem('token');
                 }
-                router.push('/login');
+                router.push('/auth/signin');
             }
         }
+
         return Promise.reject(error);
     }
 );
