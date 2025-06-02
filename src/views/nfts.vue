@@ -1,7 +1,7 @@
 <script>
 import PageHeader from "@/components/page-header";
 import Layout from "@/layouts/main.vue";
-import AuctionService from "@/services/auction.service";
+import NftService from "@/services/nft.service";
 
 export default {
   components: {
@@ -10,36 +10,43 @@ export default {
   },
   data() {
     return {
-      auctions: [],
+      NFTs: [],
       filter: {
         limit: 6,
       },
-      total: 0,
       Page: 1,
+      total: 0,
     };
   },
   methods: {
-    async fetchAuctions(filter = {}) {
+    async fetchNFTs(filter = {}) {
       try {
-        const response = await AuctionService.getAuctions(filter);
-        this.auctions = response.data.getAuctions.data;
-        this.total = response.data.getAuctions.metadata.total;
+        const response = await NftService.getNFTs(filter);
+        this.NFTs = response.data.getNfts.data;
+        this.total = response.data.getNfts.metadata.total;
         console.log(this.total);
-        console.log(this.auctions);
+        console.log(this.NFTs);
       } catch (error) {
         console.error("Error fetching auctions:", error);
       }
     },
     resetFilter() {
       this.filter = {};
-      this.fetchAuctions();
+      this.fetchNFTs();
     },
     async updateFilter() {
-      await this.fetchAuctions(this.filter);
+      console.log("Filter updated:", this.filter.search);
+      await this.fetchNFTs(this.filter);
     },
   },
   async mounted() {
-    await this.fetchAuctions();
+    await this.fetchNFTs();
+  },
+  watch: {
+    Page(newPage) {
+      this.filter.page = newPage;
+      this.fetchNFTs(this.filter);
+    },
   },
 };
 </script>
@@ -96,18 +103,17 @@ export default {
         </BCard>
         <BRow>
           <BCol
-            xxl="3"
+            xxl="4"
             lg="4"
             md="6"
             class="product-item upto-15 cursor-pointer"
-            v-for="auction in auctions"
-            v-bind:key="auction.id"
-            @click="() => $router.push(`/auction/${auction.id}`)"
+            v-for="nft in this.NFTs"
+            v-bind:key="nft.id"
           >
             <BCard no-body class="explore-box card-animate">
               <div class="position-relative rounded overflow-hidden">
                 <img
-                  :src="auction.nft.imageUrl"
+                  :src="nft.imageUrl"
                   alt=""
                   class="card-img-top explore-img"
                 />
@@ -118,22 +124,15 @@ export default {
               <BCardBody>
                 <p class="fw-medium mb-0 float-end"></p>
                 <h5 class="text-success">
-                  <i class="mdi mdi-ethereum"> {{ auction.currentPrice }}</i>
+                  <i class="mdi mdi-ethereum"> {{ nft.price }}</i>
                 </h5>
                 <h6 class="fs-16 mb-3">
                   <router-link to="/apps/nft-item-detail">{{
-                    auction.nft.title
+                    nft.title
                   }}</router-link>
                 </h6>
                 <div>
-                  <span class="text-muted float-end">Available: 436</span>
-                  <span class="text-muted">Sold: 4187</span>
-                  <BProgress
-                    striped
-                    :value="67"
-                    class="progress-sm mt-2"
-                    variant="warning"
-                  />
+                  <span class="text-muted">{{ nft.description }}</span>
                 </div>
               </BCardBody>
             </BCard>
@@ -166,7 +165,7 @@ export default {
                     class="form-control"
                     id="basiInput"
                     placeholder="Rechercher"
-                    :value="filter.search"
+                    v-model="filter.search"
                   />
                 </div>
               </BCol>
@@ -203,7 +202,7 @@ export default {
                     placeholder="0"
                     class="form-control"
                     id="minPriceInput"
-                    v-model="filter.startingPriceLower"
+                    v-model="filter.priceLower"
                   />
                 </div>
               </BCol>
@@ -218,70 +217,27 @@ export default {
                     placeholder="0"
                     class="form-control"
                     id="maxPriceInput"
-                    v-model="filter.startingPriceUpper"
+                    v-model="filter.priceUpper"
                   />
                 </div>
               </BCol>
             </BRow>
+
             <BRow class="mt-3">
-              <BCol xxl="5" md="5">
-                <div>
-                  <label for="minDurationInput" class="form-label"
-                    >Min Duration</label
+              <BCol xxl="3" md="5">
+                <div class="form-check mt-4">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="endedCheckbox"
+                    v-model="filter.isOnSale"
+                  />
+                  <label
+                    class="form-check-label whitespace-pre"
+                    for="endedCheckbox"
                   >
-                  <input
-                    type="number"
-                    min="0"
-                    placeholder="0"
-                    class="form-control"
-                    id="minDurationInput"
-                    v-model="filter.durationLower"
-                  />
-                </div>
-              </BCol>
-              <BCol xxl="5" md="5">
-                <div>
-                  <label for="maxDurationInput" class="form-label"
-                    >Max Duration</label
-                  >
-                  <input
-                    type="number"
-                    min="0"
-                    placeholder="0"
-                    class="form-control"
-                    id="maxDurationInput"
-                    v-model="filter.durationUpper"
-                  />
-                </div>
-              </BCol>
-            </BRow>
-            <BRow class="mt-3">
-              <BCol xxl="10" md="10">
-                <div>
-                  <label for="endTime" class="form-label">end time</label>
-                  <input
-                    type="datetime-local"
-                    class="form-control"
-                    id="endTime"
-                    v-model="filter.endTime"
-                  />
-                </div>
-              </BCol>
-            </BRow>
-            <BRow class="mt-3">
-              <BCol xxl="8" md="5">
-                <div>
-                  <label for="minPriceInput" class="form-label"
-                    >Current Price</label
-                  >
-                  <input
-                    type="number"
-                    min="0"
-                    placeholder="0"
-                    class="form-control"
-                    id="minPriceInput"
-                    v-model="filter.maxBidAmount"
-                  />
+                    On Sale
+                  </label>
                 </div>
               </BCol>
               <BCol xxl="3" md="5">
@@ -290,13 +246,13 @@ export default {
                     class="form-check-input"
                     type="checkbox"
                     id="endedCheckbox"
-                    v-model="filter.isEnded"
+                    v-model="filter.isOnAuction"
                   />
                   <label
                     class="form-check-label whitespace-pre"
                     for="endedCheckbox"
                   >
-                    Ended
+                    On Auction
                   </label>
                 </div>
               </BCol>
