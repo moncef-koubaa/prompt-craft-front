@@ -268,124 +268,6 @@ export default {
           </BButton>
 
           <!-- App Search-->
-          <form class="app-search d-none d-md-block">
-            <div class="dropdown-menu dropdown-menu-lg" id="search-dropdown">
-              <simplebar data-simplebar style="max-height: 320px">
-                <div class="dropdown-header">
-                  <h6 class="text-overflow text-muted mb-0 text-uppercase">
-                    Recent Searches
-                  </h6>
-                </div>
-
-                <div class="dropdown-item bg-transparent text-wrap">
-                  <router-link
-                    to="/"
-                    class="btn btn-soft-secondary btn-sm rounded-pill"
-                    >how to setup <i class="mdi mdi-magnify ms-1"></i
-                  ></router-link>
-                  <router-link
-                    to="/"
-                    class="btn btn-soft-secondary btn-sm rounded-pill"
-                    >buttons <i class="mdi mdi-magnify ms-1"></i
-                  ></router-link>
-                </div>
-                <div class="dropdown-header mt-2">
-                  <h6 class="text-overflow text-muted mb-1 text-uppercase">
-                    Pages
-                  </h6>
-                </div>
-
-                <BLink
-                  href="javascript:void(0);"
-                  class="dropdown-item notify-item"
-                >
-                  <i
-                    class="ri-bubble-chart-line align-middle fs-18 text-muted me-2"
-                  ></i>
-                  <span>Analytics Dashboard</span>
-                </BLink>
-
-                <BLink
-                  href="javascript:void(0);"
-                  class="dropdown-item notify-item"
-                >
-                  <i
-                    class="ri-lifebuoy-line align-middle fs-18 text-muted me-2"
-                  ></i>
-                  <span>Help Center</span>
-                </BLink>
-
-                <BLink
-                  href="javascript:void(0);"
-                  class="dropdown-item notify-item"
-                >
-                  <i
-                    class="ri-user-settings-line align-middle fs-18 text-muted me-2"
-                  ></i>
-                  <span>My account settings</span>
-                </BLink>
-
-                <div class="dropdown-header mt-2">
-                  <h6 class="text-overflow text-muted mb-2 text-uppercase">
-                    Members
-                  </h6>
-                </div>
-
-                <div class="notification-list">
-                  <BLink
-                    href="javascript:void(0);"
-                    class="d-flex dropdown-item notify-item py-2"
-                  >
-                    <img
-                      src="@/assets/images/users/avatar-2.jpg"
-                      class="me-3 rounded-circle avatar-xs"
-                      alt="user-pic"
-                    />
-                    <div class="flex-grow-1">
-                      <h6 class="m-0">Angela Bernier</h6>
-                      <span class="fs-11 mb-0 text-muted">Manager</span>
-                    </div>
-                  </BLink>
-                  <BLink
-                    href="javascript:void(0);"
-                    class="d-flex dropdown-item notify-item py-2"
-                  >
-                    <img
-                      src="@/assets/images/users/avatar-3.jpg"
-                      class="me-3 rounded-circle avatar-xs"
-                      alt="user-pic"
-                    />
-                    <div class="flex-grow-1">
-                      <h6 class="m-0">David Grasso</h6>
-                      <span class="fs-11 mb-0 text-muted">Web Designer</span>
-                    </div>
-                  </BLink>
-                  <BLink
-                    href="javascript:void(0);"
-                    class="d-flex dropdown-item notify-item py-2"
-                  >
-                    <img
-                      src="@/assets/images/users/avatar-5.jpg"
-                      class="me-3 rounded-circle avatar-xs"
-                      alt="user-pic"
-                    />
-                    <div class="flex-grow-1">
-                      <h6 class="m-0">Mike Bunch</h6>
-                      <span class="fs-11 mb-0 text-muted">React Developer</span>
-                    </div>
-                  </BLink>
-                </div>
-              </simplebar>
-
-              <div class="text-center pt-3 pb-1">
-                <router-link
-                  to="/pages/search-results"
-                  class="btn btn-primary btn-sm"
-                  >View All Results <i class="ri-arrow-right-line ms-1"></i
-                ></router-link>
-              </div>
-            </div>
-          </form>
         </div>
 
         <div class="d-flex align-items-center">
@@ -397,9 +279,7 @@ export default {
             toggle-class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle show  arrow-none"
             menu-class="dropdown-menu-lg dropdown-menu-end p-0"
           >
-            <template #button-content>
-              <i class="bx bx-search fs-22"></i>
-            </template>
+
             <BDropdownItem aria-labelledby="page-header-search-dropdown">
               <form class="p-3">
                 <div class="form-group m-0">
@@ -420,7 +300,7 @@ export default {
           </BDropdown>
 
           <div class="ms-1 header-item d-none d-sm-flex">
-            
+
             <i class="mdi mdi-circle online-pulse"></i>
             <router-link
               to="/auctions"
@@ -503,53 +383,6 @@ export default {
                   style="max-height: 300px"
                   class="pe-2"
                 >
-                  <!--                  <div class="notification-list">-->
-                  <!--                    <div-->
-                  <!--                        v-for="notification in notifications"-->
-                  <!--                        :key="notification.id"-->
-                  <!--                        class="text-reset notification-item d-block dropdown-item position-relative"-->
-                  <!--                    >-->
-                  <!--                      <div class="d-flex">-->
-                  <!--                        <div class="avatar-xs me-3 flex-shrink-0">-->
-                  <!--                          &lt;!&ndash; Dynamic icon and color based on notification type &ndash;&gt;-->
-                  <!--                          <span-->
-                  <!--                              :class="[-->
-                  <!--            'avatar-title',-->
-                  <!--            'rounded-circle',-->
-                  <!--            'fs-16',-->
-
-                  <!--          ]"-->
-                  <!--                          >-->
-
-                  <!--        </span>-->
-                  <!--                        </div>-->
-
-                  <!--                        <div class="flex-grow-1">-->
-                  <!--                          <a href="#!" class="stretched-link">-->
-                  <!--                            &lt;!&ndash; Notification message &ndash;&gt;-->
-                  <!--                            <h6 class="mt-0 mb-2 lh-base" v-html="notification.userId+' '+notification.message"></h6>-->
-                  <!--                          </a>-->
-
-                  <!--                          &lt;!&ndash; Timestamp &ndash;&gt;-->
-                  <!--                          &lt;!&ndash;                          <p class="mb-0 fs-11 fw-medium text-uppercase text-muted">&ndash;&gt;-->
-                  <!--                          &lt;!&ndash;                            <span><i class="mdi mdi-clock-outline"></i> {{ notification.timestamp.toLocaleTimeString() }}</span>&ndash;&gt;-->
-                  <!--                          &lt;!&ndash;                          </p>&ndash;&gt;-->
-                  <!--                        </div>-->
-
-                  <!--                        &lt;!&ndash; Checkbox &ndash;&gt;-->
-                  <!--                        <div class="px-2 fs-15">-->
-                  <!--                          <input-->
-                  <!--                              class="form-check-input"-->
-                  <!--                              type="checkbox"-->
-                  <!--                              v-model="notification.read"-->
-                  <!--                              @change="markAsRead(notification.id)"-->
-                  <!--                          />-->
-                  <!--                        </div>-->
-                  <!--                      </div>-->
-                  <!--                    </div>-->
-                  <!--                  </div>-->
-
-                  <!--                  <div class="notification-list">-->
 
                   <div class="notification-list w-full max-w-md mx-auto">
                     <transition-group
@@ -567,6 +400,7 @@ export default {
                           ),
                         }"
                       >
+                        <router-link to="/nft/{{notification.nftId}}">
                         <div
                           class="bg-white border border-blue-200 rounded-lg hover:shadow-md transition-shadow duration-200 p-4"
                         >
@@ -648,6 +482,7 @@ export default {
                             </div>
                           </div>
                         </div>
+                        </router-link>
                       </div>
                     </transition-group>
                   </div>
@@ -885,7 +720,7 @@ export default {
               <i class="mdi mdi-wallet text-muted fs-16 align-middle me-1"></i>
               <span class="align-middle"> Balance</span>
               <br />
-              <b>$5971.67</b>
+              <b>   {{myBalance}} SC</b>
             </div>
             <router-link class="dropdown-item" to="/pricing"
               ><i class="mdi mdi-currency-usd text-muted fs-16 align-middle me-1"></i>
