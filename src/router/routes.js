@@ -10,9 +10,9 @@ export default [
         component : () => import('@/views/my-nft.vue'),
     },
     {
-        path : '/bids-page',
+        path : '/auctions',
         name : 'bids-page',
-        component : () => import('@/views/bids-page.vue'),
+        component : () => import('@/views/auctions.vue'),
     },
     {
         path: '/chat-bot',
