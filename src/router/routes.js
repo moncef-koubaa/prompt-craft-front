@@ -40,7 +40,14 @@ export default [
     component : () => import('@/views/profile/ProfileSettings.vue'),
     },
     {
-        path: '/notif',
-        name: 'notifications',
-        component: () => import('@/views/notif.vue'),
-    },];
+        path :'/auth/signup',
+        name : 'signup',
+        component : () => import('@/views/auth/signup/basic.vue'),
+    },
+    {
+        path :'/auth/signin',
+        name : 'signin',
+        component : () => import('@/views/auth/signin/basic.vue'),
+    },
+
+];
