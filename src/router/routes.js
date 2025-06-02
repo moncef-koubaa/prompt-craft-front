@@ -43,4 +43,10 @@ export default [
         path: '/notif',
         name: 'notifications',
         component: () => import('@/views/notif.vue'),
-    },];
+    },
+    {
+        path: '/pricing',
+        name: 'pricing',
+        component: () => import('@/views/pricing.vue'),
+    }
+];
