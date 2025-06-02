@@ -109,6 +109,7 @@ export default {
             class="product-item upto-15 cursor-pointer"
             v-for="nft in this.NFTs"
             v-bind:key="nft.id"
+            @click="() => $router.push(`/nft/${nft.id}`)"
           >
             <BCard no-body class="explore-box card-animate">
               <div class="position-relative rounded overflow-hidden">
