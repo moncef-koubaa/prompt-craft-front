@@ -18,6 +18,7 @@ query GetNft($id: Int!) {
       id
       endTime
       maxBidAmount
+      isEnded
       owner {
         id
         username
