@@ -6,7 +6,7 @@ import simplebar from "simplebar-vue";
 import i18n from "../i18n";
 import { useNotificationStore } from "@/stores/notification";
 import { storeToRefs } from "pinia";
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted , ref} from "vue";
 import { notificationService } from "@/services/notificationService";
 import userService from "@/services/userService";
 /**
@@ -418,6 +418,16 @@ export default {
               </form>
             </BDropdownItem>
           </BDropdown>
+
+          <div class="ms-1 header-item d-none d-sm-flex">
+            
+            <i class="mdi mdi-circle online-pulse"></i>
+            <router-link
+              to="/auctions"
+            >
+            <div class="text-base mr-4 text-success">Live Auctions</div>
+            </router-link>
+          </div>
 
           <div class="ms-1 header-item d-none d-sm-flex">
             <BButton
@@ -1013,6 +1023,24 @@ button:hover .arrow-icon {
 /* Check icon animation */
 .check-icon {
   animation: check-pulse 0.2s ease;
+}
+
+.online-pulse {
+  color: rgb(4, 87, 4);
+  font-size: 14px;
+  animation: pulse 1s infinite ease-in-out;
+  
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.3);
+  }
 }
 
 @keyframes check-pulse {
