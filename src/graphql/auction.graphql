@@ -1,0 +1,26 @@
+query GetAuctions($filter: FilterDto! = {}) {
+  getAuctions(filter: $filter) {
+    metadata {
+      page
+      limit
+      total
+    }
+    data {
+      id
+      name
+      startingPrice
+      maxBidAmount
+      isEnded
+      createdAt
+      nft {
+        id
+        imageUrl
+        title
+      }
+      bids {
+        id
+        amount
+      }
+    }
+  }
+}
