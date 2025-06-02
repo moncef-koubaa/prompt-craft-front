@@ -3,5 +3,6 @@ module.exports = {
     '@vue/cli-plugin-babel/preset',
     '@babel/preset-env'
   ],
-  plugins: ['@babel/plugin-transform-private-methods']
+  plugins: ['@babel/plugin-transform-private-methods', "@babel/plugin-proposal-class-properties"],
+  
 }
