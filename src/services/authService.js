@@ -1,4 +1,5 @@
 import apiClientUnAuth from './API/not-authenticated';
+import apiClientAuth from './API/authenticated';
 
 const authService = {
     signUp: async (userData) => {
@@ -28,7 +29,7 @@ const authService = {
 
     getMe: async () => {
         try {
-            const response = await apiClientUnAuth.get('/auth/me');
+            const response = await apiClientAuth.get('/auth/me');
             return response.data;
         } catch (error) {
             console.error('Failed to fetch user info:', error);

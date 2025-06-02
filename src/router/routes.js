@@ -1,4 +1,6 @@
-export default [
+import { createRouter, createWebHistory } from 'vue-router'
+import authService from '@/services/authService'
+const routes= [
     {
         path : '/',
         name : 'home',
@@ -51,3 +53,28 @@ export default [
     },
 
 ];
+const router = createRouter({
+    history: createWebHistory(),
+    routes,
+})
+router.beforeEach(async (to, from, next) => {
+    const token = localStorage.getItem('token')
+
+    if (to.meta.requiresAuth) {
+        if (!token) {
+            return next({ name: 'Login' })
+        }
+
+        try {
+            await authService.getMe()
+            return next()
+        } catch (err) {
+            authService.logout()
+            return next({ name: 'Login' })
+        }
+    }
+
+    next()
+})
+export default router
+
