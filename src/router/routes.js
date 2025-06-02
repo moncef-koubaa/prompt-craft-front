@@ -72,6 +72,13 @@ const routes = [
         name: 'pricing',
         component: () => import('@/views/pricing.vue'),
     },
+    {
+        path: '/nft/:id',
+        name: 'nft',
+        component: () => import('@/views/nft.vue'),
+        props: true,
+        meta: { requiresAuth: true },
+    },
 ]
 
 export default routes
