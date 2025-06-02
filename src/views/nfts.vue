@@ -27,7 +27,7 @@ export default {
         console.log(this.total);
         console.log(this.NFTs);
       } catch (error) {
-        console.error("Error fetching auctions:", error);
+        console.error("Error fetching nfts:", error);
       }
     },
     resetFilter() {
@@ -53,14 +53,14 @@ export default {
 
 <template>
   <Layout>
-    <PageHeader title="Live Auction" pageTitle="NFT Marketplace" />
+    <PageHeader title="Nft Marketplace" pageTitle="NFT Marketplace" />
     <BRow>
       <BCol xxl="9">
         <BCard no-body>
           <BCardHeader class="border-0">
             <div class="d-lg-flex align-items-center">
               <div class="flex-grow-1">
-                <h5 class="card-title mb-0">Live Auction</h5>
+                <h5 class="card-title mb-0">Nfts</h5>
               </div>
               <div class="flex-shrink-0 mt-4 mt-lg-0">
                 <ul class="nav nav-pills filter-btns" role="tablist">
