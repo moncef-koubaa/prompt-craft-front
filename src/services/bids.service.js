@@ -17,6 +17,7 @@ export default class BidsService {
 
     this.socket.on('exception', (error) => {
       console.error('WebSocket error:', error);
+      this.callbacks.exception.forEach((cb) => cb(error));
     });
 
     // Setup event listeners
@@ -86,4 +87,5 @@ BidsService.callbacks = {
   newBid: [],
   auctionEnded: [],
   error: [],
+  exception: [],
 };
