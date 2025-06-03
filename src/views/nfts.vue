@@ -1,7 +1,7 @@
 <script>
-import PageHeader from "@/components/page-header";
-import Layout from "@/layouts/main.vue";
-import NftService from "@/services/nft.service";
+import PageHeader from '@/components/page-header';
+import Layout from '@/layouts/main.vue';
+import NftService from '@/services/nft.service';
 
 export default {
   components: {
@@ -27,20 +27,22 @@ export default {
         console.log(this.total);
         console.log(this.NFTs);
       } catch (error) {
-        console.error("Error fetching nfts:", error);
+        console.error('Error fetching nfts:', error);
       }
     },
     resetFilter() {
-      this.filter = {};
-      this.fetchNFTs();
+      this.filter = {
+        limit: 6,
+      };
+      this.fetchNFTs(this.filter);
     },
     async updateFilter() {
-      console.log("Filter updated:", this.filter.search);
+      console.log('Filter updated:', this.filter.search);
       await this.fetchNFTs(this.filter);
     },
   },
   async mounted() {
-    await this.fetchNFTs();
+    await this.fetchNFTs(this.filter);
   },
   watch: {
     Page(newPage) {

@@ -1,6 +1,5 @@
 <script>
 import PageHeader from '@/components/page-header';
-import Horizontal from '@/layouts/horizontal.vue';
 import NftService from '@/services/nft.service';
 import AuctionService from '@/services/auction.service';
 import Layout from '@/layouts/main.vue';
@@ -21,7 +20,6 @@ export default {
   },
   components: {
     PageHeader,
-    Horizontal,
     Layout,
   },
   methods: {
@@ -79,7 +77,6 @@ export default {
 
 <template>
   <Layout>
-    <Horizontal />
     <PageHeader title="Item Details" pageTitle="NFT Marketplace" />
     <div>
       <div v-if="loading">Loading NFT...</div>
@@ -289,7 +286,7 @@ export default {
                               </tr>
                             </thead>
                             <tbody class="text-base">
-                              <tr>
+                              <!-- <tr>
                                 <td>
                                   <i
                                     class="ri-shopping-cart-2-line text-success me-2"
@@ -308,7 +305,7 @@ export default {
                                   >
                                 </td>
                                 <td>29 April, 2022</td>
-                              </tr>
+                              </tr> -->
 
                               <tr
                                 v-for="auction in nft.auctions"

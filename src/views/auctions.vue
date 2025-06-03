@@ -1,7 +1,7 @@
 <script>
-import PageHeader from "@/components/page-header";
-import Layout from "@/layouts/main.vue";
-import AuctionService from "@/services/auction.service";
+import PageHeader from '@/components/page-header';
+import Layout from '@/layouts/main.vue';
+import AuctionService from '@/services/auction.service';
 
 export default {
   components: {
@@ -13,13 +13,14 @@ export default {
       auctions: [],
       filter: {
         limit: 6,
+        isEnded: false,
       },
       total: 0,
       Page: 1,
     };
   },
   methods: {
-    async fetchAuctions(filter = {}) {
+    async fetchAuctions(filter) {
       try {
         const response = await AuctionService.getAuctions(filter);
         this.auctions = response.data.getAuctions.data;
@@ -27,19 +28,22 @@ export default {
         console.log(this.total);
         console.log(this.auctions);
       } catch (error) {
-        console.error("Error fetching auctions:", error);
+        console.error('Error fetching auctions:', error);
       }
     },
     resetFilter() {
-      this.filter = {};
-      this.fetchAuctions();
+      this.filter = {
+        limit: 6,
+        isEnded: false,
+      };
+      this.fetchAuctions(this.filter);
     },
     async updateFilter() {
       await this.fetchAuctions(this.filter);
     },
   },
   async mounted() {
-    await this.fetchAuctions();
+    await this.fetchAuctions(this.filter);
   },
 };
 </script>
@@ -63,30 +67,6 @@ export default {
                       class="nav-link fw-medium active"
                       data-filter="all"
                       >All Items</BButton
-                    >
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <BButton
-                      variant="link"
-                      class="nav-link fw-medium"
-                      data-filter="upto-15"
-                      >Up to 15%</BButton
-                    >
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <BButton
-                      variant="link"
-                      class="nav-link fw-medium"
-                      data-filter="upto-30"
-                      >Up to 30%</BButton
-                    >
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <BButton
-                      variant="link"
-                      class="nav-link fw-medium"
-                      data-filter="upto-40"
-                      >Up to 40%</BButton
                     >
                   </li>
                 </ul>
@@ -118,23 +98,13 @@ export default {
               <BCardBody>
                 <p class="fw-medium mb-0 float-end"></p>
                 <h5 class="text-success">
-                  <i class="mdi mdi-ethereum"> {{ auction.currentPrice }}</i>
+                  <i class="mdi"> {{ auction.currentPrice }}</i>
                 </h5>
                 <h6 class="fs-16 mb-3">
                   <router-link to="/apps/nft-item-detail">{{
-                    auction.nft.title
+                    auction.nft.name || auction.nft.title
                   }}</router-link>
                 </h6>
-                <div>
-                  <span class="text-muted float-end">Available: 436</span>
-                  <span class="text-muted">Sold: 4187</span>
-                  <BProgress
-                    striped
-                    :value="67"
-                    class="progress-sm mt-2"
-                    variant="warning"
-                  />
-                </div>
               </BCardBody>
             </BCard>
           </BCol>
@@ -284,6 +254,7 @@ export default {
                   />
                 </div>
               </BCol>
+              <!-- i want checkbox to initially be checked -->
               <BCol xxl="3" md="5">
                 <div class="form-check mt-4">
                   <input
