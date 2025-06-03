@@ -782,62 +782,6 @@ export default {
         </div>
       </BCol>
     </BRow>
-                                                <BRow class="row-cols-xxl-5 row-cols-xl-4 row-cols-lg-3 row-cols-md-2 row-cols-1">
-
-                        <BCol
-                            xxl="3"
-                            lg="4"
-                            md="6"
-                            class="product-item upto-15 cursor-pointer"
-                            v-for="nft in ownedNfts"
-                            v-bind:key="nft.id"
-                        >
-                          <router-link :to="'/my-nft/' + nft.id">
-
-                          <BCard no-body class="explore-box card-animate">
-                            <div class="position-relative rounded overflow-hidden">
-                              <img
-                                  :src="nft.imageUrl"
-                                  alt=""
-                                  class="card-img-top explore-img"
-                              />
-                              <div class="discount-time">
-                                <h5 id="auction-time-1" class="mb-0 text-white"></h5>
-                              </div>
-                            </div>
-                            <BCardBody>
-                              <p class="fw-medium mb-0 float-end"></p>
-                              <h5 class="text-success">
-                                <i class="mdi mdi-ethereum"> {{ nft.description }}</i>
-                              </h5>
-                              <h6 class="fs-16 mb-3">
-                               {{
-                                    nft.name
-                                  }}
-                              </h6>
-                            </BCardBody>
-                          </BCard>
-                          </router-link>
-                        </BCol>
-                                                </BRow>
-                      </BCardBody>
-                    </BCard>
-
-
-                  </BCol>
-                </BRow>
-
-
-              </BCol>
-            </BRow>
-          </BTab>
-
-
-        </BTabs>
-      </div>
-    </BCol>
-  </BRow>
-
   </Layout>
 </template>
 
