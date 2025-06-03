@@ -132,6 +132,7 @@ export const useNotificationStore = defineStore('notifications', () => {
     // Cleanup
     onUnmounted(() => {
         tokenWatcher() // Stop watching token changes
+        clearNotifications()
         disconnectSSE()
     })
 

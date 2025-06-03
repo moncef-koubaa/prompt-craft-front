@@ -107,10 +107,10 @@ export default {
 
       try {
         const data = await ChatBotService.getChatBotResponse(this.input);
-
+        console.log("Response data:", data);
         this.messages.push({
           role: "assistant",
-          content: data.url || "data:image/png;base64,yourImageDataHere",
+          content: data.url
         });
         console.log("Generated image URL:", data.url);
       } catch (error) {

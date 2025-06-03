@@ -723,7 +723,7 @@ export default {
                             v-for="nft in ownedNfts"
                             v-bind:key="nft.id"
                         >
-                          <router-link to="/my-nft/{{ nft.id }}">
+                          <router-link :to="'/my-nft/' + nft.id">
 
                           <BCard no-body class="explore-box card-animate">
                             <div class="position-relative rounded overflow-hidden">

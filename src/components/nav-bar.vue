@@ -22,19 +22,18 @@ export default {
     // Fetch unread notifications after component mounts
     onMounted(async () => {
       try {
+        notifications.value=[];
         const unread = await notificationService.getUnreadNotifications();
         notifications.value = notifications.value.concat(unread);
         console.log("notification filler", notifications.value);
         notificationCount.value += unread.length;
         console.log("notification count", notificationCount.value);
         myBalance.value = await userService.getBalance();
-        console.log("my balance", this.myBalance);
       } catch (err) {
         console.error("Failed to fetch unread notifications", err);
       }
     });
 
-    // Cleanup SSE connection on unmount
     onUnmounted(() => {
       setTimeout(() => notificationStore.disconnectSSE(), 0);
     });

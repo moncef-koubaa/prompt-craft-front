@@ -122,18 +122,19 @@ export default {
 
         <div class="auth-page-content">
             <BContainer>
-                <BRow>
-                    <BCol lg="12">
-                        <div class="text-center mt-sm-5 mb-4 text-white-50">
-                            <div>
-                                <router-link to="/" class="d-inline-block auth-logo">
-                                    <img src="@/assets/images/logo-light.png" alt="" height="20">
-                                </router-link>
-                            </div>
-                            <p class="mt-3 fs-15 fw-medium">Premium Admin & Dashboard Template</p>
-                        </div>
-                    </BCol>
-                </BRow>
+              <BRow>
+                <BCol lg="12">
+                  <div class="text-center mt-sm-5 mb-4 text-white-50">
+                    <div>
+                      <!--                <router-link to="/" class="d-inline-block auth-logo">-->
+                      <!--                  <img src="@/assets/images/ai-generated-red-hard-background-free-photo.jpg" alt="" height="20">-->
+                      <!--                </router-link>-->
+                    </div>
+                    <h1 class="text-light">Prompt Craft</h1>
+                    <p class="mt-3 fs-15 fw-medium">Prompt and make funds</p>
+                  </div>
+                </BCol>
+              </BRow>
 
                 <BRow class="justify-content-center">
                     <BCol md="8" lg="6" xl="5">
