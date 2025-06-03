@@ -1,7 +1,7 @@
 <script>
-import PageHeader from "@/components/page-header";
-import Layout from "@/layouts/main.vue";
-import NftService from "@/services/nft.service";
+import PageHeader from '@/components/page-header';
+import Layout from '@/layouts/main.vue';
+import NftService from '@/services/nft.service';
 
 export default {
   components: {
@@ -27,20 +27,22 @@ export default {
         console.log(this.total);
         console.log(this.NFTs);
       } catch (error) {
-        console.error("Error fetching nfts:", error);
+        console.error('Error fetching nfts:', error);
       }
     },
     resetFilter() {
-      this.filter = {};
-      this.fetchNFTs();
+      this.filter = {
+        limit: 6,
+      };
+      this.fetchNFTs(this.filter);
     },
     async updateFilter() {
-      console.log("Filter updated:", this.filter.search);
+      console.log('Filter updated:', this.filter.search);
       await this.fetchNFTs(this.filter);
     },
   },
   async mounted() {
-    await this.fetchNFTs();
+    await this.fetchNFTs(this.filter);
   },
   watch: {
     Page(newPage) {
@@ -70,30 +72,6 @@ export default {
                       class="nav-link fw-medium active"
                       data-filter="all"
                       >All Items</BButton
-                    >
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <BButton
-                      variant="link"
-                      class="nav-link fw-medium"
-                      data-filter="upto-15"
-                      >Up to 15%</BButton
-                    >
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <BButton
-                      variant="link"
-                      class="nav-link fw-medium"
-                      data-filter="upto-30"
-                      >Up to 30%</BButton
-                    >
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <BButton
-                      variant="link"
-                      class="nav-link fw-medium"
-                      data-filter="upto-40"
-                      >Up to 40%</BButton
                     >
                   </li>
                 </ul>
@@ -129,7 +107,7 @@ export default {
                 </h5>
                 <h6 class="fs-16 mb-3">
                   <router-link to="/apps/nft-item-detail">{{
-                    nft.title
+                    nft.name || nft.title
                   }}</router-link>
                 </h6>
                 <div>

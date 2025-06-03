@@ -12,9 +12,11 @@ query GetAuctions($filter: FilterDto! = {}) {
       maxBidAmount
       isEnded
       createdAt
+      endTime
       nft {
         id
         imageUrl
+        name
         title
       }
       bids {
