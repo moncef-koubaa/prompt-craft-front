@@ -1,233 +1,251 @@
-<script>
-import { layoutMethods } from "@/state/helpers";
+  <script>
+  import { layoutMethods } from "@/state/helpers";
 
-import simplebar from "simplebar-vue";
+  import simplebar from "simplebar-vue";
 
-import i18n from "../i18n";
-import { useNotificationStore } from "@/stores/notification";
-import { storeToRefs } from "pinia";
-import { onMounted, onUnmounted , ref} from "vue";
-import { notificationService } from "@/services/notificationService";
-import userService from "@/services/userService";
-/**
- * Nav-bar Component
- */
-export default {
-  setup() {
-    const myBalance = ref(0);
-    const notificationStore = useNotificationStore();
-    let { notifications, unreadCount, isConnected, error, notificationCount } =
-      storeToRefs(notificationStore);
-
-    // Fetch unread notifications after component mounts
-    onMounted(async () => {
-      try {
-        notifications.value=[];
-        notificationCount.value = 0;
-        const unread = await notificationService.getUnreadNotifications();
-        notifications.value = notifications.value.concat(unread);
-        console.log("notification filler", notifications.value);
-        notificationCount.value += unread.length;
-        console.log("notification count", notificationCount.value);
-        myBalance.value = await userService.getBalance();
-      } catch (err) {
-        console.error("Failed to fetch unread notifications", err);
-      }
-    });
-
-    onUnmounted(() => {
-      setTimeout(() => notificationStore.disconnectSSE(), 0);
-    });
-
-    return {
-      notificationStore,
-      notifications,
-      unreadCount,
-      isConnected,
-      error,
-      notificationCount,
-      myBalance,
-    };
-  },
-  data() {
-    return {
-      username: null,
-      useremail: null,
-      lan: i18n.locale,
-      text: null,
-      flag: null,
-      value: null,
-      myVar: 1,
-
-    };
-  },
-  components: {
-    simplebar,
-  },
-  methods: {
-    ...layoutMethods,
-    isCustomDropdown() {
-      //Search bar
-    },
-    toggleHamburgerMenu() {
-      var windowSize = document.documentElement.clientWidth;
-      let layoutType = document.documentElement.getAttribute("data-layout");
-
-      document.documentElement.setAttribute("data-sidebar-visibility", "show");
-      let visiblilityType = document.documentElement.getAttribute(
-        "data-sidebar-visibility"
-      );
-
-      if (windowSize > 767)
-        document.querySelector(".hamburger-icon").classList.toggle("open");
-
-      //For collapse horizontal menu
-      if (
-        document.documentElement.getAttribute("data-layout") === "horizontal"
-      ) {
-        document.body.classList.contains("menu")
-          ? document.body.classList.remove("menu")
-          : document.body.classList.add("menu");
+  import i18n from "../i18n";
+  import { useNotificationStore } from "@/stores/notification";
+  import { storeToRefs } from "pinia";
+  import { onMounted , ref} from "vue";
+  import { notificationService } from "@/services/notificationService";
+  import userService from "@/services/userService";
+  /**
+   * Nav-bar Component
+   */
+  export default {
+    setup() {
+      const myBalance = ref(0);
+      const notificationStore = useNotificationStore();
+      let { notifications, unreadCount, isConnected, error, notificationCount } =
+        storeToRefs(notificationStore);
+      function removeDuplicateNotifications(notifications) {
+        const seenIds = new Set();
+        return notifications.filter(notification => {
+          if (seenIds.has(notification.id)) {
+            return false;
+          }
+          seenIds.add(notification.id);
+          return true;
+        });
       }
 
-      //For collapse vertical menu
 
-      if (
-        visiblilityType === "show" &&
-        (layoutType === "vertical" || layoutType === "semibox")
-      ) {
-        if (windowSize < 1025 && windowSize > 767) {
-          document.body.classList.remove("vertical-sidebar-enable");
-          document.documentElement.getAttribute("data-sidebar-size") == "sm"
-            ? document.documentElement.setAttribute("data-sidebar-size", "")
-            : document.documentElement.setAttribute("data-sidebar-size", "sm");
-        } else if (windowSize > 1025) {
-          document.body.classList.remove("vertical-sidebar-enable");
-          document.documentElement.getAttribute("data-sidebar-size") == "lg"
-            ? document.documentElement.setAttribute("data-sidebar-size", "sm")
-            : document.documentElement.setAttribute("data-sidebar-size", "lg");
-        } else if (windowSize <= 767) {
-          document.body.classList.add("vertical-sidebar-enable");
-          document.documentElement.setAttribute("data-sidebar-size", "lg");
+      // Fetch unread notifications after component mounts
+      onMounted(async () => {
+        try {
+          notificationStore.connectSSE();
+          notifications.value=[];
+          notificationCount.value = 0;
+          const unread = await notificationService.getUnreadNotifications();
+          console.log("unread notifications", unread);
+          notifications.value = notifications.value.concat(unread);
+          console.log("notification filler", notifications.value);
+          notificationCount.value += unread.length;
+          myBalance.value = await userService.getBalance();
+          console.log("avant funct filter", notifications.value);
+          notifications.value = removeDuplicateNotifications(notifications.value);
+          console.log("apreeess funct filter", notifications.value);
+          notificationCount.value = notifications.value.length;
+          console.log("notification count", notificationCount.value);
+
+        } catch (err) {
+          console.error("Failed to fetch unread notifications", err);
         }
-      }
-
-      //Two column menu
-      if (document.documentElement.getAttribute("data-layout") == "twocolumn") {
-        document.body.classList.contains("twocolumn-panel")
-          ? document.body.classList.remove("twocolumn-panel")
-          : document.body.classList.add("twocolumn-panel");
-      }
-    },
-    toggleMenu() {
-      this.$parent.toggleMenu();
-    },
-    toggleRightSidebar() {
-      this.$parent.toggleRightSidebar();
-    },
-    initFullScreen() {
-      document.body.classList.toggle("fullscreen-enable");
-      if (
-        !document.fullscreenElement &&
-        /* alternative standard method */
-        !document.mozFullScreenElement &&
-        !document.webkitFullscreenElement
-      ) {
-        // current working methods
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-          document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-          document.documentElement.webkitRequestFullscreen(
-            Element.ALLOW_KEYBOARD_INPUT
-          );
-        }
-      } else {
-        if (document.cancelFullScreen) {
-          document.cancelFullScreen();
-        } else if (document.mozCancelFullScreen) {
-          document.mozCancelFullScreen();
-        } else if (document.webkitCancelFullScreen) {
-          document.webkitCancelFullScreen();
-        }
-      }
-    },
-    toggleDarkMode() {
-      if (document.documentElement.getAttribute("data-bs-theme") == "dark") {
-        document.documentElement.setAttribute("data-bs-theme", "light");
-      } else {
-        document.documentElement.setAttribute("data-bs-theme", "dark");
-      }
-
-      const mode = document.documentElement.getAttribute("data-bs-theme");
-      this.changeMode({
-        mode: mode,
       });
-    },
 
-    markAllRead() {
-      notificationService.markAllNotificationsAsRead();
-      this.notifications = [];
-      this.notificationCount = 0;
-    },
-    async markAsRead(notificationId) {
-      this.slidingOut = notificationId;
+      // onUnmounted(() => {
+      //   setTimeout(() => notificationStore.disconnectSSE(), 0);
+      // });
 
-      // Remove the notification after the animation completes
-      setTimeout(() => {
-        this.notifications = this.notifications.filter(
-          (notification) => notification.id !== notificationId
+      return {
+        notificationStore,
+        notifications,
+        unreadCount,
+        isConnected,
+        error,
+        notificationCount,
+        myBalance,
+      };
+    },
+    data() {
+      return {
+        username: null,
+        useremail: null,
+        lan: i18n.locale,
+        text: null,
+        flag: null,
+        value: null,
+        myVar: 1,
+
+      };
+    },
+    components: {
+      simplebar,
+    },
+    methods: {
+      ...layoutMethods,
+      isCustomDropdown() {
+        //Search bar
+      },
+      toggleHamburgerMenu() {
+        var windowSize = document.documentElement.clientWidth;
+        let layoutType = document.documentElement.getAttribute("data-layout");
+
+        document.documentElement.setAttribute("data-sidebar-visibility", "show");
+        let visiblilityType = document.documentElement.getAttribute(
+          "data-sidebar-visibility"
         );
-        this.slidingOut = null;
-        this.notificationCount--;
-      }, 500); // Match the animation duration
-      await notificationService.markNotificationAsRead(notificationId);
-    },
-    isNotificationSlidingOut(id) {
-      return this.slidingOut === id;
-    },
-  },
 
-  computed: {
-    calculateTotalPrice() {
-      return this.cartItems
-        .reduce((total, item) => total + parseFloat(item.itemPrice), 0)
-        .toFixed(2);
+        if (windowSize > 767)
+          document.querySelector(".hamburger-icon").classList.toggle("open");
+
+        //For collapse horizontal menu
+        if (
+          document.documentElement.getAttribute("data-layout") === "horizontal"
+        ) {
+          document.body.classList.contains("menu")
+            ? document.body.classList.remove("menu")
+            : document.body.classList.add("menu");
+        }
+
+        //For collapse vertical menu
+
+        if (
+          visiblilityType === "show" &&
+          (layoutType === "vertical" || layoutType === "semibox")
+        ) {
+          if (windowSize < 1025 && windowSize > 767) {
+            document.body.classList.remove("vertical-sidebar-enable");
+            document.documentElement.getAttribute("data-sidebar-size") == "sm"
+              ? document.documentElement.setAttribute("data-sidebar-size", "")
+              : document.documentElement.setAttribute("data-sidebar-size", "sm");
+          } else if (windowSize > 1025) {
+            document.body.classList.remove("vertical-sidebar-enable");
+            document.documentElement.getAttribute("data-sidebar-size") == "lg"
+              ? document.documentElement.setAttribute("data-sidebar-size", "sm")
+              : document.documentElement.setAttribute("data-sidebar-size", "lg");
+          } else if (windowSize <= 767) {
+            document.body.classList.add("vertical-sidebar-enable");
+            document.documentElement.setAttribute("data-sidebar-size", "lg");
+          }
+        }
+
+        //Two column menu
+        if (document.documentElement.getAttribute("data-layout") == "twocolumn") {
+          document.body.classList.contains("twocolumn-panel")
+            ? document.body.classList.remove("twocolumn-panel")
+            : document.body.classList.add("twocolumn-panel");
+        }
+      },
+      toggleMenu() {
+        this.$parent.toggleMenu();
+      },
+      toggleRightSidebar() {
+        this.$parent.toggleRightSidebar();
+      },
+      initFullScreen() {
+        document.body.classList.toggle("fullscreen-enable");
+        if (
+          !document.fullscreenElement &&
+          /* alternative standard method */
+          !document.mozFullScreenElement &&
+          !document.webkitFullscreenElement
+        ) {
+          // current working methods
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+          } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+          } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen(
+              Element.ALLOW_KEYBOARD_INPUT
+            );
+          }
+        } else {
+          if (document.cancelFullScreen) {
+            document.cancelFullScreen();
+          } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+          } else if (document.webkitCancelFullScreen) {
+            document.webkitCancelFullScreen();
+          }
+        }
+      },
+      toggleDarkMode() {
+        if (document.documentElement.getAttribute("data-bs-theme") == "dark") {
+          document.documentElement.setAttribute("data-bs-theme", "light");
+        } else {
+          document.documentElement.setAttribute("data-bs-theme", "dark");
+        }
+
+        const mode = document.documentElement.getAttribute("data-bs-theme");
+        this.changeMode({
+          mode: mode,
+        });
+      },
+
+      markAllRead() {
+        notificationService.markAllNotificationsAsRead();
+        this.notifications = [];
+        this.notificationCount = 0;
+      },
+      async markAsRead(notificationId) {
+        this.slidingOut = notificationId;
+
+        // Remove the notification after the animation completes
+        setTimeout(() => {
+          this.notifications = this.notifications.filter(
+            (notification) => notification.id !== notificationId
+          );
+          this.slidingOut = null;
+          this.notificationCount--;
+        }, 500); // Match the animation duration
+        await notificationService.markNotificationAsRead(notificationId);
+      },
+      isNotificationSlidingOut(id) {
+        return this.slidingOut === id;
+      },
     },
-  },
-  async mounted() {
-    this.username = await userService.getUsername();
-    this.useremail = await userService.getEmail();
-    if (process.env.VUE_APP_I18N_LOCALE) {
-      this.flag = process.env.VUE_APP_I18N_LOCALE;
-      this.languages.forEach((item) => {
-        if (item.language == this.flag) {
-          document
-            .getElementById("header-lang-img")
-            .setAttribute("src", item.flag);
+
+    computed: {
+      calculateTotalPrice() {
+        return this.cartItems
+          .reduce((total, item) => total + parseFloat(item.itemPrice), 0)
+          .toFixed(2);
+      },
+    },
+    async mounted() {
+      this.username = await userService.getUsername();
+      this.useremail = await userService.getEmail();
+      if (process.env.VUE_APP_I18N_LOCALE) {
+        this.flag = process.env.VUE_APP_I18N_LOCALE;
+        this.languages.forEach((item) => {
+          if (item.language == this.flag) {
+            document
+              .getElementById("header-lang-img")
+              .setAttribute("src", item.flag);
+          }
+        });
+      }
+
+      document.addEventListener("scroll", function () {
+        var pageTopbar = document.getElementById("page-topbar");
+        if (pageTopbar) {
+          document.body.scrollTop >= 50 ||
+          document.documentElement.scrollTop >= 50
+            ? pageTopbar.classList.add("topbar-shadow")
+            : pageTopbar.classList.remove("topbar-shadow");
         }
       });
-    }
+      if (document.getElementById("topnav-hamburger-icon"))
+        document
+          .getElementById("topnav-hamburger-icon")
+          .addEventListener("click", this.toggleHamburgerMenu);
 
-    document.addEventListener("scroll", function () {
-      var pageTopbar = document.getElementById("page-topbar");
-      if (pageTopbar) {
-        document.body.scrollTop >= 50 ||
-        document.documentElement.scrollTop >= 50
-          ? pageTopbar.classList.add("topbar-shadow")
-          : pageTopbar.classList.remove("topbar-shadow");
-      }
-    });
-    if (document.getElementById("topnav-hamburger-icon"))
-      document
-        .getElementById("topnav-hamburger-icon")
-        .addEventListener("click", this.toggleHamburgerMenu);
-
-    this.isCustomDropdown();
-  },
-};
-</script>
+      this.isCustomDropdown();
+    },
+  };
+  </script>
 
 <template>
   <header id="page-topbar">

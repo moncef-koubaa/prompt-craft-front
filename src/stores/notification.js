@@ -26,8 +26,6 @@ export const useNotificationStore = defineStore('notifications', () => {
     // SSE connection management
     function connectSSE() {
         disconnectSSE()
-
-        // Validate token
         if (!token.value) {
             error.value = new Error('Authentication token not found')
             return
@@ -82,6 +80,7 @@ export const useNotificationStore = defineStore('notifications', () => {
     }
 
     function disconnectSSE() {
+        clearNotifications();
         if (eventSource.value) {
             eventSource.value.close()
             eventSource.value = null
@@ -105,7 +104,6 @@ export const useNotificationStore = defineStore('notifications', () => {
         }
     }
 
-    // Notification management
     function markAsRead(id) {
         const notification = notifications.value.find(n => n.id === id)
         if (notification) notification.read = true
