@@ -3,7 +3,7 @@ import router from "@/router/index.js";
 
 const baseAxios = axios.create({
     baseURL: "http://localhost:3000",
-    timeout: 10000,
+    timeout: 100000,
 });
 
 baseAxios.interceptors.response.use(

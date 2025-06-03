@@ -19,7 +19,7 @@ export default class ChatBotService  {
         const createNftResponse = await apiClientAuth.post("/nft", data);
         const subscribeResponse = await apiNotifClient.post('/sse/subscribe', {
             nftId: createNftResponse.data.id,
-            events: 'auctionStarted,auctionEnded,sold,newBid',
+            events: 'auctionStarted,auctionEnded,sold,newBid,like',
         });
         const response =  subscribeResponse.data+ createNftResponse.data;
         return response.data;    
