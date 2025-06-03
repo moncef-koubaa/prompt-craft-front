@@ -6,10 +6,12 @@ query getAuction($id: String! = "") {
     maxBidAmount
     isEnded
     createdAt
+    ownerId
     nft {
       id
       imageUrl
       title
+      name
       creator {
         id
         username

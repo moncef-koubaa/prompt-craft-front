@@ -1,5 +1,5 @@
-import apiClientAuth from "./API/authenticated";
-import { io } from "socket.io-client";
+import apiClientAuth from './API/authenticated';
+import { io } from 'socket.io-client';
 
 export default class BidsService {
   // Initialize Socket.IO connection
@@ -15,28 +15,28 @@ export default class BidsService {
       reconnectionDelay: 1000,
     });
 
-    // Setup event listeners
-    this.socket.on("connect", () => {
-      console.log("Connected to WebSocket server");
-      this.socket.emit("joinAuction", auctionId);
+    this.socket.on('exception', (error) => {
+      console.error('WebSocket error:', error);
+      this.callbacks.exception.forEach((cb) => cb(error));
     });
 
-    this.socket.on("newBid", (bid) => {
-      console.log("New bid received:", bid);
+    // Setup event listeners
+    this.socket.on('connect', () => {
+      console.log('Connected to WebSocket server');
+      this.socket.emit('joinAuction', auctionId);
+    });
+
+    this.socket.on('newBid', (bid) => {
+      console.log('New bid received:', bid);
       this.callbacks.newBid.forEach((cb) => cb(bid));
     });
 
-    this.socket.on("auctionEnded", (data) => {
+    this.socket.on('auctionEnded', (data) => {
       this.callbacks.auctionEnded.forEach((cb) => cb(data));
     });
 
-    this.socket.on("exception", (error) => {
-      console.error("WebSocket error:", error);
-      
-    });
-
-    this.socket.on("disconnect", () => {
-      console.log("Disconnected from WebSocket server");
+    this.socket.on('disconnect', () => {
+      console.log('Disconnected from WebSocket server');
     });
   }
 
@@ -87,4 +87,5 @@ BidsService.callbacks = {
   newBid: [],
   auctionEnded: [],
   error: [],
+  exception: [],
 };

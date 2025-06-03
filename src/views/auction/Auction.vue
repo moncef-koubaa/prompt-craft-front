@@ -1,15 +1,15 @@
 <script>
-import PageHeader from "@/components/page-header";
-import simplebar from "simplebar-vue";
-import Layout from "@/layouts/main.vue";
-import BidsService from "@/services/bids.service";
-import AuctionService from "@/services/auction.service";
-import userService from "@/services/userService";
+import PageHeader from '@/components/page-header';
+// import simplebar from 'simplebar-vue';
+import Layout from '@/layouts/main.vue';
+import BidsService from '@/services/bids.service';
+import AuctionService from '@/services/auction.service';
+import userService from '@/services/userService';
 
 export default {
   components: {
     PageHeader,
-    simplebar,
+    // simplebar,
     Layout,
   },
   data() {
@@ -22,7 +22,7 @@ export default {
       nextBid: 0,
       bidIncrement: 1,
       showBidModal: false,
-      bidAmount: "",
+      bidAmount: '',
       timeLeft: {
         hours: 0,
         minutes: 0,
@@ -36,16 +36,18 @@ export default {
       likeCount: 0,
       isLiked: false,
       tabs: [
-        { label: "Bid History", value: "history" },
-        { label: "Details", value: "details" },
-        { label: "Activity", value: "activity" },
+        { label: 'Bid History', value: 'history' },
+        { label: 'Details', value: 'details' },
+        { label: 'Activity', value: 'activity' },
       ],
-      activeTab: "history",
+      activeTab: 'history',
       bids: [],
       bidderInterval: null,
       timerInterval: null,
       auctionEnded: false,
-      errorMessage: "",
+      errorMessage: '',
+      bidError: false,
+      bidErrorMessage: '',
     };
   },
   async mounted() {
@@ -53,30 +55,35 @@ export default {
     this.userBalance = await userService.getBalance();
     this.auction = await AuctionService.getAuctionById(this.auctionId);
     this.auction = this.auction.getAuction;
-    console.log("Auction Data:", this.auction);
-    this.isOwner = await this.auction.ownerId === userService.getUserId();
-    console.log("Is Owner:", this.isOwner);
+    console.log('Auction Data:', this.auction);
+
+    const userId = await userService.getUserId();
+    const ownerId = this.auction.ownerId;
+    this.isOwner = ownerId === userId;
+    console.log('Is Owner:', this.isOwner);
+
     this.currentBid = this.auction.maxBidAmount;
     this.bids = this.auction.bids;
-    console.log("Auction Data:", this.auction);
+
     this.initializeTimer(this.auction.endTime);
     try {
-      const token = localStorage.getItem("token");
-      await BidsService.connectToRoom(this.auctionId, token);
-      console.log("Connected to auction room:", this.auctionId);
       const joined = await BidsService.isParticipant(this.auctionId);
-      console.log("Is Participant:", joined.data);
+      console.log('Is Participant:', joined.data);
       if (!joined.data) {
         const joinResponse = await BidsService.joinAuction(this.auctionId);
-        console.log("Join Response:", joinResponse);
+        console.log('Join Response:', joinResponse);
         console.log(`Joined auction ${this.auctionId} successfully`);
       }
 
-      BidsService.on("newBid", this.handleNewBid);
-      BidsService.on("auctionEnded", this.handleAuctionEnded);
-      BidsService.on("error", this.handleSocketError);
+      const token = localStorage.getItem('token');
+      await BidsService.connectToRoom(this.auctionId, token);
+      console.log('Connected to auction room:', this.auctionId);
+
+      BidsService.on('newBid', this.handleNewBid);
+      BidsService.on('auctionEnded', this.handleAuctionEnded);
+      BidsService.on('exception', this.handleSocketError);
     } catch (error) {
-      this.errorMessage = "Failed to initialize auction";
+      this.errorMessage = 'Failed to initialize auction';
       console.error(error);
     }
   },
@@ -84,9 +91,9 @@ export default {
     clearInterval(this.bidderInterval);
     clearInterval(this.timerInterval);
     BidsService.disconnect();
-    BidsService.off("newBid", this.handleNewBid);
-    BidsService.off("auctionEnded", this.handleAuctionEnded);
-    BidsService.off("error", this.handleSocketError);
+    BidsService.off('newBid', this.handleNewBid);
+    BidsService.off('auctionEnded', this.handleAuctionEnded);
+    BidsService.off('error', this.handleSocketError);
   },
   methods: {
     initializeTimer(endTime) {
@@ -128,7 +135,7 @@ export default {
     },
 
     handleNewBid(bid) {
-      console.log("New bid received:", bid);
+      console.log('New bid received:', bid);
       this.currentBid = bid.amount;
 
       this.bids = [bid, ...this.bids];
@@ -144,29 +151,42 @@ export default {
     },
 
     handleSocketError(error) {
-      this.errorMessage = error.message || "Connection error";
+      console.log('Socket error:', error);
+
+      this.errorMessage = error.message || 'Connection error';
+      if (this.bidSuccess) {
+        console.log('Bid failed:', this.errorMessage);
+
+        this.bidSuccess = false;
+        this.bidError = true;
+        this.bidErrorMessage = this.errorMessage;
+        setTimeout(() => {
+          this.bidError = false;
+          this.bidErrorMessage = '';
+        }, 3000);
+      }
     },
 
     async confirmBid() {
       if (!this.bidAmount || this.bidAmount <= this.currentBid) {
-        this.errorMessage = "Bid must be higher than current bid";
+        this.errorMessage = 'Bid must be higher than current bid';
         return;
       }
 
       this.isPlacingBid = true;
-      this.errorMessage = "";
+      this.errorMessage = '';
 
       try {
-        BidsService.socket.emit("placeBid", {
+        this.bidSuccess = true;
+        BidsService.socket.emit('placeBid', {
           auctionId: this.auctionId,
           amount: parseFloat(this.bidAmount),
         });
 
         this.showBidModal = false;
-        this.bidSuccess = true;
         setTimeout(() => (this.bidSuccess = false), 3000);
       } catch (error) {
-        this.errorMessage = "Failed to place bid";
+        this.errorMessage = 'Failed to place bid';
         console.error(error);
       } finally {
         this.isPlacingBid = false;
@@ -174,16 +194,16 @@ export default {
     },
     replaceTime(date) {
       date = new Date(date);
-      const hours = date.getHours().toString().padStart(2, "0");
-      const minutes = date.getMinutes().toString().padStart(2, "0");
-      const seconds = date.getSeconds().toString().padStart(2, "0");
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const seconds = date.getSeconds().toString().padStart(2, '0');
       return `${hours}:${minutes}:${seconds}`;
     },
     replaceDate(date) {
       date = new Date(date);
       const day = date.getUTCDate();
-      const month = date.toLocaleString("en-US", {
-        month: "long",
+      const month = date.toLocaleString('en-US', {
+        month: 'long',
       });
       const year = date.getUTCFullYear();
       return `${day} ${month} ${year}`;
@@ -194,7 +214,7 @@ export default {
         (this.currentBid + this.bidIncrement).toFixed(2)
       );
       this.showBidModal = true;
-      this.errorMessage = "";
+      this.errorMessage = '';
     },
 
     handlePresetBid(amount) {
@@ -224,13 +244,13 @@ export default {
   }
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 .slide-fade-enter-active,
@@ -286,39 +306,7 @@ input[type="number"] {
           </BCol>
           <BCol lg="7">
             <div>
-              <BDropdown
-                class="float-end"
-                variant="button"
-                toggle-class="btn btn-ghost-primary btn-icon arrow-none"
-                size="sm"
-                no-caret
-              >
-                <template #button-content>
-                  <i class="ri-more-fill align-middle fs-16"></i>
-                </template>
-                <BDropdownItem
-                  ><i class="ri-eye-fill align-bottom me-2 text-muted"></i
-                  >View</BDropdownItem
-                >
-                <BDropdownItem
-                  ><i class="ri-pencil-fill align-bottom me-2 text-muted"></i>
-                  Edit
-                </BDropdownItem>
-                <BDropdownItem
-                  ><i
-                    class="ri-delete-bin-fill align-bottom me-2 text-muted"
-                  ></i>
-                  Delete
-                </BDropdownItem>
-              </BDropdown>
-
-              <BBadge
-                variant="danger-subtle"
-                class="bg-danger-subtle text-danger mb-3 fs-12"
-                ><i class="ri-eye-line me-1 align-bottom"></i> 8,634 watching
-                this</BBadge
-              >
-              <h4>{{ this.auction?.nft.title }}</h4>
+              <h4>{{ this.auction?.nft.name || this.auction?.nft.title }}</h4>
               <div class="hstack gap-3 flex-wrap">
                 <div class="text-muted">
                   Creator :
@@ -341,641 +329,16 @@ input[type="number"] {
                   }}</span>
                 </div>
               </div>
-              <div class="d-flex flex-wrap gap-2 align-items-center mt-3">
-                <div class="text-muted fs-16">
-                  <span class="mdi mdi-star text-warning"></span>
-                  <span class="mdi mdi-star text-warning"></span>
-                  <span class="mdi mdi-star text-warning"></span>
-                  <span class="mdi mdi-star text-warning"></span>
-                  <span class="mdi mdi-star text-warning"></span>
-                </div>
-                <div class="text-muted">( 5.50k Customer Review )</div>
-              </div>
 
-              <BButton @click="toggleDetails" class="more-details-btn">
-                {{ showDetails ? "Hide details" : "More details" }}
-              </BButton>
-              <transition name="slide-fade">
-                <div v-show="showDetails" class="details-section">
-                  <BRow class="mt-4">
-                    <BCol lg="3" sm="6">
-                      <div class="p-2 border border-dashed rounded text-center">
-                        <div>
-                          <p class="text-muted fw-medium mb-1">Price :</p>
-                          <h5 class="fs-17 text-success mb-0">
-                            <i class="mdi mdi-ethereum me-1"></i> 83.06 SC
-                          </h5>
-                        </div>
-                      </div>
-                    </BCol>
-                    <BCol lg="3" sm="6">
-                      <div class="p-2 border border-dashed rounded text-center">
-                        <div>
-                          <p class="text-muted fw-medium mb-1">Highest bid</p>
-                          <h5 class="fs-17 mb-0">104.63 SC</h5>
-                        </div>
-                      </div>
-                    </BCol>
-                    <BCol lg="3" sm="6">
-                      <div class="p-2 border border-dashed rounded text-center">
-                        <div>
-                          <p class="text-muted fw-medium mb-1">Stock</p>
-                          <h5 class="fs-17 mb-0">12/58 Sale</h5>
-                        </div>
-                      </div>
-                    </BCol>
-                    <BCol lg="3" sm="6">
-                      <div class="p-2 border border-dashed rounded text-center">
-                        <div>
-                          <p class="text-muted fw-medium mb-1">Auction Ends:</p>
-                          <h5 id="auction-time-1" class="mb-0"></h5>
-                        </div>
-                      </div>
-                    </BCol>
-                  </BRow>
-                  <div class="mt-4 text-muted">
-                    <h5 class="fs-14">Description :</h5>
-                    <p>
-                      Cultural patterns are the similar behaviors within similar
-                      situations we witness due to shared beliefs, values, norms
-                      and social practices that are steady over time. In art, a
-                      pattern is a repetition of specific visual elements. The
-                      dictionary.com definition of "pattern" is: an arrangement
-                      of repeated or corresponding parts, decorative motifs,
-                      etc.
-                    </p>
-                  </div>
-                  <div class="product-content mt-5">
-                    <h5 class="fs-14 mb-3">Product Description :</h5>
-                    <nav></nav>
-                    <BTabs nav-class="nav-tabs nav-tabs-custom nav-success">
-                      <BTab
-                        title="Place Bids"
-                        class="nav-item border border-top-0 p-4"
-                      >
-                        <div class="table-responsive">
-                          <table class="table align-middle table-nowrap mb-0">
-                            <tbody>
-                              <tr>
-                                <th scope="row">
-                                  <div class="d-flex align-items-center">
-                                    <img
-                                      src="@/assets/images/nft/img-01.jpg"
-                                      alt=""
-                                      class="avatar-xs rounded object-fit-cover"
-                                    />
-                                    <router-link
-                                      to="/apps/nft-item-detail"
-                                      class="text-body"
-                                    >
-                                      <span class="mb-0 ms-2"
-                                        >Brave Tigers NFT</span
-                                      >
-                                    </router-link>
-                                  </div>
-                                </th>
-                                <td>0.235 SC</td>
-                                <td>
-                                  <div class="d-flex align-items-center">
-                                    <img
-                                      src="@/assets/images/users/avatar-1.jpg"
-                                      alt=""
-                                      class="avatar-xs rounded object-fit-cover"
-                                    />
-                                    <div class="ms-2">
-                                      <BLink href="#!">
-                                        <h6 class="mb-1">Alexis Clarke</h6>
-                                      </BLink>
-                                      <p class="text-muted mb-0">Creators</p>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td>29 min ago</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">
-                                  <div class="d-flex align-items-center">
-                                    <img
-                                      src="@/assets/images/nft/img-03.jpg"
-                                      alt=""
-                                      class="avatar-xs rounded object-fit-cover"
-                                    />
-                                    <router-link
-                                      to="/apps/nft-item-detail"
-                                      class="text-body"
-                                    >
-                                      <span class="mb-0 ms-2"
-                                        >Creative filtered portrait</span
-                                      >
-                                    </router-link>
-                                  </div>
-                                </th>
-                                <td>571.24 SC</td>
-                                <td>
-                                  <div class="d-flex align-items-center">
-                                    <img
-                                      src="@/assets/images/users/avatar-3.jpg"
-                                      alt=""
-                                      class="avatar-xs rounded object-fit-cover"
-                                    />
-                                    <div class="ms-2">
-                                      <BLink href="#!">
-                                        <h6 class="mb-1">Glen Matney</h6>
-                                      </BLink>
-                                      <p class="text-muted mb-0">Creators</p>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td>37 min ago</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">
-                                  <div class="d-flex align-items-center">
-                                    <img
-                                      src="https://img.themesbrand.com/velzon/images/img-4.gif"
-                                      alt=""
-                                      class="avatar-xs rounded object-fit-cover"
-                                    />
-                                    <router-link
-                                      to="/apps/nft-item-detail"
-                                      class="text-body"
-                                    >
-                                      <span class="mb-0 ms-2"
-                                        >Evolved Reality</span
-                                      >
-                                    </router-link>
-                                  </div>
-                                </th>
-                                <td>130.39 SC</td>
-                                <td>
-                                  <div class="d-flex align-items-center">
-                                    <img
-                                      src="@/assets/images/users/avatar-5.jpg"
-                                      alt=""
-                                      class="avatar-xs rounded object-fit-cover"
-                                    />
-                                    <div class="ms-2">
-                                      <BLink href="#!">
-                                        <h6 class="mb-1">Herbert Stokes</h6>
-                                      </BLink>
-                                      <p class="text-muted mb-0">Creators</p>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td>1 hrs ago</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">
-                                  <div class="d-flex align-items-center">
-                                    <img
-                                      src="@/assets/images/nft/img-06.jpg"
-                                      alt=""
-                                      class="avatar-xs rounded object-fit-cover"
-                                    />
-                                    <router-link
-                                      to="/apps/nft-item-detail"
-                                      class="text-body"
-                                    >
-                                      <span class="mb-0 ms-2"
-                                        >Robotic Body Art</span
-                                      >
-                                    </router-link>
-                                  </div>
-                                </th>
-                                <td>81.72 SC</td>
-                                <td>
-                                  <div class="d-flex align-items-center">
-                                    <img
-                                      src="@/assets/images/users/avatar-8.jpg"
-                                      alt=""
-                                      class="avatar-xs rounded object-fit-cover"
-                                    />
-                                    <div class="ms-2">
-                                      <BLink href="#!">
-                                        <h6 class="mb-1">Michael Morris</h6>
-                                      </BLink>
-                                      <p class="text-muted mb-0">Creators</p>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td>1 hrs ago</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </BTab>
-                      <BTab
-                        title="Additional Information"
-                        class="nav-item border border-top-0 p-4"
-                      >
-                        <div class="table-responsive">
-                          <table class="table mb-0">
-                            <tbody>
-                              <tr>
-                                <th scope="row" style="width: 200px">Size</th>
-                                <td>650 x 650px (66.8 KB)</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">Brand</th>
-                                <td>Patterns arts & culture</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">Formats</th>
-                                <td>JPEG / PNG / PDF</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">Token</th>
-                                <td>VLZ74516523</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">Blockchain</th>
-                                <td>Ethereum</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">Contacts</th>
-                                <td>E545D145S5646544DS541SFDB213C5Z</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </BTab>
-                      <BTab
-                        title="Details"
-                        class="nav-item border border-top-0 p-4"
-                      >
-                        <div>
-                          <h5 class="font-size-16 mb-3">
-                            Patterns arts & culture
-                          </h5>
-                          <p>
-                            Cultural patterns are the similar behaviors within
-                            similar situations we witness due to shared beliefs,
-                            values, norms and social practices that are steady
-                            over time. In art, a pattern is a repetition of
-                            specific visual elements. The dictionary.com
-                            definition of "pattern" is: an arrangement of
-                            repeated or corresponding parts, decorative motifs,
-                            etc.
-                          </p>
-                          <div>
-                            <p class="mb-2">
-                              <i
-                                class="mdi mdi-circle-medium me-1 text-muted align-middle"
-                              ></i>
-                              On digital or printed media
-                            </p>
-                            <p class="mb-2">
-                              <i
-                                class="mdi mdi-circle-medium me-1 text-muted align-middle"
-                              ></i>
-                              For commercial and personal projects
-                            </p>
-                            <p class="mb-2">
-                              <i
-                                class="mdi mdi-circle-medium me-1 text-muted align-middle"
-                              ></i>
-                              From anywhere in the world
-                            </p>
-                            <p class="mb-0">
-                              <i
-                                class="mdi mdi-circle-medium me-1 text-muted align-middle"
-                              ></i>
-                              Full copyrights sale
-                            </p>
-                          </div>
-                        </div>
-                      </BTab>
-                    </BTabs>
-                  </div>
-                  <div class="mt-5">
-                    <div>
-                      <h5 class="fs-14 mb-3">Ratings & Reviews</h5>
-                    </div>
-                    <BRow class="gy-4 gx-0">
-                      <BCol lg="4">
-                        <div>
-                          <div class="pb-3">
-                            <div class="bg-light px-3 py-2 rounded-2 mb-2">
-                              <div class="d-flex align-items-center">
-                                <div class="flex-grow-1">
-                                  <div class="fs-16 align-middle text-warning">
-                                    <i class="ri-star-fill"></i>
-                                    <i class="ri-star-fill"></i>
-                                    <i class="ri-star-fill"></i>
-                                    <i class="ri-star-fill"></i>
-                                    <i class="ri-star-half-fill"></i>
-                                  </div>
-                                </div>
-                                <div class="flex-shrink-0">
-                                  <h6 class="mb-0">4.8 out of 5</h6>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="text-center">
-                              <div class="text-muted">
-                                Total <span class="fw-medium">7.32k</span>
-                                reviews
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="mt-3">
-                            <BRow class="align-items-center g-2">
-                              <div class="col-auto">
-                                <div class="p-2">
-                                  <h6 class="mb-0">5 star</h6>
-                                </div>
-                              </div>
-                              <BCol>
-                                <div class="p-2">
-                                  <BProgress
-                                    variant="success"
-                                    class="animated-progess progress-sm"
-                                    :value="50.16"
-                                  />
-                                </div>
-                              </BCol>
-                              <div class="col-auto">
-                                <div class="p-2">
-                                  <h6 class="mb-0 text-muted">2758</h6>
-                                </div>
-                              </div>
-                            </BRow>
-
-                            <BRow class="align-items-center g-2">
-                              <div class="col-auto">
-                                <div class="p-2">
-                                  <h6 class="mb-0">4 star</h6>
-                                </div>
-                              </div>
-                              <BCol>
-                                <div class="p-2">
-                                  <BProgress
-                                    variant="success"
-                                    class="animated-progess progress-sm"
-                                    :value="19.32"
-                                  />
-                                </div>
-                              </BCol>
-                              <div class="col-auto">
-                                <div class="p-2">
-                                  <h6 class="mb-0 text-muted">1063</h6>
-                                </div>
-                              </div>
-                            </BRow>
-
-                            <BRow class="align-items-center g-2">
-                              <div class="col-auto">
-                                <div class="p-2">
-                                  <h6 class="mb-0">3 star</h6>
-                                </div>
-                              </div>
-                              <BCol>
-                                <div class="p-2">
-                                  <BProgress
-                                    variant="success"
-                                    class="animated-progess progress-sm"
-                                    :value="18.12"
-                                  />
-                                </div>
-                              </BCol>
-                              <div class="col-auto">
-                                <div class="p-2">
-                                  <h6 class="mb-0 text-muted">997</h6>
-                                </div>
-                              </div>
-                            </BRow>
-
-                            <BRow class="align-items-center g-2">
-                              <div class="col-auto">
-                                <div class="p-2">
-                                  <h6 class="mb-0">2 star</h6>
-                                </div>
-                              </div>
-                              <BCol>
-                                <div class="p-2">
-                                  <BProgress
-                                    variant="warning"
-                                    class="animated-progess progress-sm"
-                                    :value="7.42"
-                                  />
-                                </div>
-                              </BCol>
-
-                              <div class="col-auto">
-                                <div class="p-2">
-                                  <h6 class="mb-0 text-muted">408</h6>
-                                </div>
-                              </div>
-                            </BRow>
-
-                            <BRow class="align-items-center g-2">
-                              <div class="col-auto">
-                                <div class="p-2">
-                                  <h6 class="mb-0">1 star</h6>
-                                </div>
-                              </div>
-                              <BCol>
-                                <div class="p-2">
-                                  <BProgress
-                                    variant="danger"
-                                    class="animated-progess progress-sm"
-                                    :value="4.98"
-                                  />
-                                </div>
-                              </BCol>
-                              <div class="col-auto">
-                                <div class="p-2">
-                                  <h6 class="mb-0 text-muted">274</h6>
-                                </div>
-                              </div>
-                            </BRow>
-                          </div>
-                        </div>
-                      </BCol>
-
-                      <BCol lg="8">
-                        <div class="ps-lg-4">
-                          <div class="d-flex flex-wrap align-items-start gap-3">
-                            <h5 class="fs-14">Reviews:</h5>
-                          </div>
-
-                          <simplebar
-                            class="me-lg-n3 pe-lg-4"
-                            data-simplebar
-                            style="max-height: 225px"
-                          >
-                            <ul class="list-unstyled mb-0">
-                              <li class="py-2">
-                                <div class="border border-dashed rounded p-3">
-                                  <div class="d-flex align-items-start mb-3">
-                                    <div class="hstack gap-3">
-                                      <BBadge
-                                        variant="success"
-                                        tag="div"
-                                        pill
-                                        class="mb-0"
-                                      >
-                                        <i class="mdi mdi-star"></i> 4.2
-                                      </BBadge>
-                                      <div class="vr"></div>
-                                      <div class="flex-grow-1">
-                                        <p class="text-muted mb-0">
-                                          Superb sweatshirt. I loved it. It is
-                                          for winter.
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  <div class="d-flex flex-grow-1 gap-2 mb-3">
-                                    <router-link to="#" class="d-block">
-                                      <img
-                                        src="@/assets/images/small/img-12.jpg"
-                                        alt=""
-                                        class="avatar-sm rounded object-fit-cover"
-                                      />
-                                    </router-link>
-                                    <router-link to="#" class="d-block">
-                                      <img
-                                        src="@/assets/images/small/img-11.jpg"
-                                        alt=""
-                                        class="avatar-sm rounded object-fit-cover"
-                                      />
-                                    </router-link>
-                                    <router-link to="#" class="d-block">
-                                      <img
-                                        src="@/assets/images/small/img-10.jpg"
-                                        alt=""
-                                        class="avatar-sm rounded object-fit-cover"
-                                      />
-                                    </router-link>
-                                  </div>
-
-                                  <div class="d-flex align-items-end">
-                                    <div class="flex-grow-1">
-                                      <h5 class="fs-14 mb-0">Henry</h5>
-                                    </div>
-
-                                    <div class="flex-shrink-0">
-                                      <p class="text-muted fs-13 mb-0">
-                                        12 Jul, 21
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </li>
-                              <li class="py-2">
-                                <div class="border border-dashed rounded p-3">
-                                  <div class="d-flex align-items-start mb-3">
-                                    <div class="hstack gap-3">
-                                      <BBadge
-                                        variant="success"
-                                        tag="div"
-                                        pill
-                                        class="mb-0"
-                                      >
-                                        <i class="mdi mdi-star"></i> 4.0
-                                      </BBadge>
-                                      <div class="vr"></div>
-                                      <div class="flex-grow-1">
-                                        <p class="text-muted mb-0">
-                                          Great at this price, Product quality
-                                          and look is awesome.
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="d-flex align-items-end">
-                                    <div class="flex-grow-1">
-                                      <h5 class="fs-14 mb-0">Nancy</h5>
-                                    </div>
-
-                                    <div class="flex-shrink-0">
-                                      <p class="text-muted fs-13 mb-0">
-                                        06 Jul, 21
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </li>
-                              <li class="py-2">
-                                <div class="border border-dashed rounded p-3">
-                                  <div class="d-flex align-items-start mb-3">
-                                    <div class="hstack gap-3">
-                                      <BBadge
-                                        variant="success"
-                                        tag="div"
-                                        pill
-                                        class="mb-0"
-                                      >
-                                        <i class="mdi mdi-star"></i> 4.2
-                                      </BBadge>
-                                      <div class="vr"></div>
-                                      <div class="flex-grow-1">
-                                        <p class="text-muted mb-0">
-                                          Good product. I am so happy.
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="d-flex align-items-end">
-                                    <div class="flex-grow-1">
-                                      <h5 class="fs-14 mb-0">Joseph</h5>
-                                    </div>
-
-                                    <div class="flex-shrink-0">
-                                      <p class="text-muted fs-13 mb-0">
-                                        06 Jul, 21
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </li>
-                              <li class="py-2">
-                                <div class="border border-dashed rounded p-3">
-                                  <div class="d-flex align-items-start mb-3">
-                                    <div class="hstack gap-3">
-                                      <BBadge
-                                        variant="success"
-                                        tag="div"
-                                        pill
-                                        class="mb-0"
-                                      >
-                                        <i class="mdi mdi-star"></i> 4.1
-                                      </BBadge>
-                                      <div class="vr"></div>
-                                      <div class="flex-grow-1">
-                                        <p class="text-muted mb-0">
-                                          Nice Product, Good Quality.
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="d-flex align-items-end">
-                                    <div class="flex-grow-1">
-                                      <h5 class="fs-14 mb-0">Jimmy</h5>
-                                    </div>
-
-                                    <div class="flex-shrink-0">
-                                      <p class="text-muted fs-13 mb-0">
-                                        24 Jun, 21
-                                      </p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </li>
-                            </ul>
-                          </simplebar>
-                        </div>
-                      </BCol>
-                    </BRow>
-                  </div>
-                </div>
-              </transition>
+              <BBadge
+                variant="danger-subtle"
+                class="bg-danger-subtle text-danger mt-3 fs-12"
+                ><i class="ri-eye-line me-1 align-bottom"></i> 8,634 watching
+                this</BBadge
+              >
 
               <!-- Bidding Section -->
-              <div class="bg-gray-100 rounded-xl p-6 space-y-4">
+              <div class="bg-gray-100 rounded-xl p-6 space-y-4 my-3">
                 <div class="flex justify-between items-center">
                   <div>
                     <h3 class="text-lg font-medium">Auction Ends In</h3>
@@ -985,19 +348,19 @@ input[type="number"] {
                         <div
                           class="bg-black text-white dark:bg-gray-900 rounded-md px-2 py-1 font-mono font-bold"
                         >
-                          {{ String(timeLeft.hours).padStart(2, "0") }}
+                          {{ String(timeLeft.hours).padStart(2, '0') }}
                         </div>
                         <span class="mx-1 text-lg font-bold">:</span>
                         <div
                           class="bg-black text-white dark:bg-gray-900 rounded-md px-2 py-1 font-mono font-bold"
                         >
-                          {{ String(timeLeft.minutes).padStart(2, "0") }}
+                          {{ String(timeLeft.minutes).padStart(2, '0') }}
                         </div>
                         <span class="mx-1 text-lg font-bold">:</span>
                         <div
                           class="bg-black text-white dark:bg-gray-900 rounded-md px-2 py-1 font-mono font-bold"
                         >
-                          {{ String(timeLeft.seconds).padStart(2, "0") }}
+                          {{ String(timeLeft.seconds).padStart(2, '0') }}
                         </div>
                       </div>
                     </div>
@@ -1005,7 +368,9 @@ input[type="number"] {
 
                   <div class="flex items-center space-x-2">
                     <span class="text-amber-500">👤</span>
-                    <span class="text-sm font-medium">{{ this.auction?.bids.length }} active bidders</span>
+                    <span class="text-sm font-medium"
+                      >{{ this.auction?.bids.length }} active bidders</span
+                    >
                   </div>
                 </div>
 
@@ -1039,6 +404,13 @@ input[type="number"] {
                     class="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 p-2 rounded-md text-sm"
                   >
                     Your bid has been placed successfully!
+                  </div>
+
+                  <div
+                    v-else-if="bidError"
+                    class="bg-red-100 text-red-800 p-2 rounded-md text-sm"
+                  >
+                    {{ bidErrorMessage }}
                   </div>
                 </transition>
 
@@ -1084,7 +456,11 @@ input[type="number"] {
                   <!--                          <template v-else>-->
                   <!--                            BID NOW: {{ nextBid }} ETH-->
                   <!--                          </template> -->
-                  <BButton variant="primary" class="w-100" @click="openBidModal"
+                  <BButton
+                    variant="primary"
+                    class="w-100"
+                    @click="openBidModal"
+                    :disabled="isOwner"
                     >Place Bid</BButton
                   >
                   <!--                        </button>-->
@@ -1312,7 +688,10 @@ input[type="number"] {
                       <div class="text-center mb-6">
                         <h2 class="text-2xl font-bold">Place Your Bid</h2>
                         <p class="text-gray-500 dark:text-gray-400 mt-1">
-                          You're about to place a bid on {{ this.auction?.nft.title }}
+                          You're about to place a bid on
+                          {{
+                            this.auction?.nft.name || this.auction?.nft.title
+                          }}
                         </p>
                       </div>
 
@@ -1364,25 +743,17 @@ input[type="number"] {
                             ≈ ${{
                               bidAmount
                                 ? (bidAmount * 3450).toLocaleString()
-                                : "0"
+                                : '0'
                             }}
                           </p>
                         </div>
-
-                        
 
                         <!-- Total -->
                         <div
                           class="flex justify-between items-center font-medium"
                         >
                           <span>You will pay</span>
-                          <span
-                            >{{
-                              bidAmount
-                                
-                            }}
-                            SC</span
-                          >
+                          <span>{{ bidAmount }} SC</span>
                         </div>
 
                         <!-- Wallet Balance -->

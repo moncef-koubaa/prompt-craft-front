@@ -1,13 +1,13 @@
 <script>
-import Layout from "@/layouts/main.vue";
+import Layout from '@/layouts/main.vue';
 // import { Swiper, SwiperSlide } from "swiper/vue";
-import { Autoplay, Navigation } from "swiper/modules";
+import { Autoplay, Navigation } from 'swiper/modules';
 
-import "swiper/css";
-import "swiper/css/autoplay";
-import "swiper/css/navigation";
+import 'swiper/css';
+import 'swiper/css/autoplay';
+import 'swiper/css/navigation';
 
-import userService from "@/services/userService";
+import userService from '@/services/userService';
 
 export default {
   data() {
@@ -15,14 +15,14 @@ export default {
       Autoplay,
       Navigation,
       infos: {
-        Name: "",
-        Mobile: "+216 55 555 555", // Hardcoded or fetched elsewhere
-        Email: "",
-        Location: "Tunis, Tunisia", // Hardcoded or via user profile
-        JoiningDate: "01 Jan 2021", // Placeholder
-        Designation: "Lead Designer / Developer", // Placeholder
-        Website: "www.mywebsite.com",
-        Description: "",
+        Name: '',
+        Mobile: '+216 55 555 555', // Hardcoded or fetched elsewhere
+        Email: '',
+        Location: 'Tunis, Tunisia', // Hardcoded or via user profile
+        JoiningDate: '01 Jan 2021', // Placeholder
+        Designation: 'Lead Designer / Developer', // Placeholder
+        Website: 'www.mywebsite.com',
+        Description: '',
         Skills: [],
       },
       ownedNfts: [],
@@ -42,7 +42,7 @@ export default {
       this.infos.Skills = ownedNfts.map((nft) => nft.name); // Example mapping*
       this.ownedNfts = ownedNfts;
     } catch (error) {
-      console.error("Failed to fetch user info:", error);
+      console.error('Failed to fetch user info:', error);
     }
   },
   components: {
@@ -55,51 +55,64 @@ export default {
 
 <template>
   <Layout>
-  <div class="profile-foreground position-relative mx-n4 mt-n4">
-    <div class="profile-wid-bg">
-      <img src="@/assets/images/profile-bg.jpg" alt="" class="profile-wid-img" />
+    <div class="profile-foreground position-relative mx-n4 mt-n4">
+      <div class="profile-wid-bg">
+        <img
+          src="@/assets/images/profile-bg.jpg"
+          alt=""
+          class="profile-wid-img"
+        />
+      </div>
     </div>
-  </div>
-  <div class="pt-4 mb-4 mb-lg-3 pb-lg-4 profile-wrapper">
-    <BRow class="g-4">
-      <BCol cols="auto">
-        <div class="avatar-lg">
-          <img src="@/assets/images/users/avatar-1.jpg" alt="user-img" class="img-thumbnail rounded-circle" />
-        </div>
-      </BCol>
-      <BCol>
-        <div class="p-2">
-          <h3 class="text-white mb-1">{{ infos.Name }}</h3>
-          <p class="text-white text-opacity-75">Owner & Founder</p>
-          <div class="hstack text-white-50 gap-1">
-            <div class="me-2">
-              <i class="ri-map-pin-user-line me-1 text-white text-opacity-75 fs-16 align-middle"></i>{{ infos.Location
-              }}
-            </div>
-            <div>
-              <i class="ri-building-line me-1 text-white text-opacity-75 fs-16 align-middle"></i>Themesbrand
+    <div class="pt-4 mb-4 mb-lg-3 pb-lg-4 profile-wrapper">
+      <BRow class="g-4">
+        <BCol cols="auto">
+          <div class="avatar-lg">
+            <img
+              src="@/assets/images/users/avatar-1.jpg"
+              alt="user-img"
+              class="img-thumbnail rounded-circle"
+            />
+          </div>
+        </BCol>
+        <BCol>
+          <div class="p-2">
+            <h3 class="text-white mb-1">{{ infos.Name }}</h3>
+            <p class="text-white text-opacity-75">Owner & Founder</p>
+            <div class="hstack text-white-50 gap-1">
+              <div class="me-2">
+                <i
+                  class="ri-map-pin-user-line me-1 text-white text-opacity-75 fs-16 align-middle"
+                ></i
+                >{{ infos.Location }}
+              </div>
+              <div>
+                <i
+                  class="ri-building-line me-1 text-white text-opacity-75 fs-16 align-middle"
+                ></i
+                >Themesbrand
+              </div>
             </div>
           </div>
-        </div>
-      </BCol>
-      <BCol cols="12" lg="auto" order-lg="0" class="order-last">
-        <BRow class="text text-white-50 text-center">
-          <BCol lg="6" cols="4">
-            <div class="p-2">
-              <h4 class="text-white mb-1">24.3K</h4>
-              <p class="fs-14 mb-0">Followers</p>
-            </div>
-          </BCol>
-          <BCol lg="6" cols="4">
-            <div class="p-2">
-              <h4 class="text-white mb-1">1.3K</h4>
-              <p class="fs-14 mb-0">Following</p>
-            </div>
-          </BCol>
-        </BRow>
-      </BCol>
-    </BRow>
-  </div>
+        </BCol>
+        <BCol cols="12" lg="auto" order-lg="0" class="order-last">
+          <BRow class="text text-white-50 text-center">
+            <BCol lg="6" cols="4">
+              <div class="p-2">
+                <h4 class="text-white mb-1">24.3K</h4>
+                <p class="fs-14 mb-0">Followers</p>
+              </div>
+            </BCol>
+            <BCol lg="6" cols="4">
+              <div class="p-2">
+                <h4 class="text-white mb-1">1.3K</h4>
+                <p class="fs-14 mb-0">Following</p>
+              </div>
+            </BCol>
+          </BRow>
+        </BCol>
+      </BRow>
+    </div>
 
   <BRow>
     <BCol lg="12">
@@ -713,6 +726,62 @@ export default {
 <!--                          </BCol>-->
 <!--                        </BRow>-->
 
+                          <BRow
+                            class="row-cols-xxl-5 row-cols-xl-4 row-cols-lg-3 row-cols-md-2 row-cols-1"
+                          >
+                            <BCol
+                              xxl="3"
+                              lg="4"
+                              md="6"
+                              class="product-item upto-15 cursor-pointer"
+                              v-for="nft in ownedNfts"
+                              v-bind:key="nft.id"
+                            >
+                              <router-link
+                                :to="{ name: 'my-nft', params: { id: nft.id } }"
+                              >
+                                <BCard no-body class="explore-box card-animate">
+                                  <div
+                                    class="position-relative rounded overflow-hidden"
+                                  >
+                                    <img
+                                      :src="nft.imageUrl"
+                                      alt=""
+                                      class="card-img-top explore-img"
+                                    />
+                                    <div class="discount-time">
+                                      <h5
+                                        id="auction-time-1"
+                                        class="mb-0 text-white"
+                                      ></h5>
+                                    </div>
+                                  </div>
+                                  <BCardBody>
+                                    <p class="fw-medium mb-0 float-end"></p>
+                                    <h5 class="text-success">
+                                      <i class="mdi mdi-ethereum">
+                                        {{ nft.description }}</i
+                                      >
+                                    </h5>
+                                    <h6 class="fs-16 mb-3">
+                                      {{ nft.name }}
+                                    </h6>
+                                  </BCardBody>
+                                </BCard>
+                              </router-link>
+                            </BCol>
+                          </BRow>
+                        </BCardBody>
+                      </BCard>
+                    </BCol>
+                  </BRow>
+                </BCol>
+              </BRow>
+            </BTab>
+          </BTabs>
+        </div>
+      </BCol>
+    </BRow>
                                                 <BRow class="row-cols-xxl-5 row-cols-xl-4 row-cols-lg-3 row-cols-md-2 row-cols-1">
 
                         <BCol
