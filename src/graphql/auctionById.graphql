@@ -11,6 +11,7 @@ query getAuction($id: String! = "") {
       id
       imageUrl
       title
+      name
       creator {
         id
         username
