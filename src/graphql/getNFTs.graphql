@@ -7,6 +7,7 @@ query GetNfts($filter: NftFilterDto! = {}) {
     }
     data {
       id
+      name
       title
       description
       imageUrl

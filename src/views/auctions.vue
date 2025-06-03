@@ -100,11 +100,22 @@ export default {
                 <h5 class="text-success">
                   <i class="mdi"> {{ auction.currentPrice }}</i>
                 </h5>
-                <h6 class="fs-16 mb-3">
-                  <router-link to="/apps/nft-item-detail">{{
-                    auction.nft.name || auction.nft.title
-                  }}</router-link>
-                </h6>
+                <div
+                  class="d-flex justify-content-between align-items-center mb-3"
+                >
+                  <h6 class="fs-16 mb-0">
+                    <router-link to="/apps/nft-item-detail">
+                      {{ auction.nft.name || auction.nft.title }}
+                    </router-link>
+                  </h6>
+                  <h5 class="text-success mb-0">
+                    <i class="mdi mdi-ethereum"></i> {{ auction.maxBidAmount }}
+                  </h5>
+                </div>
+                <span class="text-muted"
+                  >{{ new Date(auction.createdAt).toDateString() }} -
+                  {{ new Date(auction.endTime).toDateString() }}</span
+                >
               </BCardBody>
             </BCard>
           </BCol>

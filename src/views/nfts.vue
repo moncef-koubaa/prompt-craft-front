@@ -74,30 +74,6 @@ export default {
                       >All Items</BButton
                     >
                   </li>
-                  <li class="nav-item" role="presentation">
-                    <BButton
-                      variant="link"
-                      class="nav-link fw-medium"
-                      data-filter="upto-15"
-                      >Up to 15%</BButton
-                    >
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <BButton
-                      variant="link"
-                      class="nav-link fw-medium"
-                      data-filter="upto-30"
-                      >Up to 30%</BButton
-                    >
-                  </li>
-                  <li class="nav-item" role="presentation">
-                    <BButton
-                      variant="link"
-                      class="nav-link fw-medium"
-                      data-filter="upto-40"
-                      >Up to 40%</BButton
-                    >
-                  </li>
                 </ul>
               </div>
             </div>
@@ -131,7 +107,7 @@ export default {
                 </h5>
                 <h6 class="fs-16 mb-3">
                   <router-link to="/apps/nft-item-detail">{{
-                    nft.title
+                    nft.name || nft.title
                   }}</router-link>
                 </h6>
                 <div>
