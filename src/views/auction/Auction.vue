@@ -1,10 +1,10 @@
 <script>
-import PageHeader from "@/components/page-header";
-import simplebar from "simplebar-vue";
-import Layout from "@/layouts/main.vue";
-import BidsService from "@/services/bids.service";
-import AuctionService from "@/services/auction.service";
-import userService from "@/services/userService";
+import PageHeader from '@/components/page-header';
+import simplebar from 'simplebar-vue';
+import Layout from '@/layouts/main.vue';
+import BidsService from '@/services/bids.service';
+import AuctionService from '@/services/auction.service';
+import userService from '@/services/userService';
 
 export default {
   components: {
@@ -22,7 +22,7 @@ export default {
       nextBid: 0,
       bidIncrement: 1,
       showBidModal: false,
-      bidAmount: "",
+      bidAmount: '',
       timeLeft: {
         hours: 0,
         minutes: 0,
@@ -36,16 +36,16 @@ export default {
       likeCount: 0,
       isLiked: false,
       tabs: [
-        { label: "Bid History", value: "history" },
-        { label: "Details", value: "details" },
-        { label: "Activity", value: "activity" },
+        { label: 'Bid History', value: 'history' },
+        { label: 'Details', value: 'details' },
+        { label: 'Activity', value: 'activity' },
       ],
-      activeTab: "history",
+      activeTab: 'history',
       bids: [],
       bidderInterval: null,
       timerInterval: null,
       auctionEnded: false,
-      errorMessage: "",
+      errorMessage: '',
     };
   },
   async mounted() {
@@ -53,30 +53,35 @@ export default {
     this.userBalance = await userService.getBalance();
     this.auction = await AuctionService.getAuctionById(this.auctionId);
     this.auction = this.auction.getAuction;
-    console.log("Auction Data:", this.auction);
-    this.isOwner = await this.auction.ownerId === userService.getUserId();
-    console.log("Is Owner:", this.isOwner);
+    console.log('Auction Data:', this.auction);
+
+    const userId = await userService.getUserId();
+    const ownerId = this.auction.ownerId;
+    this.isOwner = ownerId === userId;
+    console.log('Is Owner:', this.isOwner);
+
     this.currentBid = this.auction.maxBidAmount;
     this.bids = this.auction.bids;
-    console.log("Auction Data:", this.auction);
+
     this.initializeTimer(this.auction.endTime);
     try {
-      const token = localStorage.getItem("token");
-      await BidsService.connectToRoom(this.auctionId, token);
-      console.log("Connected to auction room:", this.auctionId);
       const joined = await BidsService.isParticipant(this.auctionId);
-      console.log("Is Participant:", joined.data);
+      console.log('Is Participant:', joined.data);
       if (!joined.data) {
         const joinResponse = await BidsService.joinAuction(this.auctionId);
-        console.log("Join Response:", joinResponse);
+        console.log('Join Response:', joinResponse);
         console.log(`Joined auction ${this.auctionId} successfully`);
       }
 
-      BidsService.on("newBid", this.handleNewBid);
-      BidsService.on("auctionEnded", this.handleAuctionEnded);
-      BidsService.on("error", this.handleSocketError);
+      const token = localStorage.getItem('token');
+      await BidsService.connectToRoom(this.auctionId, token);
+      console.log('Connected to auction room:', this.auctionId);
+
+      BidsService.on('newBid', this.handleNewBid);
+      BidsService.on('auctionEnded', this.handleAuctionEnded);
+      BidsService.on('error', this.handleSocketError);
     } catch (error) {
-      this.errorMessage = "Failed to initialize auction";
+      this.errorMessage = 'Failed to initialize auction';
       console.error(error);
     }
   },
@@ -84,9 +89,9 @@ export default {
     clearInterval(this.bidderInterval);
     clearInterval(this.timerInterval);
     BidsService.disconnect();
-    BidsService.off("newBid", this.handleNewBid);
-    BidsService.off("auctionEnded", this.handleAuctionEnded);
-    BidsService.off("error", this.handleSocketError);
+    BidsService.off('newBid', this.handleNewBid);
+    BidsService.off('auctionEnded', this.handleAuctionEnded);
+    BidsService.off('error', this.handleSocketError);
   },
   methods: {
     initializeTimer(endTime) {
@@ -128,7 +133,7 @@ export default {
     },
 
     handleNewBid(bid) {
-      console.log("New bid received:", bid);
+      console.log('New bid received:', bid);
       this.currentBid = bid.amount;
 
       this.bids = [bid, ...this.bids];
@@ -144,20 +149,20 @@ export default {
     },
 
     handleSocketError(error) {
-      this.errorMessage = error.message || "Connection error";
+      this.errorMessage = error.message || 'Connection error';
     },
 
     async confirmBid() {
       if (!this.bidAmount || this.bidAmount <= this.currentBid) {
-        this.errorMessage = "Bid must be higher than current bid";
+        this.errorMessage = 'Bid must be higher than current bid';
         return;
       }
 
       this.isPlacingBid = true;
-      this.errorMessage = "";
+      this.errorMessage = '';
 
       try {
-        BidsService.socket.emit("placeBid", {
+        BidsService.socket.emit('placeBid', {
           auctionId: this.auctionId,
           amount: parseFloat(this.bidAmount),
         });
@@ -166,7 +171,7 @@ export default {
         this.bidSuccess = true;
         setTimeout(() => (this.bidSuccess = false), 3000);
       } catch (error) {
-        this.errorMessage = "Failed to place bid";
+        this.errorMessage = 'Failed to place bid';
         console.error(error);
       } finally {
         this.isPlacingBid = false;
@@ -174,16 +179,16 @@ export default {
     },
     replaceTime(date) {
       date = new Date(date);
-      const hours = date.getHours().toString().padStart(2, "0");
-      const minutes = date.getMinutes().toString().padStart(2, "0");
-      const seconds = date.getSeconds().toString().padStart(2, "0");
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const seconds = date.getSeconds().toString().padStart(2, '0');
       return `${hours}:${minutes}:${seconds}`;
     },
     replaceDate(date) {
       date = new Date(date);
       const day = date.getUTCDate();
-      const month = date.toLocaleString("en-US", {
-        month: "long",
+      const month = date.toLocaleString('en-US', {
+        month: 'long',
       });
       const year = date.getUTCFullYear();
       return `${day} ${month} ${year}`;
@@ -194,7 +199,7 @@ export default {
         (this.currentBid + this.bidIncrement).toFixed(2)
       );
       this.showBidModal = true;
-      this.errorMessage = "";
+      this.errorMessage = '';
     },
 
     handlePresetBid(amount) {
@@ -224,13 +229,13 @@ export default {
   }
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 .slide-fade-enter-active,
@@ -353,7 +358,7 @@ input[type="number"] {
               </div>
 
               <BButton @click="toggleDetails" class="more-details-btn">
-                {{ showDetails ? "Hide details" : "More details" }}
+                {{ showDetails ? 'Hide details' : 'More details' }}
               </BButton>
               <transition name="slide-fade">
                 <div v-show="showDetails" class="details-section">
@@ -985,19 +990,19 @@ input[type="number"] {
                         <div
                           class="bg-black text-white dark:bg-gray-900 rounded-md px-2 py-1 font-mono font-bold"
                         >
-                          {{ String(timeLeft.hours).padStart(2, "0") }}
+                          {{ String(timeLeft.hours).padStart(2, '0') }}
                         </div>
                         <span class="mx-1 text-lg font-bold">:</span>
                         <div
                           class="bg-black text-white dark:bg-gray-900 rounded-md px-2 py-1 font-mono font-bold"
                         >
-                          {{ String(timeLeft.minutes).padStart(2, "0") }}
+                          {{ String(timeLeft.minutes).padStart(2, '0') }}
                         </div>
                         <span class="mx-1 text-lg font-bold">:</span>
                         <div
                           class="bg-black text-white dark:bg-gray-900 rounded-md px-2 py-1 font-mono font-bold"
                         >
-                          {{ String(timeLeft.seconds).padStart(2, "0") }}
+                          {{ String(timeLeft.seconds).padStart(2, '0') }}
                         </div>
                       </div>
                     </div>
@@ -1005,7 +1010,9 @@ input[type="number"] {
 
                   <div class="flex items-center space-x-2">
                     <span class="text-amber-500">👤</span>
-                    <span class="text-sm font-medium">{{ this.auction?.bids.length }} active bidders</span>
+                    <span class="text-sm font-medium"
+                      >{{ this.auction?.bids.length }} active bidders</span
+                    >
                   </div>
                 </div>
 
@@ -1312,7 +1319,8 @@ input[type="number"] {
                       <div class="text-center mb-6">
                         <h2 class="text-2xl font-bold">Place Your Bid</h2>
                         <p class="text-gray-500 dark:text-gray-400 mt-1">
-                          You're about to place a bid on {{ this.auction?.nft.title }}
+                          You're about to place a bid on
+                          {{ this.auction?.nft.title }}
                         </p>
                       </div>
 
@@ -1364,25 +1372,17 @@ input[type="number"] {
                             ≈ ${{
                               bidAmount
                                 ? (bidAmount * 3450).toLocaleString()
-                                : "0"
+                                : '0'
                             }}
                           </p>
                         </div>
-
-                        
 
                         <!-- Total -->
                         <div
                           class="flex justify-between items-center font-medium"
                         >
                           <span>You will pay</span>
-                          <span
-                            >{{
-                              bidAmount
-                                
-                            }}
-                            SC</span
-                          >
+                          <span>{{ bidAmount }} SC</span>
                         </div>
 
                         <!-- Wallet Balance -->
