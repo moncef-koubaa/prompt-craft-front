@@ -116,6 +116,7 @@ export const useNotificationStore = defineStore('notifications', () => {
     }
 
     function clearNotifications() {
+        notificationCount.value = 0;
         notifications.value = []
     }
 

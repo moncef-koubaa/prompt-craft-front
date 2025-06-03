@@ -23,6 +23,7 @@ export default {
     onMounted(async () => {
       try {
         notifications.value=[];
+        notificationCount.value = 0;
         const unread = await notificationService.getUnreadNotifications();
         notifications.value = notifications.value.concat(unread);
         console.log("notification filler", notifications.value);
@@ -458,8 +459,8 @@ export default {
                             </button>
 
                             <!-- Notification Content -->
-                            <router-link to="/nft/{{notification.nftId}}">
-                            <div class="flex-1 min-w-0">
+                            <router-link :to="{ name: 'nft', params: { id: notification.nftId } }">
+                              <div class="flex-1 min-w-0">
                               <h3 class="font-medium text-sm text-gray-900">
                                 {{ notification.user }}
                               </h3>
