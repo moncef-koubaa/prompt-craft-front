@@ -1,6 +1,5 @@
 <script>
 import PageHeader from '@/components/page-header';
-import Horizontal from '@/layouts/horizontal.vue';
 import NftService from '@/services/nft.service';
 import Layout from '@/layouts/main.vue';
 
@@ -21,7 +20,6 @@ export default {
   },
   components: {
     PageHeader,
-    Horizontal,
     Layout,
   },
   methods: {
@@ -66,7 +64,6 @@ export default {
 
 <template>
   <Layout>
-    <Horizontal />
     <PageHeader title="Item Details" pageTitle="NFT Marketplace" />
     <div>
       <div v-if="loading">Loading NFT...</div>
